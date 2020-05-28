@@ -50,11 +50,14 @@ export function TrackSelection(): JSX.Element {
         <h1 className="mb-4">Exercism: V3 Dashboard</h1>
       </header>
       <p>
-        👋 Welcome! Thanks for being involved in the creation of version 3 (v3)
-        of Exercism! 🥳
+        👋 <strong>Welcome!</strong> Thanks for being involved in the creation
+        of version 3 (v3) of Exercism! 🥳
       </p>
       <p>
-        If you're <strong>new to v3</strong>{' '}
+        <strong>This dashboard</strong> is the central hub for how we're
+        managing v3 of Exercism. Maintainers can use it to understand how their
+        tracks are progressing, and contributors can use it to find out where
+        help is required. If you're <strong>new to v3</strong>{' '}
         <a href="https://www.youtube.com/watch?v=5Cj1Dr9m3GM" target="_blank">
           this video
         </a>{' '}
@@ -62,12 +65,14 @@ export function TrackSelection(): JSX.Element {
         <a href="https://github.com/exercism/v3/issues/690" target="_blank">
           this issue
         </a>{' '}
-        give some introductory information.
-        <strong>This dashboard</strong> is the central hub for how we're
-        managing v3 of Exercism. Maintainers can use it to understand how their
-        tracks are progressing, and contributors can use it to find out where
-        help is required. Contributions to the dashboard are welcome{' '}
-        <a href="https://github.com/exercism/v3-dashboard">via GitHub</a>.
+        give some introductory information. Contributions to the dashboard are
+        welcome{' '}
+        <a href="https://github.com/exercism/v3-dashboard">via GitHub</a>.{' '}
+        <strong>If you get stuck</strong>, you can{' '}
+        <a href="https://join.slack.com/t/exercism-team/shared_invite/zt-59aazo7p-VtFgs_vwZwdTwTBLkGYspQ">
+          join our Slack Workspace
+        </a>{' '}
+        and ask for help in the #v3 channel.
       </p>
       <p>
         <strong>To get started</strong>, choose the language you maintain or
