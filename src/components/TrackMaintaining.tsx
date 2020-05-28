@@ -1,98 +1,76 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, Fragment } from 'react'
 
-import {
-  ProvideActionable,
-  useProvideActionableState,
-  useActionableState,
-} from '../hooks/useActionableOnly'
-import { usePage } from '../hooks/useUrlState'
+import { useActionableState } from '../hooks/useActionableOnly'
 
+import { useView, setOptionsInUrl } from '../hooks/useUrlState'
+import { TrackAside } from './TrackAside'
 import { SwitchToggle } from './SwitchToggle'
 import { ViewSelectLink } from './ViewSelectLink'
-import { PageSelectLink } from './PageSelectLink'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { TrackIcon } from './TrackIcon'
 import { TrackDescription } from './TrackDescription'
-import { TrackContributing } from './TrackContributing'
-import { TrackMaintaining } from './TrackMaintaining'
-import { TrackNewExercise } from './TrackNewExercise'
 import { ExerciseDetails } from './views/ExerciseDetails'
 import { LaunchList } from './views/LaunchList'
 import { ExerciseTree } from './views/ExerciseTree'
 
-const DEFAULT_PAGE: Page = 'contributing'
-
-export interface TrackToolProps {
-  trackId: TrackIdentifier
-  onUnselect: () => void
-}
-
-export function TrackTool({
+export function TrackMaintaining({
   trackId,
-  onUnselect,
-}: TrackToolProps): JSX.Element {
-  return (
-    <ProvideActionable value={useProvideActionableState()}>
-      <section>
-        <div className="d-flex justify-content-start flex-row align-items-center w-50">
-          <UnselectTrackButton onClick={onUnselect} />
-          <TogglePageButton />
-        </div>
-
-        <PageView trackId={trackId} />
-      </section>
-    </ProvideActionable>
-  )
-}
-
-function PageView({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
-  const [selectedPage] = usePage()
-  const actualPage = selectedPage || DEFAULT_PAGE
-
-  switch (actualPage) {
-    case 'maintaining': {
-      return <TrackMaintaining trackId={trackId} />
-    }
-    case 'new-exercise': {
-      return <TrackNewExercise trackId={trackId} />
-    }
-    default: {
-      return <TrackContributing trackId={trackId} />
-    }
-  }
-}
-
-function TogglePageButton(): JSX.Element {
-  return (
-    <div className="btn-group">
-      <PageSelectLink page="contributing">Contributing</PageSelectLink>
-      <PageSelectLink page="maintaining">Maintaining</PageSelectLink>
-      <PageSelectLink page="new-exercise">New exercise</PageSelectLink>
-    </div>
-  )
-}
-
-function UnselectTrackButton({
-  onClick,
 }: {
-  onClick: TrackToolProps['onUnselect']
+  trackId: TrackIdentifier
 }): JSX.Element {
-  const doClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault()
-      onClick()
-    },
-    [onClick]
-  )
+  const [selectedView] = useView()
+  const actualView = (selectedView || DEFAULT_VIEW) as View
+
+  const doHideExercise = useCallback(() => {
+    // Heuristic, if there is a "back" state, go back
+    if (
+      window &&
+      window.history &&
+      window.history.state &&
+      window.history.state.previous
+    ) {
+      if (window.history.state.previous.trackId === trackId) {
+        window.history.back()
+        return
+      }
+    }
+
+    // Otherwise, hide by going to the default view
+    setOptionsInUrl({ view: DEFAULT_VIEW, exercise: '' })
+  }, [trackId])
+
+  const doShowExercise = useCallback((exercise: ExerciseIdentifier) => {
+    setOptionsInUrl({
+      view: 'details',
+      exercise,
+    })
+  }, [])
 
   return (
-    <a
-      href="/"
-      className="btn btn-sm btn-outline-danger mr-3"
-      onClick={doClick}
-    >
-      Select different track
-    </a>
+    <Fragment>
+      <div className="d-flex flex-wrap row">
+        <div className="col" style={{ maxWidth: '27rem' }}>
+          <Header trackId={trackId} />
+        </div>
+        <TrackAside trackId={trackId} />
+      </div>
+
+      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
+        <div className="col-12 col-md-auto mb-2">
+          <ViewSelect />
+        </div>
+        <div className="col mb-2">
+          <SwitchActionableState />
+        </div>
+      </div>
+
+      <TrackView
+        trackId={trackId}
+        view={actualView}
+        onShowExercise={doShowExercise}
+        onHideExercise={doHideExercise}
+      />
+    </Fragment>
   )
 }
 
