@@ -9,6 +9,7 @@ interface GenericTrackConfiguration
   blurb: string
 }
 
+type Page = 'contributing' | 'maintaining' | 'new-exercise'
 type View = 'tree' | 'concept' | 'practice' | 'details' | 'launch'
 
 interface TrackConfiguration extends GenericTrackConfiguration {
@@ -32,6 +33,7 @@ interface ExerciseConfiguration extends Readonly<ExerciseConfiguration> {
 }
 
 type SelectedTrackIdentifier = TrackIdentifier | null
+type SelectedPage = Page | null
 type SelectedView = View | null
 type SelectedExercise = ExerciseIdentifier | null
 
