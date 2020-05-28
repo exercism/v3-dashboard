@@ -47,20 +47,38 @@ export function TrackSelection(): JSX.Element {
   return (
     <section>
       <header className="mb-4">
-        <h1 className="mb-4">Exercism: Track maintenance</h1>
+        <h1 className="mb-4">Exercism: V3 Dashboard</h1>
       </header>
+      <p>
+        👋 Welcome! Thanks for being involved in the creation of version 3 (v3)
+        of Exercism! 🥳
+      </p>
+      <p>
+        If you're <strong>new to v3</strong>{' '}
+        <a href="https://www.youtube.com/watch?v=5Cj1Dr9m3GM" target="_blank">
+          this video
+        </a>{' '}
+        and{' '}
+        <a href="https://github.com/exercism/v3/issues/690" target="_blank">
+          this issue
+        </a>{' '}
+        give some introductory information.
+        <strong>This dashboard</strong> is the central hub for how we're
+        managing v3 of Exercism. Maintainers can use it to understand how their
+        tracks are progressing, and contributors can use it to find out where
+        help is required. Contributions to the dashboard are welcome{' '}
+        <a href="https://github.com/exercism/v3-dashboard">via GitHub</a>.
+      </p>
+      <p>
+        <strong>To get started</strong>, choose the language you maintain or
+        want to contribute to:
+      </p>
       <ol className="list-inline">
         {ENABLED_TRACKS.map(renderTrackSelectionItem)}
       </ol>
-      <p className="text-muted">
-        Tracks are highlighted if the track has a defined versioning scheme. If
-        a track isn&apos;t highlighted, but the track does keep track of the
-        exercise versions, you may{' '}
-        <a href="https://github.com/exercism/tracks-maintenance-dashboard/edit/master/src/data/tracks.json">
-          edit this file
-        </a>
-        . Add the <code>versioning</code> key to the right track data. Follow
-        the format of existing values.
+      <p>
+        If the track you want to work on isn't here, please open an issue at the{' '}
+        <a href="https://github.com/exercism/v3">main v3 repo</a>.
       </p>
     </section>
   )
