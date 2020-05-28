@@ -1,6 +1,6 @@
-# tracks-maintenance-dashboard
+# V3 Progress Dashboard
 
-A dashboard to help maintainers understand the state of tracks.
+A dashboard to help maintainers and contributors understand the state of Tracks for v3.
 
 ## Track versioning
 
