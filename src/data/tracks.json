@@ -1,427 +1,150 @@
 [
   {
-    "slug": "ada",
-    "name": "Ada",
-    "core_enabled": false
-  },
-  {
-    "slug": "ballerina",
-    "name": "Ballerina",
-    "core_enabled": true
-  },
-  {
     "slug": "bash",
-    "name": "Bash",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/{exercise_slug}.sh",
-    "test_file": "exercises/{slug}/{exercise_slug}_test.sh"
+    "name": "Bash"
   },
   {
     "slug": "c",
-    "name": "C",
-    "core_enabled": true
-  },
-  {
-    "slug": "ceylon",
-    "name": "Ceylon",
-    "core_enabled": false
-  },
-  {
-    "slug": "cfml",
-    "name": "ColdFusion Markup Language",
-    "core_enabled": false
+    "name": "C"
   },
   {
     "slug": "clojure",
-    "name": "Clojure",
-    "core_enabled": false
+    "name": "Clojure"
   },
   {
     "slug": "coffeescript",
-    "name": "CoffeeScript",
-    "core_enabled": false
+    "name": "CoffeeScript"
   },
   {
     "slug": "common-lisp",
-    "name": "Common Lisp",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{exercise-slug}-test.lisp",
-    "stub_file": "exercises/{slug}/{exercise-slug}.lisp",
-    "test_file": "{versioning}"
-  },
-  {
-    "slug": "coq",
-    "name": "Coq",
-    "core_enabled": false
+    "name": "Common Lisp"
   },
   {
     "slug": "cpp",
-    "name": "C++",
-    "core_enabled": true
-  },
-  {
-    "slug": "crystal",
-    "name": "Crystal",
-    "core_enabled": false
+    "name": "C++"
   },
   {
     "slug": "csharp",
-    "name": "C#",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{ExerciseSlug}Test.cs",
-    "stub_file": "exercises/{slug}/{ExerciseSlug}.cs",
-    "test_file": "{versioning}",
-    "unactionable": {
-      "versioning": [
-        "diamond"
-      ]
-    }
-  },
-  {
-    "slug": "d",
-    "name": "D",
-    "core_enabled": false,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/source/{exercise_slug}.d",
-    "test_file": "exercises/{slug}/source/{exercise_slug}.d"
+    "name": "C#"
   },
   {
     "slug": "dart",
-    "name": "Dart",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/pubspec.yaml",
-    "stub_file": "exercises/{slug}/lib/{exercise_slug}.dart",
-    "test_file": "exercises/{slug}/test/{exercise_slug}_test.dart"
+    "name": "Dart"
   },
   {
     "slug": "delphi",
-    "name": "Delphi Pascal",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/u{ExerciseSlug}Tests.pas",
-    "stub_file": "exercises/{slug}u{exerciseslug}.pas",
-    "test_file": "exercises/{slug}/u{ExerciseSlug}Tests.pas"
-  },
-  {
-    "slug": "elm",
-    "name": "Elm",
-    "core_enabled": true
+    "name": "Delphi Pascal"
   },
   {
     "slug": "elixir",
-    "name": "Elixir",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/lib/{exercise_slug}.ex",
-    "test_file": "exercises/{slug}/test/{exercise_slug}_test.exs"
+    "name": "Elixir"
+  },
+  {
+    "slug": "elm",
+    "name": "Elm"
   },
   {
     "slug": "elisp",
-    "name": "Emacs Lisp",
-    "core_enabled": true
+    "name": "Emacs Lisp"
   },
   {
     "slug": "erlang",
-    "name": "Erlang",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/src/{exercise_slug}.app.src",
-    "stub_file": "exercises/{slug}/src/{exercise_slug}.erl",
-    "test_file": "exercises/{slug}/test/{exercise_slug}_tests.erl"
+    "name": "Erlang"
   },
   {
     "slug": "factor",
-    "name": "Factor",
-    "core_enabled": false
-  },
-  {
-    "slug": "fortran",
-    "name": "Fortran",
-    "core_enabled": false
+    "name": "Factor"
   },
   {
     "slug": "fsharp",
-    "name": "F#",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{ExerciseSlug}Test.fs",
-    "stub_file": "exercises/{slug}/{ExerciseSlug}.fs",
-    "test_file": "{versioning}",
-    "unactionable": {
-      "versioning": [
-        "diamond"
-      ]
-    }
-  },
-  {
-    "slug": "gnu-apl",
-    "name": "GNU APL",
-    "core_enabled": true
+    "name": "F#"
   },
   {
     "slug": "go",
-    "name": "Go",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/cases_test.go",
-    "stub_file": "exercises/{slug}/{exercise_slug}.go",
-    "test_file": "exercises/{slug}/{exercise_slug}_test.go"
-  },
-  {
-    "slug": "groovy",
-    "name": "Groovy",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/src/main/groovy/{ExerciseSlug}.groovy",
-    "test_file": "exercises/{slug}/src/test/groovy/{ExerciseSlug}Spec.groovy"
+    "name": "Go"
   },
   {
     "slug": "haskell",
-    "name": "Haskell",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/package.yaml",
-    "stub_file": "exercises/{slug}/src/{ExerciseSlug}.hs",
-    "test_file": "exercises/{slug}/test/Tests.hs"
+    "name": "Haskell"
   },
   {
-    "slug": "haxe",
-    "name": "Haxe",
-    "core_enabled": false
-  },
-  {
-    "slug": "idris",
-    "name": "Idris",
-    "core_enabled": false
+    "slug": "j",
+    "name": "J"
   },
   {
     "slug": "java",
-    "name": "Java",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/src/main/java/{Exerciseslug}.java",
-    "test_file": "exercises/{slug}/test/main/java/{Exerciseslug}Test.java"
+    "name": "Java"
   },
   {
     "slug": "javascript",
-    "name": "JavaScript",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/package.json",
-    "stub_file": "exercises/{slug}/{exercise-slug}.js",
-    "test_file": "exercises/{slug}/{exercise-slug}.spec.js"
+    "name": "JavaScript"
   },
   {
     "slug": "julia",
-    "name": "Julia",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/runtests.jl",
-    "stub_file": "exercises/{slug}/{exercise-slug}.jl",
-    "test_file": "{versioning}"
+    "name": "Julia"
   },
   {
     "slug": "kotlin",
-    "name": "Kotlin",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/src/main/kotlin/{ExerciseSlug}.kt",
-    "test_file": "exercises/{slug}/test/main/kotlin/{ExerciseSlug}Test.kt"
-  },
-  {
-    "slug": "lfe",
-    "name": "Lisp Flavored Erlang",
-    "core_enabled": true
-  },
-  {
-    "slug": "lua",
-    "name": "Lua",
-    "core_enabled": true
-  },
-  {
-    "slug": "mips",
-    "name": "MIPS",
-    "core_enabled": true
-  },
-  {
-    "slug": "nim",
-    "name": "Nim",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{exercise_slug}_test.nim",
-    "stub_file": "exercises/{slug}/{exercise_slug}.nim",
-    "test_file": "{versioning}"
-  },
-  {
-    "slug": "objective-c",
-    "name": "Objective-C",
-    "core_enabled": false
+    "name": "Kotlin"
   },
   {
     "slug": "ocaml",
-    "name": "OCaml",
-    "core_enabled": false,
-    "versioning": "exercises/{slug}/dune-project",
-    "stub_file": "exercises/{slug}/{exercise_slug}.ml",
-    "test_file": "exercises/{slug}/test.ml"
+    "name": "OCaml"
   },
   {
     "slug": "perl5",
-    "name": "Perl 5",
-    "core_enabled": false,
-    "versioning": "exercises/{slug}/{slug}.t",
-    "stub_file": "exercises/{slug}/{ExerciseSlug}.pm",
-    "test_file": "{versioning}"
-  },
-  {
-    "slug": "perl6",
-    "name": "Raku",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{slug}.t6",
-    "stub_file": "exercises/{slug}/{ExerciseSlug}.pm6",
-    "test_file": "{versioning}"
-  },
-  {
-    "slug": "pharo-smalltalk",
-    "name": "Pharo Smalltalk",
-    "core_enabled": true
-  },
-  {
-    "slug": "php",
-    "name": "PHP",
-    "core_enabled": true
-  },
-  {
-    "slug": "plsql",
-    "name": "PL/SQL",
-    "core_enabled": false
-  },
-  {
-    "slug": "pony",
-    "name": "Pony",
-    "core_enabled": false
-  },
-  {
-    "slug": "powershell",
-    "name": "PowerShell",
-    "core_enabled": true
-  },
-  {
-    "slug": "prolog",
-    "name": "Prolog",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/{exercise_slug}.pl",
-    "test_file": "exercises/{slug}/{exercise_slug}_tests.plt"
+    "name": "Perl 5"
   },
   {
     "slug": "purescript",
-    "name": "PureScript",
-    "core_enabled": false
+    "name": "PureScript"
   },
   {
     "slug": "python",
-    "name": "Python",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{exercise_slug}_test.py",
-    "stub_file": "exercises/{slug}/{exercise_slug}.py",
-    "test_file": "{versioning}"
+    "name": "Python"
   },
   {
     "slug": "r",
-    "name": "R",
-    "core_enabled": true
+    "name": "R"
   },
   {
     "slug": "racket",
-    "name": "Racket",
-    "core_enabled": true
+    "name": "Racket"
+  },
+  {
+    "slug": "raku",
+    "name": "Raku"
   },
   {
     "slug": "reasonml",
-    "name": "ReasonML",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/package.json",
-    "stub_file": "exercises/{slug}/src/{ExerciseSlug}.re",
-    "test_file": "exercises/{slug}/__tests__/{ExerciseSlug}_test.re"
+    "name": "ReasonML"
   },
   {
     "slug": "ruby",
-    "name": "Ruby",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{exercise_slug}_test.rb",
-    "stub_file": "exercises/{slug}/{exercise_slug}.rb",
-    "test_file": "{versioning}"
+    "name": "Ruby"
   },
   {
     "slug": "rust",
-    "name": "Rust",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/Cargo.toml",
-    "stub_file": "exercises/{slug}/src/lib.rs",
-    "test_file": "exercises/{slug}/tests/{exercise-slug}.rs"
+    "name": "Rust"
   },
   {
     "slug": "scala",
-    "name": "Scala",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/src/test/scala/{ExerciseSlug}Test.scala",
-    "stub_file": "exercises/{slug}/src/main/scala/{ExerciseSlug}.scala",
-    "test_file": "{versioning}"
+    "name": "Scala"
   },
   {
     "slug": "scheme",
-    "name": "Scheme",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/.meta/version",
-    "stub_file": "exercises/{slug}/{exercise-slug}.scm",
-    "test_file": "exercises/{slug}/test.scm"
-  },
-  {
-    "slug": "sml",
-    "name": "Standard ML",
-    "core_enabled": true
-  },
-  {
-    "slug": "shen",
-    "name": "Shen",
-    "core_enabled": false
+    "name": "Scheme"
   },
   {
     "slug": "swift",
-    "name": "Swift",
-    "core_enabled": false
-  },
-  {
-    "slug": "system-verilog",
-    "name": "SystemVerilog",
-    "core_enabled": false
-  },
-  {
-    "slug": "tcl",
-    "name": "Tcl",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{exercise-slug}.test",
-    "stub_file": "exercises/{slug}/{exercise-slug}.tcl",
-    "test_file": "{versioning}"
+    "name": "Swift"
   },
   {
     "slug": "typescript",
-    "name": "TypeScript",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/package.json",
-    "stub_file": "exercises/{slug}/{exercise-slug}.ts",
-    "test_file": "exercises/{slug}/{exercise-slug}.spec.ts"
-  },
-  {
-    "slug": "vbnet",
-    "name": "VB.Net",
-    "core_enabled": false
-  },
-  {
-    "slug": "vimscript",
-    "name": "Vim script",
-    "core_enabled": true
+    "name": "TypeScript"
   },
   {
     "slug": "x86-64-assembly",
-    "name": "x86-64 Assembly",
-    "core_enabled": true,
-    "versioning": "exercises/{slug}/{exercise_slug}_test.c",
-    "stub_file": "exercises/{slug}/{exercise_slug}.asm",
-    "test_file": "{versioning}"
+    "name": "x86-64 Assembly"
   }
 ]
