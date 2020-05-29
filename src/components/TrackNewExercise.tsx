@@ -35,7 +35,7 @@ The goal of this exercise is to teach the student the Concept of X.
 
 - \`concept-x\`: know about X; know how to use X
 
-## Prequisites
+## Prerequisites
 
 <!-- TODO: list the prerequisite concept(s) of the exercise, which are the concepts the student will have to be familiar with in order to be able to solve the exercise. All but the very first exercise must have at least one prerequisite. -->
 
