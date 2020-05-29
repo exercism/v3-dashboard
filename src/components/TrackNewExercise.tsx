@@ -8,7 +8,6 @@ export function TrackNewExercise({
   trackId,
 }: TrackNewExerciseProps): JSX.Element {
   const [exerciseName, setExerciseName] = useState('')
-  const [goal, setGoal] = useState('')
   const [learningObjectives, setLearningObjectives] = useState('')
   const [outOfScope, setOutOfScope] = useState('')
   const [concepts, setConcepts] = useState('')
@@ -26,8 +25,6 @@ export function TrackNewExercise({
     setPosting(true)
 
     const design = [
-      '## Goal',
-      goal,
       '## Learning objectives',
       learningObjectives,
       '## Out of scope',
@@ -110,17 +107,6 @@ export function TrackNewExercise({
                 </a>{' '}
                 for more information .
               </small>
-            </div>
-            <div className="form-group">
-              <label>Goal</label>
-              <textarea
-                className="form-control"
-                rows={1}
-                value={goal}
-                placeholder="E.g. The goal of this exercise is to teach the student the Concept of X."
-                onChange={(e) => setGoal(e.target.value)}
-                required
-              />
             </div>
             <div className="form-group">
               <label>Learning objectives</label>
