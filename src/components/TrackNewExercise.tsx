@@ -1,10 +1,12 @@
 import React, { useState, FormEvent } from 'react'
 
+export interface TrackNewExerciseProps {
+  trackId: TrackIdentifier
+}
+
 export function TrackNewExercise({
   trackId,
-}: {
-  trackId: TrackIdentifier
-}): JSX.Element {
+}: TrackNewExerciseProps): JSX.Element {
   const [exampleFilename, setExampleFilename] = useState('')
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {

@@ -13,11 +13,13 @@ import { ExerciseDetails } from './views/ExerciseDetails'
 import { LaunchList } from './views/LaunchList'
 import { ExerciseTree } from './views/ExerciseTree'
 
+export interface TrackMaintainingProps {
+  trackId: TrackIdentifier
+}
+
 export function TrackMaintaining({
   trackId,
-}: {
-  trackId: TrackIdentifier
-}): JSX.Element {
+}: TrackMaintainingProps): JSX.Element {
   const [selectedView] = useView()
   const actualView = (selectedView || DEFAULT_VIEW) as View
 
