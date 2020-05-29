@@ -54,9 +54,51 @@ The goal of this exercise is to teach the student the Concept of X.
   const [instructions, setInstructions] = useState(defaultInstructions)
   const [example, setExample] = useState(defaultExample)
   const [exampleFilename, setExampleFilename] = useState('')
+  const [cliToken, setCliToken] = useState('')
+  const [posting, setPosting] = useState(false)
+  const [pullRequestUrl, setPullRequestUrl] = useState('')
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
+    setPosting(true)
+
+    fetch('http://lvh.me:3000/api/maintaining/concept_exercises', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token token=${cliToken}`,
+      },
+      body: JSON.stringify({
+        exercise_track: trackId,
+        exercise_slug: exerciseName,
+        example_filename: exampleFilename,
+        example_code: example,
+        instructions_markdown: instructions,
+        design_markdown: design,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) =>
+        setPullRequestUrl(
+          `https://github.com/exercism/v3/compare/master...${data.branch_name}?expand=1`
+        )
+      )
+      .catch(() => setPosting(false))
+      .finally(() => setPosting(false))
+  }
+
+  if (pullRequestUrl) {
+    window.location.replace(pullRequestUrl)
+  }
+
+  if (posting) {
+    return (
+      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
+        <div className="col-12 mb-2">
+          <p>Creating new exercise...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -185,6 +227,26 @@ The goal of this exercise is to teach the student the Concept of X.
               The file name of the example implementation file. The name part
               should equal "Example" (in the track's preferred casing) and the
               extension part should match your track's code files extension.
+            </small>
+          </div>
+          <div className="form-group">
+            <label>Exercism CLI token</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="E.g. aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+              value={cliToken}
+              onChange={(e) => setCliToken(e.target.value)}
+              required
+            />
+            <small className="form-text text-muted">
+              The token is used to associate the pull request that will be
+              created with your account. You can find your CLI token by going to{' '}
+              <a href="https://exercism.io/my/settings">
+                the settings page on exercism.io
+              </a>{' '}
+              or by running <code>exercism configure</code> and examining its
+              output.
             </small>
           </div>
           <div className="form-group">
