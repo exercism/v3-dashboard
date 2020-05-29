@@ -15,12 +15,7 @@ function TrackSelectionItem({
 }): JSX.Element {
   return (
     <li className="list-inline-item mb-2">
-      <button
-        className={`btn btn-md btn-${
-          track.versioning ? '' : 'outline-'
-        }primary`}
-        onClick={onSelect}
-      >
+      <button className={`btn btn-md btn-outline-primary`} onClick={onSelect}>
         {track.name}
       </button>
     </li>
