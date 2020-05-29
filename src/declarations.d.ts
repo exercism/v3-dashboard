@@ -1,5 +1,42 @@
-// TODO: update to ALL the supported tracks
-type TrackIdentifier = 'csharp' | 'javascript' | 'ruby' | 'typescript'
+type TrackIdentifier =
+  | 'bash'
+  | 'c'
+  | 'clojure'
+  | 'coffeescript'
+  | 'common-lisp'
+  | 'cpp'
+  | 'csharp'
+  | 'dart'
+  | 'delphi'
+  | 'elixir'
+  | 'elm'
+  | 'emacs-lisp'
+  | 'erlang'
+  | 'factor'
+  | 'fsharp'
+  | 'go'
+  | 'haskell'
+  | 'j'
+  | 'java'
+  | 'javascript'
+  | 'julia'
+  | 'kotlin'
+  | 'ocaml'
+  | 'perl5'
+  | 'purescript'
+  | 'python'
+  | 'r'
+  | 'racket'
+  | 'raku'
+  | 'reasonml'
+  | 'ruby'
+  | 'rust'
+  | 'scala'
+  | 'scheme'
+  | 'swift'
+  | 'typescript'
+  | 'x86-64-assembly'
+
 type ExerciseIdentifier = string
 
 interface GenericTrackConfiguration
@@ -40,14 +77,6 @@ type SelectedExercise = ExerciseIdentifier | null
 interface TrackData extends Readonly<TrackData> {
   slug: TrackIdentifier
   name: string
-  core_enabled: boolean
-  versioning?: string
-  stub_file?: string
-  test_file?: string
-  unactionable?: {
-    versioning?: string[]
-    topics?: string[]
-  }
 }
 
 declare module 'js-levenshtein' {
