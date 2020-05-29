@@ -147,7 +147,7 @@ export function TrackNewExercise({
                 className="form-control"
                 rows={3}
                 value={prerequisites}
-                placeholder="- `prerequisite-1`: know how to use A&#10;- `prerequisite-2`: know how to work with B&#10;- ..."
+                placeholder="- `concept-a`: know how to use A&#10;- `concept-b`: know how to work with B&#10;"
                 onChange={(e) => setPrerequisites(e.target.value)}
                 required
               />
@@ -156,37 +156,7 @@ export function TrackNewExercise({
           <fieldset>
             <legend>Exercise</legend>
             <div className="form-group">
-              <small className="form-text text-muted">
-                The instructions for the exercise. It contains two parts. The
-                first part explains the "story" or "theme" of the exercise. It
-                should generally contain no code samples. The second part
-                provides clear instructions of what a student needs to do to, in
-                the form of one or more tasks. Markdown should be used to format
-                the document. Check out{' '}
-                <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#docsinstructionsmd">
-                  the documentation
-                </a>
-                ,{' '}
-                <a href="https://www.youtube.com/watch?v=gkbBqd7hPrA&t=309">
-                  this video
-                </a>{' '}
-                or this{' '}
-                <a href="https://github.com/exercism/v3/blob/master/languages/fsharp/exercises/concept/arrays/.docs/instructions.md">
-                  example instruction document
-                </a>{' '}
-                for more information .
-              </small>
-            </div>
-            <div className="form-group">
               <label>Exercise name</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="E.g. method-overloading"
-                value={exerciseName}
-                onChange={(e) => setExerciseName(e.target.value)}
-                required
-              />
               <small className="form-text text-muted">
                 The exercise's name, which should reflect the{' '}
                 <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#what-do-we-mean-by-concepts">
@@ -199,45 +169,92 @@ export function TrackNewExercise({
                 </a>
                 .
               </small>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="method-overloading"
+                value={exerciseName}
+                onChange={(e) => setExerciseName(e.target.value)}
+                required
+              />
             </div>
             <div className="form-group">
               <label>Story</label>
+              <small className="form-text text-muted">
+                This is the first half of the instructions.md file. The story
+                provides some context around the exercise. It can be be an
+                actual story (e.g.{' '}
+                <a href="https://github.com/exercism/v3/blob/master/languages/csharp/exercises/concept/classes/.docs/instructions.md">
+                  playing with remote-controlled cars
+                </a>
+                ) or something more programming related (e.g.{' '}
+                <a href="https://github.com/exercism/v3/blob/master/languages/csharp/exercises/concept/strings/.docs/instructions.md">
+                  parsing log lines
+                </a>
+                ). This should generally contain no code samples. Markdown
+                should be used to format the document. Check out{' '}
+                <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#docsinstructionsmd">
+                  the documentation
+                </a>
+                ,{' '}
+                <a href="https://www.youtube.com/watch?v=gkbBqd7hPrA&t=309">
+                  this video
+                </a>{' '}
+                or this{' '}
+                <a href="https://github.com/exercism/v3/blob/master/languages/fsharp/exercises/concept/arrays/.docs/instructions.md">
+                  example instruction document
+                </a>{' '}
+                for more information.
+              </small>
               <textarea
                 className="form-control"
                 rows={3}
                 value={story}
-                placeholder="E.g. In this exercise you'll be encoding the rules of an RPG game"
+                placeholder="In this exercise you'll be encoding the rules of an RPG game"
                 onChange={(e) => setStory(e.target.value)}
                 required
               />
             </div>
             <div className="form-group">
               <label>Tasks</label>
+              <small className="form-text text-muted">
+                This is the second part of the instruction.md. It provides clear
+                instructions of what a student needs to do to, in the form of
+                one or more tasks. Each task should show a code snippet of the
+                code being run and the expected output. Markdown should be used
+                to format the document. Check out{' '}
+                <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#docsinstructionsmd">
+                  the documentation
+                </a>
+                ,{' '}
+                <a href="https://www.youtube.com/watch?v=gkbBqd7hPrA&t=309">
+                  this video
+                </a>{' '}
+                or this{' '}
+                <a href="https://github.com/exercism/v3/blob/master/languages/fsharp/exercises/concept/arrays/.docs/instructions.md">
+                  example instruction document
+                </a>{' '}
+                for more information.
+              </small>
               <textarea
                 className="form-control"
                 rows={5}
                 value={tasks}
-                placeholder="E.g. ## 1. Encode the attack rules&#10;..."
+                placeholder="## 1.  Display the distance driven&#10;Implement the RemoteControlCar.DistanceDisplay() method to return the distance as displayed on the LED display:&#10;```&#10;var car = RemoteControlCar.Buy();&#10;car.DistanceDisplay();&#10;// => 'Driven 0 meters'&#10;```"
                 onChange={(e) => setTasks(e.target.value)}
                 required
               />
             </div>
             <div className="form-group">
               <label>Example implementation</label>
-              <textarea
-                className="form-control"
-                rows={5}
-                value={example}
-                placeholder="Add idiomatic example implementation of the instructions' tasks"
-                onChange={(e) => setExample(e.target.value)}
-                required
-              />
+
               <small className="form-text text-muted">
-                An example implementation of the tasks from the instructions.
-                The implementation must be idiomatic and be as simple as
-                possible. Only use language features introduced by the exercise
-                or its prerequisites (and their prerequisites, and so on). Check
-                out{' '}
+                Provide an example implementation of the tasks from the
+                instructions. The implementation should be the solution we
+                ideally want the student to produce, with consideration to the
+                knowledge they have via the prerequisites. Only use language
+                features introduced by the exercise or its prerequisites (and
+                their prerequisites, and so on). Check out{' '}
                 <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#example-implementation-file">
                   the documentation
                 </a>
@@ -251,34 +268,36 @@ export function TrackNewExercise({
                 </a>{' '}
                 for more information .
               </small>
+              <textarea
+                className="form-control"
+                rows={5}
+                value={example}
+                placeholder="Add idiomatic example implementation of the instructions' tasks"
+                onChange={(e) => setExample(e.target.value)}
+                required
+              />
             </div>
             <div className="form-group">
               <label>Example implementation filename</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="E.g. Example.js"
-                value={exampleFilename}
-                onChange={(e) => setExampleFilename(e.target.value)}
-                required
-              />
+
               <small className="form-text text-muted">
                 The file name of the example implementation file. The name part
                 should equal "Example" (in the track's preferred casing) and the
                 extension part should match your track's code files extension.
               </small>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="example.js"
+                value={exampleFilename}
+                onChange={(e) => setExampleFilename(e.target.value)}
+                required
+              />
             </div>
           </fieldset>
           <div className="form-group">
             <label>Exercism CLI token</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="E.g. aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-              value={cliToken}
-              onChange={(e) => setCliToken(e.target.value)}
-              required
-            />
+
             <small className="form-text text-muted">
               The token is used to associate the pull request that will be
               created with your account. You can find your CLI token by going to{' '}
@@ -288,6 +307,14 @@ export function TrackNewExercise({
               or by running <code>exercism configure</code> and examining its
               output.
             </small>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+              value={cliToken}
+              onChange={(e) => setCliToken(e.target.value)}
+              required
+            />
           </div>
           <div className="form-group">
             <input type="submit" value="Submit" />
