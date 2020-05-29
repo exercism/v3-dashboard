@@ -32,30 +32,8 @@ export function TrackAside({ trackId }: TrackAsideProps): JSX.Element {
             href={`https://github.com/exercism/v3/blob/master/languages/${trackId}/config.json`}
             className="d-block mr-4"
           >
-            V3 Configuration
+            Configuration
           </a>
-
-          <span title="Concept exercises">
-            <span role="img" aria-label="Concept">
-              📓
-            </span>{' '}
-            {doneConfig &&
-              config &&
-              config.exercises &&
-              config.exercises.concept &&
-              config.exercises.concept.length}
-          </span>
-
-          <span title="Practice exercises">
-            <span role="img" aria-label="Practice">
-              🧪
-            </span>{' '}
-            {doneConfig &&
-              config &&
-              config.exercises &&
-              config.exercises.practice &&
-              config.exercises.practice.length}
-          </span>
 
           <ConfigurationIcon
             currentDetails={activeDetailsKey}
@@ -65,6 +43,26 @@ export function TrackAside({ trackId }: TrackAsideProps): JSX.Element {
             valid={!!config}
           />
         </AsideItem>
+        <AsideItem disabled={actionableOnly && !!config}>
+          <span>Concept exercises</span>
+
+          {doneConfig &&
+            config &&
+            config.exercises &&
+            config.exercises.concept &&
+            config.exercises.concept.length}
+        </AsideItem>
+
+        <AsideItem disabled={actionableOnly && !!config}>
+          <span>Practice exercises</span>
+
+          {doneConfig &&
+            config &&
+            config.exercises &&
+            config.exercises.practice &&
+            config.exercises.practice.length}
+        </AsideItem>
+
         <AsideItem disabled={actionableOnly && data['testRunner'] === true}>
           <RepositoryLink repository={`${trackId}-test-runner`}>
             Test Runner
