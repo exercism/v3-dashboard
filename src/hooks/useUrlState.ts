@@ -3,13 +3,15 @@ import { useLocation } from './useLocation'
 
 import TRACKS from '../data/tracks.json'
 
-const DETAULT_VIEW: View = 'launch'
+const DEFAULT_VIEW: View = 'launch'
+const DEFAULT_PAGE: Page = 'maintaining'
 
 type UnsetTrackIdentifier = null
 type UnsetStatePartial = undefined
 
 interface SupportedState {
   trackId: TrackIdentifier | UnsetTrackIdentifier
+  page: Page | UnsetStatePartial
   view: View | UnsetStatePartial
   exercise: ExerciseIdentifier | UnsetStatePartial
 }
@@ -60,6 +62,16 @@ export function useTrack(): [
 }
 
 /**
+ * Convenience method to get the current page from the url
+ */
+export function usePage(): [
+  Page | undefined,
+  (next: Page | undefined) => void
+] {
+  return useUrlState('page', sanitizePage)
+}
+
+/**
  * Convenience method to get the current view from the url
  */
 export function useView(): [
@@ -76,7 +88,7 @@ export function useExercise(): [
   ExerciseIdentifier | undefined,
   (next: ExerciseIdentifier | undefined) => void
 ] {
-  return useUrlState('exercise', sanititzeExercise)
+  return useUrlState('exercise', sanitizeExercise)
 }
 
 function sanitizeTrack(
@@ -86,13 +98,19 @@ function sanitizeTrack(
   return track ? (anyTrack as TrackIdentifier) : null
 }
 
+function sanitizePage(anyPage: string | undefined): Page {
+  // Keep up to date with declarations.d.ts
+  const pages: Page[] = ['contributing', 'maintaining', 'new-exercise']
+  return pages.find((views) => views === anyPage) || DEFAULT_PAGE
+}
+
 function sanitizeView(anyView: string | undefined): View {
   // Keep up to date with declarations.d.ts
   const views: View[] = ['concept', 'details', 'launch', 'practice', 'tree']
-  return views.find((views) => views === anyView) || DETAULT_VIEW
+  return views.find((views) => views === anyView) || DEFAULT_VIEW
 }
 
-function sanititzeExercise(
+function sanitizeExercise(
   anyExercise: string | undefined
 ): ExerciseIdentifier | UnsetStatePartial {
   return anyExercise ? anyExercise.trim().replace(/( |_)/g, '-') : undefined
@@ -105,6 +123,7 @@ function getOptionFromLocation<K extends keyof SupportedState>(
 ): SupportedState[K] {
   const {
     trackId: urlTrackId,
+    page: urlPage,
     view: urlView,
     exercise: urlExercise,
   } = getOptionsFromLocation(location)
@@ -112,6 +131,9 @@ function getOptionFromLocation<K extends keyof SupportedState>(
   switch (key) {
     case 'trackId': {
       return sanitize(urlTrackId)
+    }
+    case 'page': {
+      return sanitize(urlPage)
     }
     case 'view': {
       return sanitize(urlView)
@@ -127,17 +149,19 @@ function getOptionFromLocation<K extends keyof SupportedState>(
 
 interface Options {
   trackId: string | undefined
+  page: string | undefined
   view: string | undefined
   exercise: string | undefined
 }
 
 function getOptionsFromLocation(location: Location | undefined): Options {
-  const [, urlTrackId, urlView, urlExercise] = location
+  const [, urlTrackId, urlPage, urlView, urlExercise] = location
     ? decodeURIComponent(location.pathname || '').split('/')
     : []
 
   return {
     trackId: urlTrackId,
+    page: urlPage,
     view: urlView,
     exercise: urlExercise,
   }
@@ -166,6 +190,7 @@ export function useUrl(
 interface NextUrl {
   state: {
     trackId: TrackIdentifier | null
+    page: Page
     view: View
     exercise: ExerciseIdentifier | undefined
     previous?: Options
@@ -177,6 +202,7 @@ interface NextUrl {
 function getNextUrlWithLocation({
   location,
   trackId: nextTrackId,
+  page: nextPage,
   view: nextView,
   exercise: nextExercise,
 }: Partial<SupportedState> & { location: Location }): NextUrl {
@@ -185,7 +211,8 @@ function getNextUrlWithLocation({
     return {
       state: {
         trackId: null,
-        view: DETAULT_VIEW,
+        page: DEFAULT_PAGE,
+        view: DEFAULT_VIEW,
         exercise: undefined,
       },
       title: 'Exercism: Track maintenance tool - Select your track',
@@ -195,6 +222,7 @@ function getNextUrlWithLocation({
 
   const current = getOptionsFromLocation(location)
   const trackId = sanitizeTrack(nextTrackId || current.trackId)
+  const page = sanitizePage(nextPage || current.page)
 
   const exercise = nextExercise === undefined ? current.exercise : nextExercise
   const view = sanitizeView(
@@ -206,10 +234,11 @@ function getNextUrlWithLocation({
   )
 
   return {
-    state: { trackId, view, exercise, previous: { ...current } },
-    title: `Exercism: Track ${trackId} maintenance tool (${view ||
+    state: { trackId, page, view, exercise, previous: { ...current } },
+    title: `Exercism: Track ${trackId} maintenance tool (${page} - ${view ||
       'Dashboard'}`,
-    href: '/' + [trackId, view, view && exercise].filter(Boolean).join('/'),
+    href:
+      '/' + [trackId, page, view, view && exercise].filter(Boolean).join('/'),
   }
 }
 
