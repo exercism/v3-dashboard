@@ -102,19 +102,6 @@ export function TrackAside({ trackId }: TrackAsideProps): JSX.Element {
           />
         </AsideItem>
       </ul>
-
-      {done && data['analyzer'] === true && (
-        <ul className="list-group mt-4">
-          <li className="list-group-item d-flex w-100 w-sm-auto justify-content-between">
-            <a
-              href={`https://exercism.io/admin/analyses`}
-              className="d-block mr-4"
-            >
-              Latest Analysis
-            </a>
-          </li>
-        </ul>
-      )}
     </aside>
   )
 }
