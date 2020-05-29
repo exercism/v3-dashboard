@@ -62,14 +62,14 @@ The goal of this exercise is to teach the student the Concept of X.
     evt.preventDefault()
     setPosting(true)
 
-    fetch('http://lvh.me:3000/api/maintaining/concept_exercises', {
+    fetch('http://lvh.me:3000/git_api/concept_exercises', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token token=${cliToken}`,
       },
       body: JSON.stringify({
-        exercise_track: trackId,
+        track_slug: trackId,
         exercise_slug: exerciseName,
         example_filename: exampleFilename,
         example_code: example,
@@ -80,7 +80,7 @@ The goal of this exercise is to teach the student the Concept of X.
       .then((response) => response.json())
       .then((data) =>
         setPullRequestUrl(
-          `https://github.com/exercism/v3/compare/master...${data.branch_name}?expand=1`
+          `https://github.com/exercism/v3/compare/master...exercism-bot:${data.branch_name}?expand=1`
         )
       )
       .catch(() => setPosting(false))
@@ -89,6 +89,14 @@ The goal of this exercise is to teach the student the Concept of X.
 
   if (pullRequestUrl) {
     window.location.replace(pullRequestUrl)
+
+    return (
+      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
+        <div className="col-12 mb-2">
+          <p>Redirecting to create pull request...</p>
+        </div>
+      </div>
+    )
   }
 
   if (posting) {
