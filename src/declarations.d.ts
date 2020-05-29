@@ -77,6 +77,7 @@ type SelectedExercise = ExerciseIdentifier | null
 interface TrackData extends Readonly<TrackData> {
   slug: TrackIdentifier
   name: string
+  example_filename: string
 }
 
 declare module 'js-levenshtein' {

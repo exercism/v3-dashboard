@@ -1,150 +1,187 @@
 [
   {
     "slug": "bash",
-    "name": "Bash"
+    "name": "Bash",
+    "example_filename": "example.sh"
   },
   {
     "slug": "c",
-    "name": "C"
+    "name": "C",
+    "example_filename": "example.c"
   },
   {
     "slug": "clojure",
-    "name": "Clojure"
+    "name": "Clojure",
+    "example_filename": "example.clj"
   },
   {
     "slug": "coffeescript",
-    "name": "CoffeeScript"
+    "name": "CoffeeScript",
+    "example_filename": "example.coffee"
   },
   {
     "slug": "common-lisp",
-    "name": "Common Lisp"
+    "name": "Common Lisp",
+    "example_filename": "example.lisp"
   },
   {
     "slug": "cpp",
-    "name": "C++"
+    "name": "C++",
+    "example_filename": "example.cpp"
   },
   {
     "slug": "csharp",
-    "name": "C#"
+    "name": "C#",
+    "example_filename": "Example.cs"
   },
   {
     "slug": "dart",
-    "name": "Dart"
+    "name": "Dart",
+    "example_filename": "example.dart"
   },
   {
     "slug": "delphi",
-    "name": "Delphi Pascal"
+    "name": "Delphi Pascal",
+    "example_filename": "example.pas"
   },
   {
     "slug": "elixir",
-    "name": "Elixir"
+    "name": "Elixir",
+    "example_filename": "example.ex"
   },
   {
     "slug": "elm",
-    "name": "Elm"
+    "name": "Elm",
+    "example_filename": "Example.elm"
   },
   {
     "slug": "elisp",
-    "name": "Emacs Lisp"
+    "name": "Emacs Lisp",
+    "example_filename": "example.el"
   },
   {
     "slug": "erlang",
-    "name": "Erlang"
+    "name": "Erlang",
+    "example_filename": "example.erl"
   },
   {
     "slug": "factor",
-    "name": "Factor"
+    "name": "Factor",
+    "example_filename": "example.factor"
   },
   {
     "slug": "fsharp",
-    "name": "F#"
+    "name": "F#",
+    "example_filename": "Example.fs"
   },
   {
     "slug": "go",
-    "name": "Go"
+    "name": "Go",
+    "example_filename": "example.go"
   },
   {
     "slug": "haskell",
-    "name": "Haskell"
+    "name": "Haskell",
+    "example_filename": "Example.hs"
   },
   {
     "slug": "j",
-    "name": "J"
+    "name": "J",
+    "example_filename": "example.ijs"
   },
   {
     "slug": "java",
-    "name": "Java"
+    "name": "Java",
+    "example_filename": "Example.java"
   },
   {
     "slug": "javascript",
-    "name": "JavaScript"
+    "name": "JavaScript",
+    "example_filename": "example.js"
   },
   {
     "slug": "julia",
-    "name": "Julia"
+    "name": "Julia",
+    "example_filename": "example.jl"
   },
   {
     "slug": "kotlin",
-    "name": "Kotlin"
+    "name": "Kotlin",
+    "example_filename": "Example.kt"
   },
   {
     "slug": "ocaml",
-    "name": "OCaml"
+    "name": "OCaml",
+    "example_filename": "example.ml"
   },
   {
     "slug": "perl5",
-    "name": "Perl 5"
+    "name": "Perl 5",
+    "example_filename": "Example.pm"
   },
   {
     "slug": "purescript",
-    "name": "PureScript"
+    "name": "PureScript",
+    "example_filename": "Example.purs"
   },
   {
     "slug": "python",
-    "name": "Python"
+    "name": "Python",
+    "example_filename": "example.py"
   },
   {
     "slug": "r",
-    "name": "R"
+    "name": "R",
+    "example_filename": "example.r"
   },
   {
     "slug": "racket",
-    "name": "Racket"
+    "name": "Racket",
+    "example_filename": "example.rkt"
   },
   {
     "slug": "raku",
-    "name": "Raku"
+    "name": "Raku",
+    "example_filename": "Example.pm6"
   },
   {
     "slug": "reasonml",
-    "name": "ReasonML"
+    "name": "ReasonML",
+    "example_filename": "Example.re"
   },
   {
     "slug": "ruby",
-    "name": "Ruby"
+    "name": "Ruby",
+    "example_filename": "example.rb"
   },
   {
     "slug": "rust",
-    "name": "Rust"
+    "name": "Rust",
+    "example_filename": "example.rs"
   },
   {
     "slug": "scala",
-    "name": "Scala"
+    "name": "Scala",
+    "example_filename": "example.scala"
   },
   {
     "slug": "scheme",
-    "name": "Scheme"
+    "name": "Scheme",
+    "example_filename": "example.scm"
   },
   {
     "slug": "swift",
-    "name": "Swift"
+    "name": "Swift",
+    "example_filename": "Example.swift"
   },
   {
     "slug": "typescript",
-    "name": "TypeScript"
+    "name": "TypeScript",
+    "example_filename": "example.ts"
   },
   {
     "slug": "x86-64-assembly",
-    "name": "x86-64 Assembly"
+    "name": "x86-64 Assembly",
+    "example_filename": "example.asm"
   }
 ]
