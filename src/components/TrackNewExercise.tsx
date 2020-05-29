@@ -112,7 +112,7 @@ export function TrackNewExercise({
               <label>Learning objectives</label>
               <textarea
                 className="form-control"
-                rows={8}
+                rows={3}
                 value={learningObjectives}
                 placeholder="- Know about X&#10;- Know how to use X&#10;- ..."
                 onChange={(e) => setLearningObjectives(e.target.value)}
@@ -123,7 +123,7 @@ export function TrackNewExercise({
               <label>Out of scope</label>
               <textarea
                 className="form-control"
-                rows={8}
+                rows={4}
                 value={outOfScope}
                 placeholder="- Memory characteristics of X&#10;- Using X in situation Y&#10;- ..."
                 onChange={(e) => setOutOfScope(e.target.value)}
@@ -134,7 +134,7 @@ export function TrackNewExercise({
               <label>Concepts</label>
               <textarea
                 className="form-control"
-                rows={8}
+                rows={2}
                 value={concepts}
                 placeholder="- `concept-x`: know about X; know how to use X"
                 onChange={(e) => setConcepts(e.target.value)}
@@ -145,7 +145,7 @@ export function TrackNewExercise({
               <label>Prerequisites</label>
               <textarea
                 className="form-control"
-                rows={8}
+                rows={3}
                 value={prerequisites}
                 placeholder="- `prerequisite-1`: know how to use A&#10;- `prerequisite-2`: know how to work with B&#10;- ..."
                 onChange={(e) => setPrerequisites(e.target.value)}
@@ -204,7 +204,7 @@ export function TrackNewExercise({
               <label>Story</label>
               <textarea
                 className="form-control"
-                rows={8}
+                rows={3}
                 value={story}
                 placeholder="E.g. In this exercise you'll be encoding the rules of an RPG game"
                 onChange={(e) => setStory(e.target.value)}
@@ -215,7 +215,7 @@ export function TrackNewExercise({
               <label>Tasks</label>
               <textarea
                 className="form-control"
-                rows={8}
+                rows={5}
                 value={tasks}
                 placeholder="E.g. ## 1. Encode the attack rules&#10;..."
                 onChange={(e) => setTasks(e.target.value)}
@@ -226,7 +226,7 @@ export function TrackNewExercise({
               <label>Example implementation</label>
               <textarea
                 className="form-control"
-                rows={8}
+                rows={5}
                 value={example}
                 placeholder="Add idiomatic example implementation of the instructions' tasks"
                 onChange={(e) => setExample(e.target.value)}
