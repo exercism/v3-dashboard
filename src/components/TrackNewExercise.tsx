@@ -290,7 +290,11 @@ export function TrackNewExercise({
             </small>
           </div>
           <div className="form-group">
-            <input type="submit" value="Submit" />
+            <input
+              type="submit"
+              value="Create Pull Request"
+              className="btn btn-primary"
+            />
           </div>
         </form>
       </div>
