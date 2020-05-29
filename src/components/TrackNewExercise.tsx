@@ -36,7 +36,7 @@ export function TrackNewExercise({
     ].join('\n\n')
     const instructions = `${story}\n\n${tasks}`
 
-    fetch('http://lvh.me:3000/git_api/concept_exercises', {
+    fetch('https://exercism.io/git_api/concept_exercises', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
