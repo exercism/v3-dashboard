@@ -110,6 +110,11 @@
     "example_filename": "Example.kt"
   },
   {
+    "slug": "nim",
+    "name": "Nim",
+    "example_filename": "example.nim"
+  },
+  {
     "slug": "ocaml",
     "name": "OCaml",
     "example_filename": "example.ml"
