@@ -1,10 +1,12 @@
 import React from 'react'
 
+interface TrackDescriptionProps {
+  config: TrackConfiguration | undefined
+}
+
 export function TrackDescription({
   config,
-}: {
-  config: TrackConfiguration | undefined
-}): JSX.Element | null {
+}: TrackDescriptionProps): JSX.Element | null {
   if (!config) {
     return null
   }

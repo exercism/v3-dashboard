@@ -1,148 +1,146 @@
-import React /*, { useCallback, Fragment }*/ from 'react'
+import React, { useCallback, Fragment } from 'react'
+import {
+  useParams,
+  useLocation,
+  useRouteMatch,
+  generatePath,
+  Link,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom'
 
-// import { useActionableState } from '../hooks/useActionableOnly'
+import { useActionableState } from '../hooks/useActionableOnly'
+import { TrackAside } from './TrackAside'
+import { SwitchToggle } from './SwitchToggle'
+import { useRemoteConfig } from '../hooks/useRemoteConfig'
+import { TrackIcon } from './TrackIcon'
+import { TrackDescription } from './TrackDescription'
+import { ExerciseDetails } from './views/ExerciseDetails'
+import { LaunchList } from './views/LaunchList'
+import { ExerciseTree } from './views/ExerciseTree'
+import { TrackContributing } from './TrackContributing'
+import { TrackNewExercise } from './TrackNewExercise'
 
-// import { TrackAside } from './TrackAside'
-// import { SwitchToggle } from './SwitchToggle'
-// import { ViewSelectLink } from './ViewSelectLink'
-// import { useRemoteConfig } from '../hooks/useRemoteConfig'
-// import { TrackIcon } from './TrackIcon'
-// import { TrackDescription } from './TrackDescription'
-// import { ExerciseDetails } from './views/ExerciseDetails'
-// import { LaunchList } from './views/LaunchList'
-// import { ExerciseTree } from './views/ExerciseTree'
+export interface TrackMaintainingParams {
+  trackId: TrackIdentifier
+}
 
 export function TrackMaintaining(): JSX.Element {
-  // const [selectedView] = useView()
-  // const actualView = (selectedView || DEFAULT_VIEW) as View
+  const params = useParams<TrackMaintainingParams>()
 
-  // const doHideExercise = useCallback(() => {
-  //   // Heuristic, if there is a "back" state, go back
-  //   if (
-  //     window &&
-  //     window.history &&
-  //     window.history.state &&
-  //     window.history.state.previous
-  //   ) {
-  //     if (window.history.state.previous.trackId === trackId) {
-  //       window.history.back()
-  //       return
-  //     }
-  //   }
+  return (
+    <Fragment>
+      <div className="d-flex flex-wrap row">
+        <div className="col" style={{ maxWidth: '27rem' }}>
+          <Header trackId={params.trackId} />
+        </div>
+        <TrackAside trackId={params.trackId} />
+      </div>
 
-  //   // Otherwise, hide by going to the default view
-  //   setOptionsInUrl({ view: DEFAULT_VIEW, exercise: '' })
-  // }, [trackId])
+      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
+        <div className="col-12 col-md-auto mb-2">
+          <TrackMaintainingViewSelect />
+        </div>
+        <div className="col mb-2">
+          <SwitchActionableState />
+        </div>
+      </div>
 
-  // const doShowExercise = useCallback((exercise: ExerciseIdentifier) => {
-  //   setOptionsInUrl({
-  //     view: 'details',
-  //     exercise,
-  //   })
-  // }, [])
+      <TrackView />
+    </Fragment>
+  )
+}
 
-  // return (
-  //   <Fragment>
-  //     <div className="d-flex flex-wrap row">
-  //       <div className="col" style={{ maxWidth: '27rem' }}>
-  //         <Header trackId={trackId} />
-  //       </div>
-  //       <TrackAside trackId={trackId} />
-  //     </div>
+interface HeaderProps {
+  trackId: TrackIdentifier
+}
 
-  //     <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
-  //       <div className="col-12 col-md-auto mb-2">
-  //         <ViewSelect />
-  //       </div>
-  //       <div className="col mb-2">
-  //         <SwitchActionableState />
-  //       </div>
-  //     </div>
+function Header({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
+  const { config, done } = useRemoteConfig(trackId)
 
-  //     <TrackView
-  //       trackId={trackId}
-  //       view={actualView}
-  //       onShowExercise={doShowExercise}
-  //       onHideExercise={doHideExercise}
-  //     />
-  //   </Fragment>
-  // )
-
-  return <p>Track maintaining</p>
+  return (
+    <header
+      className="card mt-4 mb-4"
+      style={{ maxWidth: '25rem', width: '100%' }}
+    >
+      <figure style={{ maxWidth: 234, padding: '0 10px', margin: '10px auto' }}>
+        <TrackIcon className="card-img-top" trackId={trackId} />
+      </figure>
+      <h1 className="sr-only card-title">{trackId}</h1>
+      {done && (
+        <div className="card-body">
+          <TrackDescription config={config} />
+        </div>
+      )}
+    </header>
+  )
 }
 
 // const DEFAULT_VIEW = 'launch'
 
-// function SwitchActionableState(): JSX.Element {
-//   const [current, onChange] = useActionableState()
+function SwitchActionableState(): JSX.Element {
+  const [current, onChange] = useActionableState()
 
-//   const doToggle = useCallback(() => onChange((prev) => !prev), [onChange])
+  const doToggle = useCallback(() => onChange((prev) => !prev), [onChange])
 
-//   return (
-//     <SwitchToggle
-//       inActiveLabel="All"
-//       activeLabel="Actionable"
-//       onToggle={doToggle}
-//       actionableOnly={current}
-//     />
-//   )
-// }
+  return (
+    <SwitchToggle
+      inActiveLabel="All"
+      activeLabel="Actionable"
+      onToggle={doToggle}
+      actionableOnly={current}
+    />
+  )
+}
 
-// function ViewSelect(): JSX.Element {
-//   return (
-//     <div className="btn-group w-100">
-//       <ViewSelectLink view="launch">Launch</ViewSelectLink>
-//       <ViewSelectLink view="tree">Tree</ViewSelectLink>
-//     </div>
-//   )
-// }
+function TrackView(): JSX.Element | null {
+  const match = useRouteMatch()
 
-// function Header({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
-//   const { config, done } = useRemoteConfig(trackId)
+  return (
+    <Switch>
+      <Route path={`${match.path}/details`} component={ExerciseDetails} />
+      <Route path={`${match.path}/launch`} component={LaunchList} />
+      <Route path={`${match.path}/tree`} component={ExerciseTree} />
+    </Switch>
+  )
+}
 
-//   return (
-//     <header
-//       className="card mt-4 mb-4"
-//       style={{ maxWidth: '25rem', width: '100%' }}
-//     >
-//       <figure style={{ maxWidth: 234, padding: '0 10px', margin: '10px auto' }}>
-//         <TrackIcon className="card-img-top" trackId={trackId} />
-//       </figure>
-//       <h1 className="sr-only card-title">{trackId}</h1>
-//       {done && (
-//         <div className="card-body">
-//           <TrackDescription config={config} />
-//         </div>
-//       )}
-//     </header>
-//   )
-// }
+interface TrackViewPageLinkProps {
+  to: string
+  children: React.ReactNode
+}
 
-// interface TrackViewProps {
-//   trackId: TrackIdentifier
-//   view: View
-//   onShowExercise: (exercise: ExerciseIdentifier) => void
-//   onHideExercise: () => void
-// }
+function TrackMaintainingViewSelect(): JSX.Element {
+  const match = useRouteMatch()
 
-// function TrackView({
-//   trackId,
-//   view,
-//   onShowExercise,
-//   onHideExercise,
-// }: TrackViewProps): JSX.Element | null {
-//   switch (view) {
-//     case 'details': {
-//       return <ExerciseDetails trackId={trackId} onHide={onHideExercise} />
-//     }
-//     case 'launch': {
-//       return <LaunchList trackId={trackId} />
-//     }
-//     case 'tree': {
-//       return <ExerciseTree trackId={trackId} />
-//     }
-//     default: {
-//       return null
-//     }
-//   }
-// }
+  return (
+    <div className="btn-group w-100">
+      <TrackMaintainingViewLink to={`${match.url}/launch`}>
+        Launch
+      </TrackMaintainingViewLink>
+      <TrackMaintainingViewLink to={`${match.url}/tree`}>
+        Tree
+      </TrackMaintainingViewLink>
+    </div>
+  )
+}
+
+function TrackMaintainingViewLink({
+  to,
+  children,
+}: TrackViewPageLinkProps): JSX.Element {
+  const location = useLocation()
+  const match = useRouteMatch()
+  const path = generatePath(to, match.params)
+  const active = location.pathname.startsWith(path)
+
+  return (
+    <Link
+      to={to}
+      className={`btn btn-sm btn-outline-primary ${active ? 'active' : ''}`}
+    >
+      {children}
+    </Link>
+  )
+}

@@ -1,15 +1,15 @@
 import React, { useState, FormEvent } from 'react'
 
 import { useTrackData } from '../hooks/useTrackData'
+import { useParams } from 'react-router-dom'
 
-export interface TrackNewExerciseProps {
+export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
 }
 
-export function TrackNewExercise({
-  trackId,
-}: TrackNewExerciseProps): JSX.Element {
-  const trackData = useTrackData(trackId)
+export function TrackNewExercise(): JSX.Element {
+  const params = useParams<TrackNewExerciseParams>()
+  const trackData = useTrackData(params.trackId)
   const [exerciseName, setExerciseName] = useState('')
   const [learningObjectives, setLearningObjectives] = useState('')
   const [outOfScope, setOutOfScope] = useState('')
@@ -45,7 +45,7 @@ export function TrackNewExercise({
         Authorization: `Token token=${cliToken}`,
       },
       body: JSON.stringify({
-        track_slug: trackId,
+        track_slug: params.trackId,
         exercise_slug: exerciseName,
         example_filename: trackData.example_filename,
         example_code: example,

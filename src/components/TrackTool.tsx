@@ -85,7 +85,7 @@ function TrackToolPageLink({
   const location = useLocation()
   const match = useRouteMatch()
   const path = generatePath(to, match.params)
-  const active = location.pathname == path
+  const active = location.pathname.startsWith(path)
 
   return (
     <Link
