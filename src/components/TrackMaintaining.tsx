@@ -1,23 +1,18 @@
 import React, { useCallback, Fragment } from 'react'
-import {
-  useParams,
-  useLocation,
-  useRouteMatch,
-  generatePath,
-  Link,
-  Switch,
-  Route,
-} from 'react-router-dom'
+import { useParams, useRouteMatch, Switch, Route } from 'react-router-dom'
 
-import { useActionableState } from '../hooks/useActionableOnly'
 import { TrackAside } from './TrackAside'
-import { SwitchToggle } from './SwitchToggle'
-import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { TrackIcon } from './TrackIcon'
 import { TrackDescription } from './TrackDescription'
+import { PageLink } from './PageLink'
+import { SwitchToggle } from './SwitchToggle'
+
 import { ExerciseDetails } from './views/ExerciseDetails'
 import { LaunchList } from './views/LaunchList'
 import { ExerciseTree } from './views/ExerciseTree'
+
+import { useActionableState } from '../hooks/useActionableOnly'
+import { useRemoteConfig } from '../hooks/useRemoteConfig'
 
 export interface TrackMaintainingParams {
   trackId: TrackIdentifier
@@ -97,41 +92,13 @@ function TrackView(): JSX.Element | null {
   )
 }
 
-interface TrackViewPageLinkProps {
-  to: string
-  children: React.ReactNode
-}
-
 function TrackMaintainingViewSelect(): JSX.Element {
   const match = useRouteMatch()
 
   return (
     <div className="btn-group w-100">
-      <TrackMaintainingViewLink to={`${match.url}/launch`}>
-        Launch
-      </TrackMaintainingViewLink>
-      <TrackMaintainingViewLink to={`${match.url}/tree`}>
-        Tree
-      </TrackMaintainingViewLink>
+      <PageLink to={`${match.url}/launch`}>Launch</PageLink>
+      <PageLink to={`${match.url}/tree`}>Tree</PageLink>
     </div>
-  )
-}
-
-function TrackMaintainingViewLink({
-  to,
-  children,
-}: TrackViewPageLinkProps): JSX.Element {
-  const location = useLocation()
-  const match = useRouteMatch()
-  const path = generatePath(to, match.params)
-  const active = location.pathname.startsWith(path)
-
-  return (
-    <Link
-      to={to}
-      className={`btn btn-sm btn-outline-primary ${active ? 'active' : ''}`}
-    >
-      {children}
-    </Link>
   )
 }
