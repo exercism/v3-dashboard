@@ -1,5 +1,11 @@
 import React, { useCallback, Fragment } from 'react'
-import { useParams, useRouteMatch, Switch, Route } from 'react-router-dom'
+import {
+  useParams,
+  useRouteMatch,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom'
 
 import { TrackAside } from './TrackAside'
 import { TrackIcon } from './TrackIcon'
@@ -88,6 +94,7 @@ function TrackView(): JSX.Element | null {
       <Route path={`${match.path}/details`} component={ExerciseDetails} />
       <Route path={`${match.path}/launch`} component={LaunchList} />
       <Route path={`${match.path}/tree`} component={ExerciseTree} />
+      <Redirect to={`${match.path}/launch`} />
     </Switch>
   )
 }
