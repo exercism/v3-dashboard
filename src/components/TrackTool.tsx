@@ -12,13 +12,19 @@ import {
 import { TrackContributing } from './TrackContributing'
 import { TrackMaintaining } from './TrackMaintaining'
 import { TrackNewExercise } from './TrackNewExercise'
+import {
+  ProvideActionable,
+  useProvideActionableState,
+} from '../hooks/useActionableOnly'
 
 export function TrackTool(): JSX.Element {
   return (
-    <section>
-      <TrackToolHeader />
-      <TrackToolPage />
-    </section>
+    <ProvideActionable value={useProvideActionableState()}>
+      <section>
+        <TrackToolHeader />
+        <TrackToolPage />
+      </section>
+    </ProvideActionable>
   )
 }
 
