@@ -1,84 +1,98 @@
-import React, { useCallback } from 'react'
+import React from 'react'
+import {
+  Link,
+  Switch,
+  Route,
+  Redirect,
+  useRouteMatch,
+  useLocation,
+  generatePath,
+} from 'react-router-dom'
 
-import { PageSelectLink } from './PageSelectLink'
 import { TrackContributing } from './TrackContributing'
 import { TrackMaintaining } from './TrackMaintaining'
 import { TrackNewExercise } from './TrackNewExercise'
-import { RouteComponentProps } from 'react-router-dom'
 
-const DEFAULT_PAGE: Page = 'contributing'
-
-export interface TrackToolProps extends RouteComponentProps {
-  trackId: TrackIdentifier
-  onUnselect: () => void
-}
-
-export function TrackTool({
-  trackId,
-  onUnselect,
-}: TrackToolProps): JSX.Element {
+export function TrackTool(): JSX.Element {
   return (
-    <p>Hello!</p>
-    // <ProvideActionable value={useProvideActionableState()}>
-    //   <section>
-    //     <div className="d-flex justify-content-start flex-row align-items-center w-50">
-    //       <UnselectTrackButton onClick={onUnselect} />
-    //       <TogglePageButton />
-    //     </div>
-
-    //     <PageView trackId={trackId} />
-    //   </section>
-    // </ProvideActionable>
+    <section>
+      <TrackToolHeader />
+      <TrackToolPage />
+    </section>
   )
 }
 
-// function PageView({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
-//   const [selectedPage] = usePage()
-//   const actualPage = selectedPage || DEFAULT_PAGE
+function TrackToolHeader(): JSX.Element {
+  return (
+    <div className="d-flex justify-content-start flex-row align-items-center w-50">
+      <SelectDifferentTrackButton />
+      <TogglePageButton />
+    </div>
+  )
+}
 
-//   switch (actualPage) {
-//     case 'maintaining': {
-//       return <TrackMaintaining trackId={trackId} />
-//     }
-//     case 'new-exercise': {
-//       return <TrackNewExercise trackId={trackId} />
-//     }
-//     default: {
-//       return <TrackContributing trackId={trackId} />
-//     }
-//   }
-// }
+function TogglePageButton(): JSX.Element {
+  const match = useRouteMatch()
 
-// function TogglePageButton(): JSX.Element {
-//   return (
-//     <div className="btn-group">
-//       <PageSelectLink page="contributing">Contributing</PageSelectLink>
-//       <PageSelectLink page="maintaining">Maintaining</PageSelectLink>
-//       <PageSelectLink page="new-exercise">New exercise</PageSelectLink>
-//     </div>
-//   )
-// }
+  return (
+    <div className="btn-group">
+      <TrackToolPageLink to={`${match.url}/contributing`}>
+        Contributing
+      </TrackToolPageLink>
+      <TrackToolPageLink to={`${match.url}/maintaining`}>
+        Maintaining
+      </TrackToolPageLink>
+      <TrackToolPageLink to={`${match.url}/new-exercise`}>
+        New exercise
+      </TrackToolPageLink>
+    </div>
+  )
+}
 
-// function UnselectTrackButton({
-//   onClick,
-// }: {
-//   onClick: TrackToolProps['onUnselect']
-// }): JSX.Element {
-//   const doClick = useCallback(
-//     (e: React.MouseEvent) => {
-//       e.preventDefault()
-//       onClick()
-//     },
-//     [onClick]
-//   )
+function SelectDifferentTrackButton(): JSX.Element {
+  return (
+    <Link to="/" className="btn btn-sm btn-outline-danger mr-3">
+      Select different track
+    </Link>
+  )
+}
 
-//   return (
-//     <a
-//       href="/"
-//       className="btn btn-sm btn-outline-danger mr-3"
-//       onClick={doClick}
-//     >
-//       Select different track
-//     </a>
-//   )
-// }
+function TrackToolPage(): JSX.Element {
+  const match = useRouteMatch()
+
+  return (
+    <Switch>
+      <Route
+        path={`${match.path}/contributing`}
+        component={TrackContributing}
+      />
+      <Route path={`${match.path}/maintaining`} component={TrackMaintaining} />
+      <Route path={`${match.path}/new-exercise`} component={TrackNewExercise} />
+      <Redirect to={`${match.path}/contributing`} />
+    </Switch>
+  )
+}
+
+interface TrackToolPageLinkProps {
+  to: string
+  children: React.ReactNode
+}
+
+function TrackToolPageLink({
+  to,
+  children,
+}: TrackToolPageLinkProps): JSX.Element {
+  const location = useLocation()
+  const match = useRouteMatch()
+  const path = generatePath(to, match.params)
+  const active = location.pathname == path
+
+  return (
+    <Link
+      to={to}
+      className={`btn btn-sm btn-outline-primary ${active ? 'active' : ''}`}
+    >
+      {children}
+    </Link>
+  )
+}

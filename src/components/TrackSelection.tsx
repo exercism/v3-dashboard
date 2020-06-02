@@ -1,25 +1,18 @@
-import React, { useCallback } from 'react'
-import {
-  BrowserRouter as Link,
-  useRouteMatch,
-  RouteComponentProps,
-  BrowserRouterProps,
-} from 'react-router-dom'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-import TRACKS from '../data/tracks.json'
+import TRACKS_DATA from '../data/tracks.json'
 
-const ENABLED_TRACKS = TRACKS as ReadonlyArray<TrackData>
+const TRACKS = TRACKS_DATA as ReadonlyArray<TrackData>
 
-interface TrackSelectionItemProps extends Readonly<BrowserRouterProps> {
+interface TrackSelectionItemProps {
   track: TrackData
 }
 
 function TrackSelectionItem({ track }: TrackSelectionItemProps): JSX.Element {
-  const match = useRouteMatch()
-
   return (
     <li className="list-inline-item mb-2">
-      <Link to={`${match.url}/${track.slug}`}>
+      <Link to={`/${track.slug}`}>
         <button className={`btn btn-md btn-outline-primary`}>
           {track.name}
         </button>
@@ -28,9 +21,7 @@ function TrackSelectionItem({ track }: TrackSelectionItemProps): JSX.Element {
   )
 }
 
-interface TrackSelectionProps extends BrowserRouterProps {}
-
-export function TrackSelection(props: TrackSelectionProps): JSX.Element {
+export function TrackSelection(): JSX.Element {
   return (
     <section>
       <header className="mb-4">
@@ -84,7 +75,7 @@ export function TrackSelection(props: TrackSelectionProps): JSX.Element {
         want to contribute to:
       </p>
       <ol className="list-inline">
-        {ENABLED_TRACKS.map((track) => (
+        {TRACKS.map((track) => (
           <TrackSelectionItem key={track.slug} track={track} />
         ))}
       </ol>

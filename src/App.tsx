@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 import { TrackSelection } from './components/TrackSelection'
 import { TrackTool } from './components/TrackTool'
@@ -8,11 +8,11 @@ import './styles.css'
 
 export function App(): JSX.Element {
   return (
-    <Router>
+    <BrowserRouter>
       <AppContainer>
-        <TrackMaintenanceTool />
+        <Dashboard />
       </AppContainer>
-    </Router>
+    </BrowserRouter>
   )
 }
 
@@ -24,11 +24,11 @@ function AppContainer({
   return <div className="app container">{children}</div>
 }
 
-function TrackMaintenanceTool(): JSX.Element {
+function Dashboard(): JSX.Element {
   return (
     <Switch>
-      <Route path="/" component={TrackSelection} exact />
       <Route path="/:trackId" component={TrackTool} />
+      <Route path="/" component={TrackSelection} />
     </Switch>
   )
 }
