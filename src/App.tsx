@@ -1,21 +1,18 @@
-import React, { useCallback } from 'react'
-import { useProvideBrowserLocation, ProvideLocation } from './hooks/useLocation'
+import React from 'react'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import { useTrack } from './hooks/useUrlState'
 import { TrackSelection } from './components/TrackSelection'
 import { TrackTool } from './components/TrackTool'
 
 import './styles.css'
 
 export function App(): JSX.Element {
-  const location = useProvideBrowserLocation()
-
   return (
-    <ProvideLocation value={location}>
+    <Router>
       <AppContainer>
         <TrackMaintenanceTool />
       </AppContainer>
-    </ProvideLocation>
+    </Router>
   )
 }
 
@@ -28,15 +25,10 @@ function AppContainer({
 }
 
 function TrackMaintenanceTool(): JSX.Element {
-  const [selectedTrackId, onSelectTrack] = useTrack()
-
-  const doUnselectTrack = useCallback(() => onSelectTrack(null), [
-    onSelectTrack,
-  ])
-
-  if (!selectedTrackId) {
-    return <TrackSelection />
-  }
-
-  return <TrackTool trackId={selectedTrackId} onUnselect={doUnselectTrack} />
+  return (
+    <Switch>
+      <Route path="/" component={TrackSelection} exact />
+      <Route path="/:trackId" component={TrackTool} />
+    </Switch>
+  )
 }

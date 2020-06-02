@@ -2,7 +2,6 @@ import React, { useCallback, Fragment } from 'react'
 
 import { useActionableState } from '../hooks/useActionableOnly'
 
-import { useView, setOptionsInUrl } from '../hooks/useUrlState'
 import { TrackAside } from './TrackAside'
 import { SwitchToggle } from './SwitchToggle'
 import { ViewSelectLink } from './ViewSelectLink'
@@ -20,60 +19,62 @@ export interface TrackMaintainingProps {
 export function TrackMaintaining({
   trackId,
 }: TrackMaintainingProps): JSX.Element {
-  const [selectedView] = useView()
-  const actualView = (selectedView || DEFAULT_VIEW) as View
+  // const [selectedView] = useView()
+  // const actualView = (selectedView || DEFAULT_VIEW) as View
 
-  const doHideExercise = useCallback(() => {
-    // Heuristic, if there is a "back" state, go back
-    if (
-      window &&
-      window.history &&
-      window.history.state &&
-      window.history.state.previous
-    ) {
-      if (window.history.state.previous.trackId === trackId) {
-        window.history.back()
-        return
-      }
-    }
+  // const doHideExercise = useCallback(() => {
+  //   // Heuristic, if there is a "back" state, go back
+  //   if (
+  //     window &&
+  //     window.history &&
+  //     window.history.state &&
+  //     window.history.state.previous
+  //   ) {
+  //     if (window.history.state.previous.trackId === trackId) {
+  //       window.history.back()
+  //       return
+  //     }
+  //   }
 
-    // Otherwise, hide by going to the default view
-    setOptionsInUrl({ view: DEFAULT_VIEW, exercise: '' })
-  }, [trackId])
+  //   // Otherwise, hide by going to the default view
+  //   setOptionsInUrl({ view: DEFAULT_VIEW, exercise: '' })
+  // }, [trackId])
 
-  const doShowExercise = useCallback((exercise: ExerciseIdentifier) => {
-    setOptionsInUrl({
-      view: 'details',
-      exercise,
-    })
-  }, [])
+  // const doShowExercise = useCallback((exercise: ExerciseIdentifier) => {
+  //   setOptionsInUrl({
+  //     view: 'details',
+  //     exercise,
+  //   })
+  // }, [])
 
-  return (
-    <Fragment>
-      <div className="d-flex flex-wrap row">
-        <div className="col" style={{ maxWidth: '27rem' }}>
-          <Header trackId={trackId} />
-        </div>
-        <TrackAside trackId={trackId} />
-      </div>
+  // return (
+  //   <Fragment>
+  //     <div className="d-flex flex-wrap row">
+  //       <div className="col" style={{ maxWidth: '27rem' }}>
+  //         <Header trackId={trackId} />
+  //       </div>
+  //       <TrackAside trackId={trackId} />
+  //     </div>
 
-      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
-        <div className="col-12 col-md-auto mb-2">
-          <ViewSelect />
-        </div>
-        <div className="col mb-2">
-          <SwitchActionableState />
-        </div>
-      </div>
+  //     <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
+  //       <div className="col-12 col-md-auto mb-2">
+  //         <ViewSelect />
+  //       </div>
+  //       <div className="col mb-2">
+  //         <SwitchActionableState />
+  //       </div>
+  //     </div>
 
-      <TrackView
-        trackId={trackId}
-        view={actualView}
-        onShowExercise={doShowExercise}
-        onHideExercise={doHideExercise}
-      />
-    </Fragment>
-  )
+  //     <TrackView
+  //       trackId={trackId}
+  //       view={actualView}
+  //       onShowExercise={doShowExercise}
+  //       onHideExercise={doHideExercise}
+  //     />
+  //   </Fragment>
+  // )
+
+  return <p>Track maintaining</p>
 }
 
 const DEFAULT_VIEW = 'launch'

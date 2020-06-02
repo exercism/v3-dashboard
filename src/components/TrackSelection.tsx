@@ -1,44 +1,36 @@
 import React, { useCallback } from 'react'
+import {
+  BrowserRouter as Link,
+  useRouteMatch,
+  RouteComponentProps,
+  BrowserRouterProps,
+} from 'react-router-dom'
 
 import TRACKS from '../data/tracks.json'
 
-import { useTrack } from '../hooks/useUrlState'
-
 const ENABLED_TRACKS = TRACKS as ReadonlyArray<TrackData>
 
-function TrackSelectionItem({
-  track,
-  onSelect,
-}: {
+interface TrackSelectionItemProps extends Readonly<BrowserRouterProps> {
   track: TrackData
-  onSelect: () => void
-}): JSX.Element {
+}
+
+function TrackSelectionItem({ track }: TrackSelectionItemProps): JSX.Element {
+  const match = useRouteMatch()
+
   return (
     <li className="list-inline-item mb-2">
-      <button className={`btn btn-md btn-outline-primary`} onClick={onSelect}>
-        {track.name}
-      </button>
+      <Link to={`${match.url}/${track.slug}`}>
+        <button className={`btn btn-md btn-outline-primary`}>
+          {track.name}
+        </button>
+      </Link>
     </li>
   )
 }
 
-export function TrackSelection(): JSX.Element {
-  const [, onSelectTrack] = useTrack()
+interface TrackSelectionProps extends BrowserRouterProps {}
 
-  const renderTrackSelectionItem = useCallback(
-    (track: Readonly<TrackData>) => {
-      const doSelectTrack = (): void => onSelectTrack(track.slug)
-      return (
-        <TrackSelectionItem
-          key={track.slug}
-          onSelect={doSelectTrack}
-          track={track}
-        />
-      )
-    },
-    [onSelectTrack]
-  )
-
+export function TrackSelection(props: TrackSelectionProps): JSX.Element {
   return (
     <section>
       <header className="mb-4">
@@ -92,7 +84,9 @@ export function TrackSelection(): JSX.Element {
         want to contribute to:
       </p>
       <ol className="list-inline">
-        {ENABLED_TRACKS.map(renderTrackSelectionItem)}
+        {ENABLED_TRACKS.map((track) => (
+          <TrackSelectionItem key={track.slug} track={track} />
+        ))}
       </ol>
       <p>
         If the track you want to work on isn't here, please open an issue at the{' '}
