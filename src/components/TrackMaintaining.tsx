@@ -7,7 +7,6 @@ import {
   Link,
   Switch,
   Route,
-  Redirect,
 } from 'react-router-dom'
 
 import { useActionableState } from '../hooks/useActionableOnly'
@@ -19,8 +18,6 @@ import { TrackDescription } from './TrackDescription'
 import { ExerciseDetails } from './views/ExerciseDetails'
 import { LaunchList } from './views/LaunchList'
 import { ExerciseTree } from './views/ExerciseTree'
-import { TrackContributing } from './TrackContributing'
-import { TrackNewExercise } from './TrackNewExercise'
 
 export interface TrackMaintainingParams {
   trackId: TrackIdentifier
@@ -52,10 +49,6 @@ export function TrackMaintaining(): JSX.Element {
   )
 }
 
-interface HeaderProps {
-  trackId: TrackIdentifier
-}
-
 function Header({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
   const { config, done } = useRemoteConfig(trackId)
 
@@ -76,8 +69,6 @@ function Header({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
     </header>
   )
 }
-
-// const DEFAULT_VIEW = 'launch'
 
 function SwitchActionableState(): JSX.Element {
   const [current, onChange] = useActionableState()
