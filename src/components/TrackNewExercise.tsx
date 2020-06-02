@@ -1,5 +1,7 @@
 import React, { useState, FormEvent } from 'react'
 
+import { useTrackData } from '../hooks/useTrackData'
+
 export interface TrackNewExerciseProps {
   trackId: TrackIdentifier
 }
@@ -7,6 +9,7 @@ export interface TrackNewExerciseProps {
 export function TrackNewExercise({
   trackId,
 }: TrackNewExerciseProps): JSX.Element {
+  const trackData = useTrackData(trackId)
   const [exerciseName, setExerciseName] = useState('')
   const [learningObjectives, setLearningObjectives] = useState('')
   const [outOfScope, setOutOfScope] = useState('')
@@ -15,7 +18,6 @@ export function TrackNewExercise({
   const [story, setStory] = useState('')
   const [tasks, setTasks] = useState('')
   const [example, setExample] = useState('')
-  const [exampleFilename, setExampleFilename] = useState('')
   const [cliToken, setCliToken] = useState('')
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
@@ -45,7 +47,7 @@ export function TrackNewExercise({
       body: JSON.stringify({
         track_slug: trackId,
         exercise_slug: exerciseName,
-        example_filename: exampleFilename,
+        example_filename: trackData.example_filename,
         example_code: example,
         instructions_markdown: instructions,
         design_markdown: design,
@@ -274,23 +276,6 @@ export function TrackNewExercise({
                 value={example}
                 placeholder="Add idiomatic example implementation of the instructions' tasks"
                 onChange={(e) => setExample(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Example implementation filename</label>
-
-              <small className="form-text text-muted">
-                The file name of the example implementation file. The name part
-                should equal "Example" (in the track's preferred casing) and the
-                extension part should match your track's code files extension.
-              </small>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="example.js"
-                value={exampleFilename}
-                onChange={(e) => setExampleFilename(e.target.value)}
                 required
               />
             </div>
