@@ -21,6 +21,7 @@ type TrackIdentifier =
   | 'javascript'
   | 'julia'
   | 'kotlin'
+  | 'nim'
   | 'ocaml'
   | 'perl5'
   | 'purescript'
