@@ -32,13 +32,13 @@ function TrackToolHeader(): JSX.Element {
 }
 
 function TogglePageButton(): JSX.Element {
-  const match = useRouteMatch()
+  const { path } = useRouteMatch()
 
   return (
     <div className="btn-group">
-      <PageLink to={`${match.url}/contributing`}>Contributing</PageLink>
-      <PageLink to={`${match.url}/maintaining`}>Maintaining</PageLink>
-      <PageLink to={`${match.url}/new-exercise`}>New exercise</PageLink>
+      <PageLink to={`${path}/contributing`}>Contributing</PageLink>
+      <PageLink to={`${path}/maintaining`}>Maintaining</PageLink>
+      <PageLink to={`${path}/new-exercise`}>New exercise</PageLink>
     </div>
   )
 }
@@ -52,17 +52,14 @@ function SelectDifferentTrackButton(): JSX.Element {
 }
 
 function TrackToolPage(): JSX.Element {
-  const match = useRouteMatch()
+  const { path } = useRouteMatch()
 
   return (
     <Switch>
-      <Route
-        path={`${match.path}/contributing`}
-        component={TrackContributing}
-      />
-      <Route path={`${match.path}/maintaining`} component={TrackMaintaining} />
-      <Route path={`${match.path}/new-exercise`} component={TrackNewExercise} />
-      <Redirect to={`${match.path}/contributing`} />
+      <Route path={`${path}/contributing`} component={TrackContributing} />
+      <Route path={`${path}/maintaining`} component={TrackMaintaining} />
+      <Route path={`${path}/new-exercise`} component={TrackNewExercise} />
+      <Redirect to={`${path}/contributing`} />
     </Switch>
   )
 }

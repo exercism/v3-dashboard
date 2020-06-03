@@ -19,7 +19,7 @@ export function PageLink({ to, children }: PageLinkProps): JSX.Element {
 
   return (
     <Link
-      to={to}
+      to={path}
       className={`btn btn-sm btn-outline-primary ${active ? 'active' : ''}`}
     >
       {children}

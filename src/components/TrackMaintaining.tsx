@@ -31,9 +31,9 @@ export function TrackMaintaining(): JSX.Element {
     <Fragment>
       <div className="d-flex flex-wrap row">
         <div className="col" style={{ maxWidth: '27rem' }}>
-          <Header trackId={params.trackId} />
+          <Header trackId={trackId} />
         </div>
-        <TrackAside trackId={params.trackId} />
+        <TrackAside trackId={trackId} />
       </div>
 
       <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
@@ -87,25 +87,25 @@ function SwitchActionableState(): JSX.Element {
 }
 
 function TrackView(): JSX.Element | null {
-  const { path }= useRouteMatch()
+  const { path } = useRouteMatch()
 
   return (
     <Switch>
-      <Route path={`${match.path}/details`} component={ExerciseDetails} />
-      <Route path={`${match.path}/launch`} component={LaunchList} />
-      <Route path={`${match.path}/tree`} component={ExerciseTree} />
-      <Redirect to={`${match.path}/launch`} />
+      <Route path={`${path}/details`} component={ExerciseDetails} />
+      <Route path={`${path}/launch`} component={LaunchList} />
+      <Route path={`${path}/tree`} component={ExerciseTree} />
+      <Redirect to={`${path}/launch`} />
     </Switch>
   )
 }
 
 function TrackMaintainingViewSelect(): JSX.Element {
-  const { path }  = useRouteMatch()
+  const { path } = useRouteMatch()
 
   return (
     <div className="btn-group w-100">
-      <PageLink to={`${match.url}/launch`}>Launch</PageLink>
-      <PageLink to={`${match.url}/tree`}>Tree</PageLink>
+      <PageLink to={`${path}/launch`}>Launch</PageLink>
+      <PageLink to={`${path}/tree`}>Tree</PageLink>
     </div>
   )
 }
