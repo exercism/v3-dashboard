@@ -1,57 +1,35 @@
 const yargs = require('yargs')
 const fs = require('fs')
 const { execSync } = require('child_process')
-const { Octokit } = require('@octokit/rest')
 const opn = require('opn')
 
 const argv = yargs
   .options({
-    tag: {
-      alias: 'a',
+    patch: {
+      alias: 'p',
       demandOption: true,
-      description: 'The release version',
+      description: 'What part of the version to bump',
       choices: ['major', 'minor', 'patch'],
     },
     message: {
       alias: 'm',
       demandOption: true,
-      description: 'The release message',
-      type: 'string',
-    },
-    token: {
-      alias: 't',
-      demandOption: false,
-      description:
-        'The GitHub token. If provided, the GitHub release will automatically be created.',
+      description: 'Describe the release',
       type: 'string',
     },
   })
   .help().argv
 
 console.log('Bump version')
-execSync(`npm version ${argv.tag} -m "${argv.message}"`)
-
-// console.log('Push commit and tags')
-// execSync(`git push`)
-// execSync(`git push --tags`)
+execSync(`npm version ${argv.patch} -m "${argv.message}"`)
 
 const version = JSON.parse(fs.readFileSync('./package.json')).version
+const tag = `v${version}`
 
-// if (argv.token) {
-//   opn('https://github.com/exercism/v3-dashboard/releases/new')
-// } else {
-//   opn('https://github.com/exercism/v3-dashboard/releases/new')
-// }
-// Add to scripts in package.json that:
+console.log('Push commit and tag')
+execSync(`git push`)
+execSync(`git push origin ${tag}`)
 
-// yarn release "This is the best release"
-// mimics yarn publish
-// asks for the next version (free to type in for example)
-// changes package.json
-// checks if CHANGELOG contains ## master and renames to ## version and prepends ## master, unless ## version exists
-// runs git tag -a <version> "This is the best release"
-// runs git push --tags
-// opens github releases
-// alt command:
-
-// yarn release -a 1.0.2 -m "This is the best release"
+console.log('Open create GitHub release page')
+const newReleaseUrl = `https://github.com/exercism/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
+opn(newReleaseUrl)
