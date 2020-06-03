@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useMutableMemoryValue, StoredMemoryValue } from 'use-memory-value'
 
 interface NewExerciseData {
@@ -16,11 +16,11 @@ const NEW_EXERCISE_DATA = new StoredMemoryValue<NewExerciseData>(
   `exercism.new_exercise`
 )
 
-const [newExercise, setNewExercise] = useMutableMemoryValue(NEW_EXERCISE_DATA)
-
 function useNewExerciseField<K extends keyof NewExerciseData>(
   field: K
 ): [NewExerciseData[K], (value: NewExerciseData[K]) => void] {
+  const [newExercise, setNewExercise] = useMutableMemoryValue(NEW_EXERCISE_DATA)
+
   const setter = useCallback(
     (value: NewExerciseData[K]) => {
       setNewExercise((prev) => {
