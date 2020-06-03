@@ -31,5 +31,8 @@ execSync(`git push temp`)
 execSync(`git push temp ${tag}`)
 
 console.log('Open create GitHub release page')
-const newReleaseUrl = `https://github.com/erikschierboom/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
+const newReleaseUrl = encodeURIComponent(
+  `https://github.com/erikschierboom/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
+)
+console.log(newReleaseUrl)
 opn(newReleaseUrl)
