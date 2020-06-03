@@ -1,6 +1,5 @@
-import React, { useState, FormEvent, useCallback } from 'react'
+import React, { useState, FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
-import { useMutableMemoryValue, StoredMemoryValue } from 'use-memory-value'
 
 import { useTrackData } from '../hooks/useTrackData'
 import { useCliToken } from '../hooks/useUserData'
@@ -22,15 +21,15 @@ export interface TrackNewExerciseParams {
 export function TrackNewExercise(): JSX.Element {
   const params = useParams<TrackNewExerciseParams>()
   const trackData = useTrackData(params.trackId)
-  const [exerciseName, setExerciseName] = useExerciseName
-  const [learningObjectives, setLearningObjectives] = useLearningObjectives
-  const [outOfScope, setOutOfScope] = useOutOfScope
-  const [concepts, setConcepts] = useConcepts
-  const [prerequisites, setPrerequisites] = usePrerequisites
-  const [story, setStory] = useStory
-  const [tasks, setTasks] = useTasks
-  const [example, setExample] = useExample
-  const [cliToken, setCliToken] = useCliToken
+  const [exerciseName, setExerciseName] = useExerciseName()
+  const [learningObjectives, setLearningObjectives] = useLearningObjectives()
+  const [outOfScope, setOutOfScope] = useOutOfScope()
+  const [concepts, setConcepts] = useConcepts()
+  const [prerequisites, setPrerequisites] = usePrerequisites()
+  const [story, setStory] = useStory()
+  const [tasks, setTasks] = useTasks()
+  const [example, setExample] = useExample()
+  const [cliToken, setCliToken] = useCliToken()
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
 

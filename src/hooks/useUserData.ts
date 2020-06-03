@@ -9,19 +9,19 @@ const USER_DATA = new StoredMemoryValue<UserData>(`exercism.user`)
 
 const [user, setUser] = useMutableMemoryValue(USER_DATA)
 
-function useUserField(
-  field: keyof UserData
-): [string | undefined, (value: string) => void] {
+function useUserField<K extends keyof UserData>(
+  field: K
+): [UserData[K], (value: UserData[K]) => void] {
   const setter = useCallback(
-    (value: string) => {
+    (value: UserData[K]) => {
       setUser((prev) => {
         return { ...(prev || {}), [field]: value }
       })
     },
-    [setUser]
+    [field, setUser]
   )
 
   return [user?.[field], setter]
 }
 
-export const useCliToken = useUserField('cliToken')
+export const useCliToken = () => useUserField('cliToken')
