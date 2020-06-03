@@ -31,5 +31,5 @@ execSync(`git push`)
 execSync(`git push origin ${tag}`)
 
 console.log('Open create GitHub release page')
-const newReleaseUrl = `https://github.com/erikschierboom/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
+const newReleaseUrl = `https://github.com/exercism/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
 openUrl.open(newReleaseUrl)
