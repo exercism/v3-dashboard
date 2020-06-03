@@ -87,7 +87,7 @@ function SwitchActionableState(): JSX.Element {
 }
 
 function TrackView(): JSX.Element | null {
-  const match = useRouteMatch()
+  const { path }= useRouteMatch()
 
   return (
     <Switch>
