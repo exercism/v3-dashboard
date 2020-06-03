@@ -1,5 +1,8 @@
 const yargs = require('yargs')
-const { exec } = require('child_process')
+const fs = require('fs')
+const { execSync } = require('child_process')
+const { Octokit } = require('@octokit/rest')
+const opn = require('opn')
 
 const argv = yargs
   .options({
@@ -15,11 +18,30 @@ const argv = yargs
       description: 'The release message',
       type: 'string',
     },
+    token: {
+      alias: 't',
+      demandOption: false,
+      description:
+        'The GitHub token. If provided, the GitHub release will automatically be created.',
+      type: 'string',
+    },
   })
   .help().argv
 
-exec(`npm version ${argv.tag} -m "${argv.message}"`)
+console.log('Bump version')
+execSync(`npm version ${argv.tag} -m "${argv.message}"`)
 
+// console.log('Push commit and tags')
+// execSync(`git push`)
+// execSync(`git push --tags`)
+
+const version = JSON.parse(fs.readFileSync('./package.json')).version
+
+// if (argv.token) {
+//   opn('https://github.com/exercism/v3-dashboard/releases/new')
+// } else {
+//   opn('https://github.com/exercism/v3-dashboard/releases/new')
+// }
 // Add to scripts in package.json that:
 
 // yarn release "This is the best release"
