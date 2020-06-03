@@ -28,7 +28,7 @@ function Dashboard(): JSX.Element {
   return (
     <Switch>
       <Route path="/:trackId" component={TrackTool} />
-      <Route path="/" component={TrackSelection} />
+      <Route path="/" exact component={TrackSelection} />
     </Switch>
   )
 }
