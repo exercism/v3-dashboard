@@ -1,6 +1,6 @@
 {
   "name": "@exercism/v3-dashboard",
-  "version": "0.7.7",
+  "version": "0.7.5",
   "description": "Tool for maintainers and track contributors",
   "license": "MIT",
   "author": "Derk-Jan Karrenbeld <derk-jan+git@karrenbeld.info>",
