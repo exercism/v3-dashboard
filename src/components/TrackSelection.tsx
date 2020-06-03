@@ -1,44 +1,25 @@
-import React, { useCallback } from 'react'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-import TRACKS from '../data/tracks.json'
+import TRACKS_DATA from '../data/tracks.json'
 
-import { useTrack } from '../hooks/useUrlState'
+const TRACKS = TRACKS_DATA as ReadonlyArray<TrackData>
 
-const ENABLED_TRACKS = TRACKS as ReadonlyArray<TrackData>
-
-function TrackSelectionItem({
-  track,
-  onSelect,
-}: {
+interface TrackSelectionItemProps {
   track: TrackData
-  onSelect: () => void
-}): JSX.Element {
+}
+
+function TrackSelectionItem({ track }: TrackSelectionItemProps): JSX.Element {
   return (
     <li className="list-inline-item mb-2">
-      <button className={`btn btn-md btn-outline-primary`} onClick={onSelect}>
+      <Link to={`/${track.slug}`} className={`btn btn-md btn-outline-primary`}>
         {track.name}
-      </button>
+      </Link>
     </li>
   )
 }
 
 export function TrackSelection(): JSX.Element {
-  const [, onSelectTrack] = useTrack()
-
-  const renderTrackSelectionItem = useCallback(
-    (track: Readonly<TrackData>) => {
-      const doSelectTrack = (): void => onSelectTrack(track.slug)
-      return (
-        <TrackSelectionItem
-          key={track.slug}
-          onSelect={doSelectTrack}
-          track={track}
-        />
-      )
-    },
-    [onSelectTrack]
-  )
-
   return (
     <section>
       <header className="mb-4">
@@ -92,7 +73,9 @@ export function TrackSelection(): JSX.Element {
         want to contribute to:
       </p>
       <ol className="list-inline">
-        {ENABLED_TRACKS.map(renderTrackSelectionItem)}
+        {TRACKS.map((track) => (
+          <TrackSelectionItem key={track.slug} track={track} />
+        ))}
       </ol>
       <p>
         If the track you want to work on isn't here, please open an issue at the{' '}

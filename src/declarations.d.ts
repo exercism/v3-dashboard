@@ -47,9 +47,6 @@ interface GenericTrackConfiguration
   blurb: string
 }
 
-type Page = 'contributing' | 'maintaining' | 'new-exercise'
-type View = 'tree' | 'concept' | 'practice' | 'details' | 'launch'
-
 interface TrackConfiguration extends GenericTrackConfiguration {
   test_pattern: string
   version: 3
@@ -69,11 +66,6 @@ interface ExerciseConfiguration extends Readonly<ExerciseConfiguration> {
   concepts: ReadonlyArray<string>
   prerequisites: ReadonlyArray<string>
 }
-
-type SelectedTrackIdentifier = TrackIdentifier | null
-type SelectedPage = Page | null
-type SelectedView = View | null
-type SelectedExercise = ExerciseIdentifier | null
 
 interface TrackData extends Readonly<TrackData> {
   slug: TrackIdentifier

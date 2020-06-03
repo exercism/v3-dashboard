@@ -8,12 +8,14 @@ import {
   useRawGithubFileDoesNotContain,
   useRawGithubFileMatches,
 } from '../../hooks/useRawGithubFile'
+import { useParams } from 'react-router-dom'
 
-export interface LaunchListProps {
+export interface LaunchListParams {
   trackId: TrackIdentifier
 }
 
-export function LaunchList({ trackId }: LaunchListProps): JSX.Element {
+export function LaunchList(): JSX.Element {
+  const params = useParams<LaunchListParams>()
   const [activeDetailsKey, setActiveDetailsKey] = useToggleState<
     HTMLUListElement
   >(undefined, 'popover', 'popover-toggle')
@@ -29,9 +31,9 @@ export function LaunchList({ trackId }: LaunchListProps): JSX.Element {
         </p>
 
         <p>
-          Find the {trackId} track in the v3 repository{' '}
+          Find the {params.trackId} track in the v3 repository{' '}
           <a
-            href={`https://github.com/exercism/v3/tree/master/languages/${trackId}`}
+            href={`https://github.com/exercism/v3/tree/master/languages/${params.trackId}`}
           >
             here
           </a>
@@ -40,13 +42,13 @@ export function LaunchList({ trackId }: LaunchListProps): JSX.Element {
       </header>
 
       <PreparationList
-        trackId={trackId}
+        trackId={params.trackId}
         activeDetailsKey={activeDetailsKey}
         setActiveDetailsKey={setActiveDetailsKey}
       />
 
       <ReadyForLaunch
-        trackId={trackId}
+        trackId={params.trackId}
         activeDetailsKey={activeDetailsKey}
         setActiveDetailsKey={setActiveDetailsKey}
       />

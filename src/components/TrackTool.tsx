@@ -1,88 +1,65 @@
-import React, { useCallback } from 'react'
+import React from 'react'
+import { Link, Switch, Route, Redirect, useRouteMatch } from 'react-router-dom'
+
+import { TrackContributing } from './TrackContributing'
+import { TrackMaintaining } from './TrackMaintaining'
+import { TrackNewExercise } from './TrackNewExercise'
+import { PageLink } from './PageLink'
 
 import {
   ProvideActionable,
   useProvideActionableState,
 } from '../hooks/useActionableOnly'
-import { usePage } from '../hooks/useUrlState'
 
-import { PageSelectLink } from './PageSelectLink'
-import { TrackContributing } from './TrackContributing'
-import { TrackMaintaining } from './TrackMaintaining'
-import { TrackNewExercise } from './TrackNewExercise'
-
-const DEFAULT_PAGE: Page = 'contributing'
-
-export interface TrackToolProps {
-  trackId: TrackIdentifier
-  onUnselect: () => void
-}
-
-export function TrackTool({
-  trackId,
-  onUnselect,
-}: TrackToolProps): JSX.Element {
+export function TrackTool(): JSX.Element {
   return (
     <ProvideActionable value={useProvideActionableState()}>
       <section>
-        <div className="d-flex justify-content-start flex-row align-items-center w-50">
-          <UnselectTrackButton onClick={onUnselect} />
-          <TogglePageButton />
-        </div>
-
-        <PageView trackId={trackId} />
+        <TrackToolHeader />
+        <TrackToolPage />
       </section>
     </ProvideActionable>
   )
 }
 
-function PageView({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
-  const [selectedPage] = usePage()
-  const actualPage = selectedPage || DEFAULT_PAGE
-
-  switch (actualPage) {
-    case 'maintaining': {
-      return <TrackMaintaining trackId={trackId} />
-    }
-    case 'new-exercise': {
-      return <TrackNewExercise trackId={trackId} />
-    }
-    default: {
-      return <TrackContributing trackId={trackId} />
-    }
-  }
-}
-
-function TogglePageButton(): JSX.Element {
+function TrackToolHeader(): JSX.Element {
   return (
-    <div className="btn-group">
-      <PageSelectLink page="contributing">Contributing</PageSelectLink>
-      <PageSelectLink page="maintaining">Maintaining</PageSelectLink>
-      <PageSelectLink page="new-exercise">New exercise</PageSelectLink>
+    <div className="d-flex justify-content-start flex-row align-items-center w-50">
+      <SelectDifferentTrackButton />
+      <TogglePageButton />
     </div>
   )
 }
 
-function UnselectTrackButton({
-  onClick,
-}: {
-  onClick: TrackToolProps['onUnselect']
-}): JSX.Element {
-  const doClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault()
-      onClick()
-    },
-    [onClick]
-  )
+function TogglePageButton(): JSX.Element {
+  const { path } = useRouteMatch()
 
   return (
-    <a
-      href="/"
-      className="btn btn-sm btn-outline-danger mr-3"
-      onClick={doClick}
-    >
+    <div className="btn-group">
+      <PageLink to={`${path}/contributing`}>Contributing</PageLink>
+      <PageLink to={`${path}/maintaining`}>Maintaining</PageLink>
+      <PageLink to={`${path}/new-exercise`}>New exercise</PageLink>
+    </div>
+  )
+}
+
+function SelectDifferentTrackButton(): JSX.Element {
+  return (
+    <Link to="/" className="btn btn-sm btn-outline-danger mr-3">
       Select different track
-    </a>
+    </Link>
+  )
+}
+
+function TrackToolPage(): JSX.Element {
+  const { path } = useRouteMatch()
+
+  return (
+    <Switch>
+      <Route path={`${path}/contributing`} component={TrackContributing} />
+      <Route path={`${path}/maintaining`} component={TrackMaintaining} />
+      <Route path={`${path}/new-exercise`} component={TrackNewExercise} />
+      <Redirect to={`${path}/contributing`} />
+    </Switch>
   )
 }

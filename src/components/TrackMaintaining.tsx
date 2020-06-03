@@ -1,52 +1,31 @@
 import React, { useCallback, Fragment } from 'react'
+import {
+  useParams,
+  useRouteMatch,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom'
 
-import { useActionableState } from '../hooks/useActionableOnly'
-
-import { useView, setOptionsInUrl } from '../hooks/useUrlState'
 import { TrackAside } from './TrackAside'
-import { SwitchToggle } from './SwitchToggle'
-import { ViewSelectLink } from './ViewSelectLink'
-import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { TrackIcon } from './TrackIcon'
 import { TrackDescription } from './TrackDescription'
+import { PageLink } from './PageLink'
+import { SwitchToggle } from './SwitchToggle'
+
 import { ExerciseDetails } from './views/ExerciseDetails'
 import { LaunchList } from './views/LaunchList'
 import { ExerciseTree } from './views/ExerciseTree'
 
-export interface TrackMaintainingProps {
+import { useActionableState } from '../hooks/useActionableOnly'
+import { useRemoteConfig } from '../hooks/useRemoteConfig'
+
+export interface TrackMaintainingParams {
   trackId: TrackIdentifier
 }
 
-export function TrackMaintaining({
-  trackId,
-}: TrackMaintainingProps): JSX.Element {
-  const [selectedView] = useView()
-  const actualView = (selectedView || DEFAULT_VIEW) as View
-
-  const doHideExercise = useCallback(() => {
-    // Heuristic, if there is a "back" state, go back
-    if (
-      window &&
-      window.history &&
-      window.history.state &&
-      window.history.state.previous
-    ) {
-      if (window.history.state.previous.trackId === trackId) {
-        window.history.back()
-        return
-      }
-    }
-
-    // Otherwise, hide by going to the default view
-    setOptionsInUrl({ view: DEFAULT_VIEW, exercise: '' })
-  }, [trackId])
-
-  const doShowExercise = useCallback((exercise: ExerciseIdentifier) => {
-    setOptionsInUrl({
-      view: 'details',
-      exercise,
-    })
-  }, [])
+export function TrackMaintaining(): JSX.Element {
+  const { trackId } = useParams<TrackMaintainingParams>()
 
   return (
     <Fragment>
@@ -59,46 +38,15 @@ export function TrackMaintaining({
 
       <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
         <div className="col-12 col-md-auto mb-2">
-          <ViewSelect />
+          <TrackMaintainingViewSelect />
         </div>
         <div className="col mb-2">
           <SwitchActionableState />
         </div>
       </div>
 
-      <TrackView
-        trackId={trackId}
-        view={actualView}
-        onShowExercise={doShowExercise}
-        onHideExercise={doHideExercise}
-      />
+      <TrackView />
     </Fragment>
-  )
-}
-
-const DEFAULT_VIEW = 'launch'
-
-function SwitchActionableState(): JSX.Element {
-  const [current, onChange] = useActionableState()
-
-  const doToggle = useCallback(() => onChange((prev) => !prev), [onChange])
-
-  return (
-    <SwitchToggle
-      inActiveLabel="All"
-      activeLabel="Actionable"
-      onToggle={doToggle}
-      actionableOnly={current}
-    />
-  )
-}
-
-function ViewSelect(): JSX.Element {
-  return (
-    <div className="btn-group w-100">
-      <ViewSelectLink view="launch">Launch</ViewSelectLink>
-      <ViewSelectLink view="tree">Tree</ViewSelectLink>
-    </div>
   )
 }
 
@@ -123,31 +71,41 @@ function Header({ trackId }: { trackId: TrackIdentifier }): JSX.Element {
   )
 }
 
-interface TrackViewProps {
-  trackId: TrackIdentifier
-  view: View
-  onShowExercise: (exercise: ExerciseIdentifier) => void
-  onHideExercise: () => void
+function SwitchActionableState(): JSX.Element {
+  const [current, onChange] = useActionableState()
+
+  const doToggle = useCallback(() => onChange((prev) => !prev), [onChange])
+
+  return (
+    <SwitchToggle
+      inActiveLabel="All"
+      activeLabel="Actionable"
+      onToggle={doToggle}
+      actionableOnly={current}
+    />
+  )
 }
 
-function TrackView({
-  trackId,
-  view,
-  onShowExercise,
-  onHideExercise,
-}: TrackViewProps): JSX.Element | null {
-  switch (view) {
-    case 'details': {
-      return <ExerciseDetails trackId={trackId} onHide={onHideExercise} />
-    }
-    case 'launch': {
-      return <LaunchList trackId={trackId} />
-    }
-    case 'tree': {
-      return <ExerciseTree trackId={trackId} />
-    }
-    default: {
-      return null
-    }
-  }
+function TrackView(): JSX.Element | null {
+  const { path } = useRouteMatch()
+
+  return (
+    <Switch>
+      <Route path={`${path}/details`} component={ExerciseDetails} />
+      <Route path={`${path}/launch`} component={LaunchList} />
+      <Route path={`${path}/tree`} component={ExerciseTree} />
+      <Redirect to={`${path}/launch`} />
+    </Switch>
+  )
+}
+
+function TrackMaintainingViewSelect(): JSX.Element {
+  const { path } = useRouteMatch()
+
+  return (
+    <div className="btn-group w-100">
+      <PageLink to={`${path}/launch`}>Launch</PageLink>
+      <PageLink to={`${path}/tree`}>Tree</PageLink>
+    </div>
+  )
 }

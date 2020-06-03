@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export function ExerciseTree({
-  trackId,
-}: {
-  trackId: TrackIdentifier
-}): JSX.Element {
+export function ExerciseTree(): JSX.Element {
   const [library, setLibrary] = useState()
 
   useEffect(() => {

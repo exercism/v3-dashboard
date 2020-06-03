@@ -1,5 +1,5 @@
 import React from 'react'
-import { useExercise } from '../../hooks/useUrlState'
+// import { useExercise } from '../../hooks/useUrlState'
 
 interface ExerciseDetailsProps {
   trackId: TrackIdentifier
@@ -10,11 +10,11 @@ export function ExerciseDetails({
   trackId,
   onHide,
 }: ExerciseDetailsProps): JSX.Element {
-  const [exercise] = useExercise()
+  // const [exercise] = useExercise()
 
   return (
     <section>
-      <header className="mb-4">
+      {/* <header className="mb-4">
         <h2>{exercise}</h2>
         <p></p>
       </header>
@@ -25,7 +25,7 @@ export function ExerciseDetails({
         onClick={onHide}
       >
         Hide
-      </button>
+      </button> */}
     </section>
   )
 }
