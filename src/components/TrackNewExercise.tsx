@@ -39,7 +39,7 @@ export function TrackNewExercise(): JSX.Element {
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
 
-  const clearExerciseSpecificMemoryValues = () => {
+  const clearStoredFormValues = () => {
     setExerciseName('')
     setLearningObjectives('')
     setOutOfScope('')
@@ -92,8 +92,8 @@ export function TrackNewExercise(): JSX.Element {
       )
       .catch(() => setPosting(false))
       .finally(() => {
+        clearStoredFormValues()
         setPosting(false)
-        clearExerciseSpecificMemoryValues()
       })
   }
 
