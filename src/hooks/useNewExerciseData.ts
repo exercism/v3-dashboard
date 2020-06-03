@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useMutableMemoryValue, StoredMemoryValue } from 'use-memory-value'
 
 interface NewExerciseData {
