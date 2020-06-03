@@ -3,7 +3,7 @@ const yargs = require('yargs')
 const { exec } = require('child_process')
 
 const argv = yargs
-  .option('tag', {
+  .option('version', {
     alias: 'a',
     demandOption: true,
     description: 'The release version',
@@ -17,12 +17,7 @@ const argv = yargs
   })
   .help().argv
 
-//   let rawdata = fs.readFileSync('student.json');
-//   let student = JSON.parse(rawdata);
-
-// exec('git tag')
-
-console.log(argv)
+exec(`npm version ${argv.version} -m "${argv.message}"`)
 
 // Add to scripts in package.json that:
 
