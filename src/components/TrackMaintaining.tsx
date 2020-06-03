@@ -25,7 +25,7 @@ export interface TrackMaintainingParams {
 }
 
 export function TrackMaintaining(): JSX.Element {
-  const params = useParams<TrackMaintainingParams>()
+  const { trackId } = useParams<TrackMaintainingParams>()
 
   return (
     <Fragment>
