@@ -1,23 +1,24 @@
-const fs = require('fs')
 const yargs = require('yargs')
 const { exec } = require('child_process')
 
 const argv = yargs
-  .option('version', {
-    alias: 'a',
-    demandOption: true,
-    description: 'The release version',
-    type: 'string',
-  })
-  .option('message', {
-    alias: 'm',
-    demandOption: true,
-    description: 'The release message',
-    type: 'string',
+  .options({
+    tag: {
+      alias: 'a',
+      demandOption: true,
+      description: 'The release version',
+      choices: ['major', 'minor', 'patch'],
+    },
+    message: {
+      alias: 'm',
+      demandOption: true,
+      description: 'The release message',
+      type: 'string',
+    },
   })
   .help().argv
 
-exec(`npm version ${argv.version} -m "${argv.message}"`)
+exec(`npm version ${argv.tag} -m "${argv.message}"`)
 
 // Add to scripts in package.json that:
 
