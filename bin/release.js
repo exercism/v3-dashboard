@@ -2,6 +2,7 @@ const yargs = require('yargs')
 const fs = require('fs')
 const { execSync } = require('child_process')
 const opn = require('opn')
+const openUrl = require('openurl')
 
 const argv = yargs
   .options({
@@ -33,4 +34,4 @@ execSync(`git push temp ${tag}`)
 console.log('Open create GitHub release page')
 const newReleaseUrl = `https://github.com/erikschierboom/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
 console.log(newReleaseUrl)
-opn(newReleaseUrl)
+openUrl.open(newReleaseUrl)

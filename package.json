@@ -28,6 +28,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.20.0",
     "husky": "^4.2.5",
+    "openurl": "^1.1.1",
     "opn": "^6.0.0",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
