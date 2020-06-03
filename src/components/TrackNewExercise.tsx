@@ -1,7 +1,22 @@
 import React, { useState, FormEvent } from 'react'
+import { useParams } from 'react-router-dom'
+import { useMutableMemoryValue, StoredMemoryValue } from 'use-memory-value'
 
 import { useTrackData } from '../hooks/useTrackData'
-import { useParams } from 'react-router-dom'
+
+function createMemoryValue(name: string) {
+  return new StoredMemoryValue<string>(`exercism.new_exercise.${name}`)
+}
+
+const EXERCISE_NAME = createMemoryValue('name')
+const LEARNING_OBJECTIVES = createMemoryValue('learning_objectives')
+const OUT_OF_SCOPE = createMemoryValue('out_of_scope')
+const CONCEPTS = createMemoryValue('concepts')
+const PREREQUISITES = createMemoryValue('prerequisites')
+const STORY = createMemoryValue('story')
+const TASKS = createMemoryValue('tasks')
+const EXAMPLE = createMemoryValue('example')
+const CLI_TOKEN = createMemoryValue('cli_token')
 
 export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
@@ -10,17 +25,33 @@ export interface TrackNewExerciseParams {
 export function TrackNewExercise(): JSX.Element {
   const params = useParams<TrackNewExerciseParams>()
   const trackData = useTrackData(params.trackId)
-  const [exerciseName, setExerciseName] = useState('')
-  const [learningObjectives, setLearningObjectives] = useState('')
-  const [outOfScope, setOutOfScope] = useState('')
-  const [concepts, setConcepts] = useState('')
-  const [prerequisites, setPrerequisites] = useState('')
-  const [story, setStory] = useState('')
-  const [tasks, setTasks] = useState('')
-  const [example, setExample] = useState('')
-  const [cliToken, setCliToken] = useState('')
+  const [exerciseName, setExerciseName] = useMutableMemoryValue(EXERCISE_NAME)
+  const [learningObjectives, setLearningObjectives] = useMutableMemoryValue(
+    LEARNING_OBJECTIVES
+  )
+  const [outOfScope, setOutOfScope] = useMutableMemoryValue(OUT_OF_SCOPE)
+  const [concepts, setConcepts] = useMutableMemoryValue(CONCEPTS)
+  const [prerequisites, setPrerequisites] = useMutableMemoryValue(PREREQUISITES)
+  const [story, setStory] = useMutableMemoryValue(STORY)
+  const [tasks, setTasks] = useMutableMemoryValue(TASKS)
+  const [example, setExample] = useMutableMemoryValue(EXAMPLE)
+  const [cliToken, setCliToken] = useMutableMemoryValue(CLI_TOKEN)
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
+
+  const clearExerciseSpecificMemoryValues = () => {
+    setExerciseName('')
+    setLearningObjectives('')
+    setOutOfScope('')
+    setConcepts('')
+    setPrerequisites('')
+    setStory('')
+    setTasks('')
+    setExample('')
+
+    // We don't clear the CLI token as that is not exercise-specific
+    // and can be reused later when creating more exercises
+  }
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
@@ -60,7 +91,10 @@ export function TrackNewExercise(): JSX.Element {
         )
       )
       .catch(() => setPosting(false))
-      .finally(() => setPosting(false))
+      .finally(() => {
+        setPosting(false)
+        clearExerciseSpecificMemoryValues()
+      })
   }
 
   if (pullRequestUrl) {
@@ -115,7 +149,7 @@ export function TrackNewExercise(): JSX.Element {
               <textarea
                 className="form-control"
                 rows={3}
-                value={learningObjectives}
+                value={learningObjectives || ''}
                 placeholder="- Know about X&#10;- Know how to use X&#10;- ..."
                 onChange={(e) => setLearningObjectives(e.target.value)}
                 required
@@ -126,7 +160,7 @@ export function TrackNewExercise(): JSX.Element {
               <textarea
                 className="form-control"
                 rows={4}
-                value={outOfScope}
+                value={outOfScope || ''}
                 placeholder="- Memory characteristics of X&#10;- Using X in situation Y&#10;- ..."
                 onChange={(e) => setOutOfScope(e.target.value)}
                 required
@@ -137,7 +171,7 @@ export function TrackNewExercise(): JSX.Element {
               <textarea
                 className="form-control"
                 rows={2}
-                value={concepts}
+                value={concepts || ''}
                 placeholder="- `concept-x`: know about X; know how to use X"
                 onChange={(e) => setConcepts(e.target.value)}
                 required
@@ -148,7 +182,7 @@ export function TrackNewExercise(): JSX.Element {
               <textarea
                 className="form-control"
                 rows={3}
-                value={prerequisites}
+                value={prerequisites || ''}
                 placeholder="- `concept-a`: know how to use A&#10;- `concept-b`: know how to work with B&#10;"
                 onChange={(e) => setPrerequisites(e.target.value)}
                 required
@@ -175,7 +209,7 @@ export function TrackNewExercise(): JSX.Element {
                 type="text"
                 className="form-control"
                 placeholder="method-overloading"
-                value={exerciseName}
+                value={exerciseName || ''}
                 onChange={(e) => setExerciseName(e.target.value)}
                 required
               />
@@ -211,7 +245,7 @@ export function TrackNewExercise(): JSX.Element {
               <textarea
                 className="form-control"
                 rows={3}
-                value={story}
+                value={story || ''}
                 placeholder="In this exercise you'll be encoding the rules of an RPG game"
                 onChange={(e) => setStory(e.target.value)}
                 required
@@ -241,7 +275,7 @@ export function TrackNewExercise(): JSX.Element {
               <textarea
                 className="form-control"
                 rows={5}
-                value={tasks}
+                value={tasks || ''}
                 placeholder="## 1.  Display the distance driven&#10;Implement the RemoteControlCar.DistanceDisplay() method to return the distance as displayed on the LED display:&#10;```&#10;var car = RemoteControlCar.Buy();&#10;car.DistanceDisplay();&#10;// => 'Driven 0 meters'&#10;```"
                 onChange={(e) => setTasks(e.target.value)}
                 required
@@ -273,7 +307,7 @@ export function TrackNewExercise(): JSX.Element {
               <textarea
                 className="form-control"
                 rows={5}
-                value={example}
+                value={example || ''}
                 placeholder="Add idiomatic example implementation of the instructions' tasks"
                 onChange={(e) => setExample(e.target.value)}
                 required
@@ -296,7 +330,7 @@ export function TrackNewExercise(): JSX.Element {
               type="text"
               className="form-control"
               placeholder="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-              value={cliToken}
+              value={cliToken || ''}
               onChange={(e) => setCliToken(e.target.value)}
               required
             />
