@@ -12,10 +12,8 @@ interface TrackSelectionItemProps {
 function TrackSelectionItem({ track }: TrackSelectionItemProps): JSX.Element {
   return (
     <li className="list-inline-item mb-2">
-      <Link to={`/${track.slug}`}>
-        <button className={`btn btn-md btn-outline-primary`}>
-          {track.name}
-        </button>
+      <Link to={`/${track.slug}`} className={`btn btn-md btn-outline-primary`}>
+        {track.name}
       </Link>
     </li>
   )
