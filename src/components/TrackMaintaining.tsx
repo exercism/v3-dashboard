@@ -100,7 +100,7 @@ function TrackView(): JSX.Element | null {
 }
 
 function TrackMaintainingViewSelect(): JSX.Element {
-  const match = useRouteMatch()
+  const { path }  = useRouteMatch()
 
   return (
     <div className="btn-group w-100">
