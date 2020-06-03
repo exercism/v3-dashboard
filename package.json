@@ -1,6 +1,6 @@
 {
   "name": "@exercism/v3-dashboard",
-  "version": "0.8.4",
+  "version": "0.7.7",
   "description": "Tool for maintainers and track contributors",
   "license": "MIT",
   "author": "Derk-Jan Karrenbeld <derk-jan+git@karrenbeld.info>",
@@ -29,7 +29,6 @@
     "eslint-plugin-react": "^7.20.0",
     "husky": "^4.2.5",
     "openurl": "^1.1.1",
-    "opn": "^6.0.0",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "typescript": "~3.9.3",
