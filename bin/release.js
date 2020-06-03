@@ -27,12 +27,9 @@ const version = JSON.parse(fs.readFileSync('./package.json')).version
 const tag = `v${version}`
 
 console.log('Push commit and tag')
-execSync(`git push temp`)
+execSync(`git push`)
 execSync(`git push temp ${tag}`)
 
 console.log('Open create GitHub release page')
-const newReleaseUrl = encodeURIComponent(
-  `https://github.com/erikschierboom/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
-)
-console.log(newReleaseUrl)
+const newReleaseUrl = `https://github.com/erikschierboom/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
 opn(newReleaseUrl)
