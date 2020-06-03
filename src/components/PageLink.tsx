@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  Link,
-  useRouteMatch,
-  useLocation,
-  generatePath,
-} from 'react-router-dom'
+import { Link, useRouteMatch, generatePath } from 'react-router-dom'
 
 interface PageLinkProps {
   to: string
@@ -12,10 +7,9 @@ interface PageLinkProps {
 }
 
 export function PageLink({ to, children }: PageLinkProps): JSX.Element {
-  const location = useLocation()
-  const match = useRouteMatch()
-  const path = generatePath(to, match.params)
-  const active = location.pathname.startsWith(path)
+  const { params } = useRouteMatch()
+  const path = generatePath(to, params)
+  const active = useRouteMatch(to)
 
   return (
     <Link
