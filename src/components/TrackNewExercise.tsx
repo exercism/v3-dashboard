@@ -92,7 +92,7 @@ export function TrackNewExercise(): JSX.Element {
           <fieldset>
             <legend>Design</legend>
             <div className="form-group">
-              <small className="form-text text-muted">
+              <p className="form-text text-muted">
                 Describe the exercise's design, which includes its goal,
                 learning objectives, prerequisites, and more. Markdown should be
                 used to format the document. Check out{' '}
@@ -108,7 +108,7 @@ export function TrackNewExercise(): JSX.Element {
                   example design document
                 </a>{' '}
                 for more information .
-              </small>
+              </p>
             </div>
             <div className="form-group">
               <label>Learning objectives</label>
@@ -159,7 +159,7 @@ export function TrackNewExercise(): JSX.Element {
             <legend>Exercise</legend>
             <div className="form-group">
               <label>Exercise name</label>
-              <small className="form-text text-muted">
+              <p className="form-text text-muted">
                 The exercise's name, which should reflect the{' '}
                 <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#what-do-we-mean-by-concepts">
                   Concept
@@ -170,7 +170,7 @@ export function TrackNewExercise(): JSX.Element {
                   the concept naming rules
                 </a>
                 .
-              </small>
+              </p>
               <input
                 type="text"
                 className="form-control"
@@ -182,7 +182,7 @@ export function TrackNewExercise(): JSX.Element {
             </div>
             <div className="form-group">
               <label>Story</label>
-              <small className="form-text text-muted">
+              <p className="form-text text-muted">
                 This is the first half of the instructions.md file. The story
                 provides some context around the exercise. It can be be an
                 actual story (e.g.{' '}
@@ -207,7 +207,7 @@ export function TrackNewExercise(): JSX.Element {
                   example instruction document
                 </a>{' '}
                 for more information.
-              </small>
+              </p>
               <textarea
                 className="form-control"
                 rows={3}
@@ -219,7 +219,7 @@ export function TrackNewExercise(): JSX.Element {
             </div>
             <div className="form-group">
               <label>Tasks</label>
-              <small className="form-text text-muted">
+              <p className="form-text text-muted">
                 This is the second part of the instruction.md. It provides clear
                 instructions of what a student needs to do to, in the form of
                 one or more tasks. Each task should show a code snippet of the
@@ -237,7 +237,7 @@ export function TrackNewExercise(): JSX.Element {
                   example instruction document
                 </a>{' '}
                 for more information.
-              </small>
+              </p>
               <textarea
                 className="form-control"
                 rows={5}
@@ -249,8 +249,7 @@ export function TrackNewExercise(): JSX.Element {
             </div>
             <div className="form-group">
               <label>Example implementation</label>
-
-              <small className="form-text text-muted">
+              <p className="form-text text-muted">
                 Provide an example implementation of the tasks from the
                 instructions. The implementation should be the solution we
                 ideally want the student to produce, with consideration to the
@@ -269,7 +268,7 @@ export function TrackNewExercise(): JSX.Element {
                   example document
                 </a>{' '}
                 for more information .
-              </small>
+              </p>
               <textarea
                 className="form-control"
                 rows={5}
@@ -282,8 +281,7 @@ export function TrackNewExercise(): JSX.Element {
           </fieldset>
           <div className="form-group">
             <label>Exercism CLI token</label>
-
-            <small className="form-text text-muted">
+            <p className="form-text text-muted">
               The token is used to associate the pull request that will be
               created with your account. You can find your CLI token by going to{' '}
               <a href="https://exercism.io/my/settings">
@@ -291,7 +289,7 @@ export function TrackNewExercise(): JSX.Element {
               </a>{' '}
               or by running <code>exercism configure</code> and examining its
               output.
-            </small>
+            </p>
             <input
               type="text"
               className="form-control"
