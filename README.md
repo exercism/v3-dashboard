@@ -14,7 +14,7 @@ To deploy a new version of the dashboard, do:
 
 - Run `git checkout master` to checkout the master branch
 - Run `git pull` to update the `master` branch to the latest version
-- Run `yarn release -p [major | minor | patch] -m <message>` which will:
+- Run `yarn release -b [major | minor | patch] -m <message>` which will:
   - Bump the version in the `package.json` file
   - Create a commit for the modified `package.json` file
   - Create a tag for the commit that was just added

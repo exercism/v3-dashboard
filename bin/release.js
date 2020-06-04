@@ -5,8 +5,8 @@ const openUrl = require('openurl')
 
 const argv = yargs
   .options({
-    patch: {
-      alias: 'p',
+    bump: {
+      alias: 'b',
       demandOption: true,
       description: 'What part of the version to bump',
       choices: ['major', 'minor', 'patch'],
@@ -21,7 +21,7 @@ const argv = yargs
   .help().argv
 
 console.log('Bump version')
-execSync(`npm version ${argv.patch} -m "${argv.message}"`)
+execSync(`npm version ${argv.bump} -m "${argv.message}"`)
 
 const version = JSON.parse(fs.readFileSync('./package.json')).version
 const tag = `v${version}`
