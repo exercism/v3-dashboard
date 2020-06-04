@@ -81,7 +81,7 @@ export function useGithubApi<T, U = T>({
     return (): void => {
       active = false
     }
-  }, [key, rawUrl, state])
+  }, [key, rawUrl, state, mapper])
 
   return {
     url,

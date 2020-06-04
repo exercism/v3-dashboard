@@ -1,7 +1,10 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
-import { useGithubApi } from '../hooks/useGithubApi'
+import {
+  useNewConceptExerciseIssues,
+  NewConceptExerciseIssue,
+} from '../hooks/useNewConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
 
@@ -32,58 +35,13 @@ function Loading(): JSX.Element {
   )
 }
 
-interface GithubIssueUserData {
-  login: string
-  avatar_url: string
-}
-
-interface GithubIssuePullRequestData {
-  html_url: string
-}
-
-interface GithubIssueData {
-  id: number
-  title: string
-  number: number
-  html_url: string
-  user: GithubIssueUserData
-  pull_request: GithubIssuePullRequestData
-}
-
-interface NewConceptExerciseIssue {
-  id: number
-  title: string
-  url: string
-}
-
-function newConceptExerciseIssuesMapper(
-  issues: GithubIssueData[]
-): NewConceptExerciseIssue[] {
-  return issues
-    .filter((issue) => !issue.pull_request)
-    .map((issue) => ({
-      id: issue.id,
-      title: issue.title.substr(issue.title.indexOf(':') + 1),
-      url: issue.html_url,
-    }))
-    .sort((a, b) => a.title.localeCompare(b.title))
-}
-
 interface ContentProps {
-  trackId: string
+  trackId: TrackIdentifier
   config: TrackConfiguration | undefined
 }
 
 function Content({ trackId, config }: ContentProps): JSX.Element {
-  const asyncNewConceptExerciseIssues = useGithubApi<
-    GithubIssueData[],
-    NewConceptExerciseIssue[]
-  >({
-    repository: 'v3',
-    path: `issues`,
-    params: `labels=track/${trackId},type/new-exercise&state=open`,
-    mapper: newConceptExerciseIssuesMapper,
-  })
+  const asyncNewConceptExerciseIssues = useNewConceptExerciseIssues(trackId)
 
   return (
     <>
@@ -121,7 +79,10 @@ function NewConceptExerciseToImplement({
           Some quick example text to build on the card title and make up the
           bulk of the card's content.
         </p>
-        <a href={issue.url} className="btn btn-primary">
+        <p className="card-text">
+          <small className="text-muted">Last updated 3 mins ago</small>
+        </p>
+        <a href={issue.url} className="card-link">
           Go to issue
         </a>
         {/* TODO: add link to new exercise issue with pre-populated data */}
