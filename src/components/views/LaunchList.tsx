@@ -8,6 +8,7 @@ import {
   useRawGithubFileDoesNotContain,
   useRawGithubFileMatches,
 } from '../../hooks/useRawGithubFile'
+import { useGithubApi } from '../../hooks/useGithubApi'
 import { useParams } from 'react-router-dom'
 
 export interface LaunchListParams {
@@ -75,22 +76,22 @@ function ReadyForLaunch({
       <h2>Readiness for Launch</h2>
       <ol className="list-group mt-4">
         <li
-          className={`list-group-item d-flex justify-content-between flex-column flex-md-row ${(actionableOnly &&
-            done &&
-            configDone &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between flex-column flex-md-row ${
+            (actionableOnly && done && configDone && 'not-actionable') || ''
+          }`}
         >
           <a href="https://github.com/exercism/v3/blob/master/docs/maintainers/migrating-your-config-json-files.md">
             Updated <code>config.json</code>
           </a>
           <ul className="mt-2 d-flex flex-column flex-md-row">
             <li
-              className={`ml-auto ml-md-0 badge badge-pill badge-light d-flex justify-content-between ${(actionableOnly &&
-                done &&
-                checklist.hasVersion3 &&
-                'not-actionable') ||
-                ''}`}
+              className={`ml-auto ml-md-0 badge badge-pill badge-light d-flex justify-content-between ${
+                (actionableOnly &&
+                  done &&
+                  checklist.hasVersion3 &&
+                  'not-actionable') ||
+                ''
+              }`}
             >
               <span>
                 Added <code>version</code> key
@@ -110,11 +111,13 @@ function ReadyForLaunch({
               </LoadingIconWithPopover>
             </li>
             <li
-              className={`ml-auto ml-md-0 mt-1 mt-md-0 badge badge-pill badge-light ml-md-2 d-flex justify-content-between ${(actionableOnly &&
-                done &&
-                checklist.hasOnlineEditor &&
-                'not-actionable') ||
-                ''}`}
+              className={`ml-auto ml-md-0 mt-1 mt-md-0 badge badge-pill badge-light ml-md-2 d-flex justify-content-between ${
+                (actionableOnly &&
+                  done &&
+                  checklist.hasOnlineEditor &&
+                  'not-actionable') ||
+                ''
+              }`}
             >
               <span>Added online editor settings</span>
               <LoadingIconWithPopover
@@ -136,11 +139,13 @@ function ReadyForLaunch({
         </li>
 
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            done &&
-            checklist.exerciseConceptCount >= 20 &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly &&
+              done &&
+              checklist.exerciseConceptCount >= 20 &&
+              'not-actionable') ||
+            ''
+          }`}
         >
           Implemented 20+ Concept Exercises
           <LoadingIconWithPopover
@@ -157,13 +162,15 @@ function ReadyForLaunch({
           </LoadingIconWithPopover>
         </li>
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            done &&
-            checklist.exercisePracticeWithConceptCount ===
-              checklist.exercisePracticeCount &&
-            checklist.exercisePracticeCount > 0 &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly &&
+              done &&
+              checklist.exercisePracticeWithConceptCount ===
+                checklist.exercisePracticeCount &&
+              checklist.exercisePracticeCount > 0 &&
+              'not-actionable') ||
+            ''
+          }`}
         >
           Added Concepts for all Practice Exercises
           <LoadingIconWithPopover
@@ -187,11 +194,10 @@ function ReadyForLaunch({
         </li>
 
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            done &&
-            data.testRunner &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly && done && data.testRunner && 'not-actionable') ||
+            ''
+          }`}
         >
           Build Test Runner
           <LoadingIconWithPopover
@@ -218,11 +224,10 @@ function ReadyForLaunch({
           </LoadingIconWithPopover>
         </li>
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            done &&
-            data.representer &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly && done && data.representer && 'not-actionable') ||
+            ''
+          }`}
         >
           Build Representer
           <LoadingIconWithPopover
@@ -258,11 +263,9 @@ function ReadyForLaunch({
           </LoadingIconWithPopover>
         </li>
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            done &&
-            data.analyzer &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly && done && data.analyzer && 'not-actionable') || ''
+          }`}
         >
           (Optional) Build Analyzer
           <LoadingIconWithPopover
@@ -364,16 +367,25 @@ function PreparationList({
     refute: 'TODO',
   })
 
+  const asyncConceptExerciseIssues = useGithubApi<object[]>({
+    repository: 'v3',
+    path: `issues`,
+    params: `labels=track/${trackId},type/new-exercise&state=all`,
+    matcher: (issues) => issues.length >= 20,
+  })
+
   return (
     <section>
       <h2>Preparation Status</h2>
       <ol className="list-group mt-4">
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            asyncStructureCheck.done &&
-            asyncStructureCheck.result &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly &&
+              asyncStructureCheck.done &&
+              asyncStructureCheck.result &&
+              'not-actionable') ||
+            ''
+          }`}
         >
           <span>
             Convert existing files to{' '}
@@ -421,18 +433,20 @@ function PreparationList({
           </span>
         </li>
         <li
-          className={`list-group-item d-flex ${(actionableOnly &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex ${
+            (actionableOnly && 'not-actionable') || ''
+          }`}
         >
           Have a kick-off discussion between track maintainers
         </li>
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            asyncMaintainersFilled.done &&
-            asyncMaintainersFilled.result &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly &&
+              asyncMaintainersFilled.done &&
+              asyncMaintainersFilled.result &&
+              'not-actionable') ||
+            ''
+          }`}
         >
           <span>
             Fill out the{' '}
@@ -485,11 +499,13 @@ function PreparationList({
           </span>
         </li>
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            asyncCheckLinkToTrack.done &&
-            asyncCheckLinkToTrack.result &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly &&
+              asyncCheckLinkToTrack.done &&
+              asyncCheckLinkToTrack.result &&
+              'not-actionable') ||
+            ''
+          }`}
         >
           <span>
             Ensure there is a link to your track&apos;s GitHub issues on the{' '}
@@ -520,11 +536,13 @@ function PreparationList({
           </LoadingIconWithPopover>
         </li>
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            asyncConceptExerciseGuideCheck.done &&
-            asyncConceptExerciseGuideCheck.result &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly &&
+              asyncConceptExerciseGuideCheck.done &&
+              asyncConceptExerciseGuideCheck.result &&
+              'not-actionable') ||
+            ''
+          }`}
         >
           <span>
             <a href="https://github.com/exercism/v3/blob/master/docs/maintainers/writing-a-concept-exercise-github-issue.md">
@@ -575,11 +593,13 @@ function PreparationList({
           </span>
         </li>
         <li
-          className={`list-group-item d-flex justify-content-between ${(actionableOnly &&
-            asyncConceptsReferenceCheck.done &&
-            asyncConceptsReferenceCheck.result &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly &&
+              asyncConceptsReferenceCheck.done &&
+              asyncConceptsReferenceCheck.result &&
+              'not-actionable') ||
+            ''
+          }`}
         >
           <span>
             <a href="https://github.com/exercism/v3/blob/master/docs/maintainers/determining-concepts.md">
@@ -636,14 +656,44 @@ function PreparationList({
           </span>
         </li>
         <li
-          className={`list-group-item d-flex ${(actionableOnly &&
-            'not-actionable') ||
-            ''}`}
+          className={`list-group-item d-flex justify-content-between ${
+            (actionableOnly && 'not-actionable') || ''
+          }`}
         >
           <span>
             <a href="https://github.com/exercism/v3/blob/master/docs/maintainers/writing-a-concept-exercise-github-issue.md">
               Add GitHub issues for 20 Concept Exercises
             </a>
+          </span>
+
+          <span style={{ whiteSpace: 'nowrap' }}>
+            {asyncConceptExerciseIssues.done && (
+              <a
+                style={{ textDecoration: 'none' }}
+                href={asyncConceptExerciseIssues.url}
+              >
+                <span role="img" aria-label="Issues url">
+                  🔗
+                </span>
+              </a>
+            )}
+            <LoadingIconWithPopover
+              active={activeDetailsKey === 'concept-exercise-issues'}
+              loading={!asyncConceptExerciseIssues.done}
+              valid={!!asyncConceptExerciseIssues.result}
+              onToggle={(): void => {
+                setActiveDetailsKey('concept-exercise-issues')
+              }}
+            >
+              <p>
+                This check passes if there are a least 20 (open or closed)
+                issues in the{' '}
+                <a href="https://github.com/exercism/v3">v3 repo's issues</a>{' '}
+                with the tags:
+                <code>track/{trackId}</code> and <code>type/new-exercise</code>{' '}
+                repository.
+              </p>
+            </LoadingIconWithPopover>
           </span>
         </li>
       </ol>
