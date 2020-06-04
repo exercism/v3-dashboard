@@ -305,6 +305,10 @@ function ReadyForLaunch({
   )
 }
 
+function matchIfTwentyOrMoreIssues(issues: unknown[]) {
+  return issues.length >= 20
+}
+
 function PreparationList({
   trackId,
   activeDetailsKey,
@@ -371,7 +375,7 @@ function PreparationList({
     repository: 'v3',
     path: `issues`,
     params: `labels=track/${trackId},type/new-exercise&state=all`,
-    matcher: (issues) => issues.length >= 20,
+    matcher: matchIfTwentyOrMoreIssues,
   })
 
   return (
