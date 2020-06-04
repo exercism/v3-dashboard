@@ -72,7 +72,8 @@ interface NewConceptExerciseToImplementProps {
 function NewConceptExerciseToImplement({
   issue,
 }: NewConceptExerciseToImplementProps): JSX.Element {
-  const asyncNewConceptExerciseIssue = useNewConceptExerciseIssue(issue.number)
+  // TODO: re-enable once caching works
+  // const asyncNewConceptExerciseIssue = useNewConceptExerciseIssue(issue.number)
   return (
     <div className="card">
       <div className="card-body">

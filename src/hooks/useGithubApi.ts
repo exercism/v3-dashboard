@@ -1,12 +1,20 @@
 import { useReducer, useEffect } from 'react'
 
-const CACHE: Record<string, boolean | undefined> = {}
+const CACHE: Record<string, any | undefined> = {}
 
 type FetchAction<T> =
   | { type: 'result'; key: string; result: T }
   | { type: 'error' }
 
-type FetchState<T> = { result: undefined | T; loading: boolean }
+type FetchState<T> = { result: T | undefined; loading: boolean }
+
+function readCache<T>(key: string): T | undefined {
+  return CACHE[key]
+}
+
+function writeCache<T>(key: string, value: T): void {
+  CACHE[key] = value
+}
 
 function initialState<T>(): FetchState<T> {
   return {
@@ -48,7 +56,7 @@ export function useGithubApi<T, U = T>({
   const key = `${repository}/${path}?${params}`
   const [state, dispatch] = useReducer(fetchReducer, {
     ...initialState<T>(),
-    result: CACHE[key],
+    result: readCache(key),
   })
 
   const url = `https://github.com/exercism/${repository}/${path}?${params}`
@@ -69,6 +77,8 @@ export function useGithubApi<T, U = T>({
         if (active) {
           const typedResult = json as T
           const mappedResult = mapper ? mapper(typedResult) : typedResult
+
+          writeCache<T | U>(key, mappedResult)
           dispatch({ type: 'result', result: mappedResult, key })
         }
       })
@@ -110,7 +120,7 @@ export function useGithubApiMatches<T>({
   const key = `${repository}/${path}?${params}`
   const [state, dispatch] = useReducer(fetchReducer, {
     ...initialState(),
-    result: CACHE[key],
+    result: readCache(key),
   })
 
   const url = `https://github.com/exercism/${repository}/${path}?${params}`
@@ -133,6 +143,7 @@ export function useGithubApiMatches<T>({
       )
       .then((result) => {
         if (active) {
+          writeCache<boolean>(key, result)
           dispatch({ type: 'result', result, key })
         }
       })
