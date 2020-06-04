@@ -8,7 +8,7 @@ export interface TrackMaintainingParams {
   trackId: TrackIdentifier
 }
 
-export function TrackContributing(): JSX.Element {
+export function TrackConceptExerciseToImplement(): JSX.Element {
   const { trackId } = useParams<TrackMaintainingParams>()
   const { config, done } = useRemoteConfig(trackId)
 
