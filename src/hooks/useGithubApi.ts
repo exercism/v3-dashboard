@@ -37,6 +37,8 @@ function fetchReducer<T>(
   }
 }
 
+// TODO: take rate limiting into account
+
 export function useGithubApi<T, U = T>({
   repository,
   path,
