@@ -29,22 +29,23 @@ function fetchReducer<T>(
   }
 }
 
-export function useGithubApi<T>({
+export function useGithubApi<T, U = T>({
   repository,
   path,
   params,
+  mapper,
 }: {
   repository: string
   path: string
   params?: string | undefined
+  mapper?: (from: T) => U
 }): {
   url: string
   rawUrl: string
   done: boolean
-  result: T | undefined
+  result: U | undefined
 } {
   const key = `${repository}/${path}?${params}`
-  const initial = initialState<T>()
   const [state, dispatch] = useReducer(fetchReducer, {
     ...initialState<T>(),
     result: CACHE[key],
@@ -66,7 +67,9 @@ export function useGithubApi<T>({
       )
       .then((json) => {
         if (active) {
-          dispatch({ type: 'result', result: json as T, key })
+          const typedResult = json as T
+          const mappedResult = mapper ? mapper(typedResult) : typedResult
+          dispatch({ type: 'result', result: mappedResult, key })
         }
       })
       .catch(() => {
@@ -84,7 +87,7 @@ export function useGithubApi<T>({
     url,
     rawUrl,
     done: !state.loading,
-    result: state.result as T | undefined,
+    result: state.result as U | undefined, // TODO: don't use cast
   }
 }
 
@@ -148,6 +151,6 @@ export function useGithubApiMatches<T>({
     url,
     rawUrl,
     done: !state.loading,
-    result: state.result as boolean | undefined,
+    result: state.result as boolean | undefined, // TODO: don't use cast
   }
 }

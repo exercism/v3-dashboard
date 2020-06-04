@@ -19,8 +19,8 @@ export interface TrackNewExerciseParams {
 }
 
 export function TrackNewExercise(): JSX.Element {
-  const params = useParams<TrackNewExerciseParams>()
-  const trackData = useTrackData(params.trackId)
+  const { trackId } = useParams<TrackNewExerciseParams>()
+  const trackData = useTrackData(trackId)
   const [exerciseName, setExerciseName] = useExerciseName()
   const [learningObjectives, setLearningObjectives] = useLearningObjectives()
   const [outOfScope, setOutOfScope] = useOutOfScope()
@@ -67,7 +67,7 @@ export function TrackNewExercise(): JSX.Element {
         Authorization: `Token token=${cliToken}`,
       },
       body: JSON.stringify({
-        track_slug: params.trackId,
+        track_slug: trackId,
         exercise_slug: exerciseName,
         example_filename: trackData.example_filename,
         example_code: example,
