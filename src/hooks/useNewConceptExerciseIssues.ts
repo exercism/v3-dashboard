@@ -1,46 +1,64 @@
 import { useGithubApi } from './useGithubApi'
 
-interface GithubIssueUserData {
-  login: string
-  avatar_url: string
-}
-
-interface GithubIssuePullRequestData {
-  html_url: string
-}
-
-interface GithubIssueData {
-  id: number
-  title: string
+export interface NewConceptExerciseIssueSummary {
   number: number
-  html_url: string
-  user: GithubIssueUserData
-  pull_request: GithubIssuePullRequestData
-}
-
-export interface NewConceptExerciseIssue {
-  id: number
   title: string
-  url: string
+  html_url: string
+  updated_at: string
+  pull_request?: object
 }
 
-function createNewConceptExerciseIssuesFromApiIssue(
-  issue: GithubIssueData
-): NewConceptExerciseIssue {
+export interface NewConceptExerciseIssueDetails {
+  body: string
+  number: number
+  title: string
+  html_url: string
+  updated_at: string
+  pull_request?: object
+}
+
+export interface GithubNewConceptExerciseIssueSummary {
+  number: number
+  title: string
+  html_url: string
+  updated_at: string
+  pull_request?: object
+}
+
+export interface GithubNewConceptExerciseIssueDetails
+  extends GithubNewConceptExerciseIssueSummary {
+  body: string
+}
+
+function newConceptExerciseIssueSummaryMapper(
+  issue: GithubNewConceptExerciseIssueSummary
+): NewConceptExerciseIssueSummary {
   return {
-    id: issue.id,
-    title: issue.title.substr(issue.title.indexOf(':') + 1),
-    url: issue.html_url,
+    ...issue,
+    title: normalizeTitle(issue.title),
   }
 }
 
-function newConceptExerciseIssuesMapper(
-  issues: GithubIssueData[]
-): NewConceptExerciseIssue[] {
+function newConceptExerciseIssuesSummaryMapper(
+  issues: GithubNewConceptExerciseIssueSummary[]
+): NewConceptExerciseIssueSummary[] {
   return issues
     .filter((issue) => !issue.pull_request)
-    .map(createNewConceptExerciseIssuesFromApiIssue)
+    .map(newConceptExerciseIssueSummaryMapper)
     .sort((a, b) => a.title.localeCompare(b.title))
+}
+
+function newConceptExerciseIssueDetailsMapper(
+  issue: GithubNewConceptExerciseIssueDetails
+): NewConceptExerciseIssueDetails {
+  return {
+    ...issue,
+    title: normalizeTitle(issue.title),
+  }
+}
+
+function normalizeTitle(title: string) {
+  return title.slice(title.indexOf(':') + 1)
 }
 
 export function useNewConceptExerciseIssues(
@@ -49,12 +67,33 @@ export function useNewConceptExerciseIssues(
   url: string
   rawUrl: string
   done: boolean
-  result: NewConceptExerciseIssue[] | undefined
+  result: NewConceptExerciseIssueSummary[] | undefined
 } {
-  return useGithubApi<GithubIssueData[], NewConceptExerciseIssue[]>({
+  return useGithubApi<
+    GithubNewConceptExerciseIssueSummary[],
+    NewConceptExerciseIssueSummary[]
+  >({
     repository: 'v3',
     path: `issues`,
     params: `labels=track/${trackId},type/new-exercise&state=open`,
-    mapper: newConceptExerciseIssuesMapper,
+    mapper: newConceptExerciseIssuesSummaryMapper,
+  })
+}
+
+export function useNewConceptExerciseIssue(
+  number: number
+): {
+  url: string
+  rawUrl: string
+  done: boolean
+  result: NewConceptExerciseIssueDetails | undefined
+} {
+  return useGithubApi<
+    GithubNewConceptExerciseIssueDetails,
+    NewConceptExerciseIssueDetails
+  >({
+    repository: 'v3',
+    path: `issues/${number}`,
+    mapper: newConceptExerciseIssueDetailsMapper,
   })
 }

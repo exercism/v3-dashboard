@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom'
 
 import {
   useNewConceptExerciseIssues,
-  NewConceptExerciseIssue,
+  NewConceptExerciseIssueSummary,
+  useNewConceptExerciseIssue,
 } from '../hooks/useNewConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
@@ -55,7 +56,7 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
 
       {asyncNewConceptExerciseIssues.done ? (
         asyncNewConceptExerciseIssues.result?.map((issue) => (
-          <NewConceptExerciseToImplement key={issue.id} issue={issue} />
+          <NewConceptExerciseToImplement key={issue.number} issue={issue} />
         ))
       ) : (
         <p>TODO: loading indicator</p>
@@ -65,24 +66,22 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
 }
 
 interface NewConceptExerciseToImplementProps {
-  issue: NewConceptExerciseIssue
+  issue: NewConceptExerciseIssueSummary
 }
 
 function NewConceptExerciseToImplement({
   issue,
 }: NewConceptExerciseToImplementProps): JSX.Element {
+  const asyncNewConceptExerciseIssue = useNewConceptExerciseIssue(issue.number)
   return (
     <div className="card">
       <div className="card-body">
         <h5 className="card-title">{issue.title}</h5>
+        <p className="card-text">TODO</p>
         <p className="card-text">
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.
+          <small className="text-muted">{issue.updated_at}</small>
         </p>
-        <p className="card-text">
-          <small className="text-muted">Last updated 3 mins ago</small>
-        </p>
-        <a href={issue.url} className="card-link">
+        <a href={issue.html_url} className="card-link">
           Go to issue
         </a>
         {/* TODO: add link to new exercise issue with pre-populated data */}
