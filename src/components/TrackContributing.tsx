@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
+import { useGithubApi } from '../hooks/useGithubApi'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
 
@@ -31,11 +32,30 @@ function Loading(): JSX.Element {
   )
 }
 
+interface GithubIssueUserData {
+  login: string
+  avatar_url: string
+}
+
+interface GithubIssueData {
+  title: string
+  number: number
+  html_url: string
+  user: GithubIssueUserData
+}
+
 interface ContentProps {
+  trackId: string
   config: TrackConfiguration | undefined
 }
 
 function Content({ config }: ContentProps): JSX.Element {
+  const asyncConceptExerciseIssues = useGithubApi<GithubIssueData[]>({
+    repository: 'v3',
+    path: `issues`,
+    params: `labels=track/${config},type/new-exercise&state=all`,
+  })
+
   return (
     <>
       <h2>Contributing to {config?.language} </h2>

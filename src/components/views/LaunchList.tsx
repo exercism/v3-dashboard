@@ -8,7 +8,7 @@ import {
   useRawGithubFileDoesNotContain,
   useRawGithubFileMatches,
 } from '../../hooks/useRawGithubFile'
-import { useGithubApi } from '../../hooks/useGithubApi'
+import { useGithubApiMatches } from '../../hooks/useGithubApi'
 import { useParams } from 'react-router-dom'
 
 export interface LaunchListParams {
@@ -371,7 +371,7 @@ function PreparationList({
     refute: 'TODO',
   })
 
-  const asyncConceptExerciseIssues = useGithubApi<object[]>({
+  const asyncConceptExerciseIssues = useGithubApiMatches<object[]>({
     repository: 'v3',
     path: `issues`,
     params: `labels=track/${trackId},type/new-exercise&state=all`,
