@@ -8,11 +8,14 @@
   "main": "src/index.tsx",
   "dependencies": {
     "js-levenshtein": "^1.1.6",
+    "localforage": "^1.7.3",
     "react": "~16.13.1",
     "react-dom": "~16.13.1",
+    "react-fast-compare": "^3.2.0",
     "react-router-dom": "~5.2.0",
     "react-scripts": "~3.4.1",
-    "semver": "^7.3.2"
+    "semver": "^7.3.2",
+    "use-memory-value": "^1.0.4"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",

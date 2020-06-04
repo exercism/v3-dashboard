@@ -1,7 +1,18 @@
 import React, { useState, FormEvent } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { useTrackData } from '../hooks/useTrackData'
-import { useParams } from 'react-router-dom'
+import { useCliToken } from '../hooks/useUserData'
+import {
+  useOutOfScope,
+  useExerciseName,
+  useLearningObjectives,
+  useConcepts,
+  useExample,
+  usePrerequisites,
+  useStory,
+  useTasks,
+} from '../hooks/useNewExerciseData'
 
 export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
@@ -10,17 +21,28 @@ export interface TrackNewExerciseParams {
 export function TrackNewExercise(): JSX.Element {
   const params = useParams<TrackNewExerciseParams>()
   const trackData = useTrackData(params.trackId)
-  const [exerciseName, setExerciseName] = useState('')
-  const [learningObjectives, setLearningObjectives] = useState('')
-  const [outOfScope, setOutOfScope] = useState('')
-  const [concepts, setConcepts] = useState('')
-  const [prerequisites, setPrerequisites] = useState('')
-  const [story, setStory] = useState('')
-  const [tasks, setTasks] = useState('')
-  const [example, setExample] = useState('')
-  const [cliToken, setCliToken] = useState('')
+  const [exerciseName, setExerciseName] = useExerciseName()
+  const [learningObjectives, setLearningObjectives] = useLearningObjectives()
+  const [outOfScope, setOutOfScope] = useOutOfScope()
+  const [concepts, setConcepts] = useConcepts()
+  const [prerequisites, setPrerequisites] = usePrerequisites()
+  const [story, setStory] = useStory()
+  const [tasks, setTasks] = useTasks()
+  const [example, setExample] = useExample()
+  const [cliToken, setCliToken] = useCliToken()
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
+
+  const clearData = () => {
+    setExerciseName('')
+    setLearningObjectives('')
+    setOutOfScope('')
+    setConcepts('')
+    setPrerequisites('')
+    setStory('')
+    setTasks('')
+    setExample('')
+  }
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
@@ -60,7 +82,10 @@ export function TrackNewExercise(): JSX.Element {
         )
       )
       .catch(() => setPosting(false))
-      .finally(() => setPosting(false))
+      .finally(() => {
+        clearData()
+        setPosting(false)
+      })
   }
 
   if (pullRequestUrl) {
