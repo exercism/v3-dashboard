@@ -437,13 +437,6 @@ function PreparationList({
           </span>
         </li>
         <li
-          className={`list-group-item d-flex ${
-            (actionableOnly && 'not-actionable') || ''
-          }`}
-        >
-          Have a kick-off discussion between track maintainers
-        </li>
-        <li
           className={`list-group-item d-flex justify-content-between ${
             (actionableOnly &&
               asyncMaintainersFilled.done &&
