@@ -9,10 +9,12 @@ type FetchAction<T> =
 type FetchState<T> = { result: T | undefined; loading: boolean }
 
 function readCache<T>(key: string): T | undefined {
+  console.log('using readCache ' + key)
   return CACHE[key]
 }
 
 function writeCache<T>(key: string, value: T): void {
+  console.log('using writeCache ' + key)
   CACHE[key] = value
 }
 
@@ -68,6 +70,8 @@ export function useGithubApi<T, U = T>({
     if (state.result !== undefined) {
       return
     }
+
+    console.log('not reading from cache')
 
     let active = true
 
@@ -132,6 +136,7 @@ export function useGithubApiMatches<T>({
     if (state.result !== undefined) {
       return
     }
+    console.log('not reading from cache')
 
     let active = true
 

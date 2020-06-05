@@ -6,6 +6,8 @@ import {
   NewConceptExerciseIssueSummary,
   useNewConceptExerciseIssue,
 } from '../hooks/useNewConceptExerciseIssues'
+
+import { useGithubGraphqlApi } from '../hooks/useGithubGraphqlApi'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
 
@@ -42,7 +44,8 @@ interface ContentProps {
 }
 
 function Content({ trackId, config }: ContentProps): JSX.Element {
-  const asyncNewConceptExerciseIssues = useNewConceptExerciseIssues(trackId)
+  // const asyncNewConceptExerciseIssues = useNewConceptExerciseIssues(trackId)
+  const asyncIssues = useGithubGraphqlApi<any>()
 
   return (
     <>
@@ -54,13 +57,13 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
       <h3>Exercises that need implementing</h3>
       <p>The following exercise are all open to be worked on</p>
 
-      {asyncNewConceptExerciseIssues.done ? (
+      {/* {asyncNewConceptExerciseIssues.done ? (
         asyncNewConceptExerciseIssues.result?.map((issue) => (
           <NewConceptExerciseToImplement key={issue.number} issue={issue} />
         ))
       ) : (
         <p>TODO: loading indicator</p>
-      )}
+      )} */}
     </>
   )
 }
