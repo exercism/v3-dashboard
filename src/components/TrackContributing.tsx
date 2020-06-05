@@ -1,15 +1,16 @@
+/// <reference path="../declarations.d.ts" />
+
+import marked from 'marked'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
 import {
   useNewConceptExerciseIssues,
-  NewConceptExerciseIssueSummary,
-  useNewConceptExerciseIssue,
+  NewConceptExerciseIssue,
 } from '../hooks/useNewConceptExerciseIssues'
-
-import { useGithubGraphqlApi } from '../hooks/useGithubGraphqlApi'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
+import { PageLink } from './PageLink'
 
 export interface TrackContributingParams {
   trackId: TrackIdentifier
@@ -44,8 +45,7 @@ interface ContentProps {
 }
 
 function Content({ trackId, config }: ContentProps): JSX.Element {
-  // const asyncNewConceptExerciseIssues = useNewConceptExerciseIssues(trackId)
-  const asyncIssues = useGithubGraphqlApi<any>()
+  const asyncNewConceptExerciseIssues = useNewConceptExerciseIssues(trackId)
 
   return (
     <>
@@ -56,39 +56,123 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
       </p>
       <h3>Exercises that need implementing</h3>
       <p>The following exercise are all open to be worked on</p>
-
-      {/* {asyncNewConceptExerciseIssues.done ? (
+      {asyncNewConceptExerciseIssues.done ? (
         asyncNewConceptExerciseIssues.result?.map((issue) => (
-          <NewConceptExerciseToImplement key={issue.number} issue={issue} />
+          <NewConceptExerciseToImplement
+            key={issue.number}
+            issue={issue}
+            trackId={trackId}
+          />
         ))
       ) : (
         <p>TODO: loading indicator</p>
-      )} */}
+      )}
     </>
   )
 }
 
 interface NewConceptExerciseToImplementProps {
-  issue: NewConceptExerciseIssueSummary
+  issue: NewConceptExerciseIssue
+  trackId: TrackIdentifier
 }
 
 function NewConceptExerciseToImplement({
   issue,
+  trackId,
 }: NewConceptExerciseToImplementProps): JSX.Element {
-  // TODO: re-enable once caching works
-  // const asyncNewConceptExerciseIssue = useNewConceptExerciseIssue(issue.number)
+  const tokens = marked.lexer(issue.body)
+
+  let learningObjectives: string | undefined = undefined
+  let outOfScope: string | undefined = undefined
+  let concepts: string | undefined = undefined
+  let prerequisites: string | undefined = undefined
+
+  for (let i = 0; i < tokens.length - 1; i++) {
+    const token = tokens[i]
+
+    if (
+      token.type === 'heading' &&
+      [
+        'Learning objectives',
+        'Out of scope',
+        'Concepts',
+        'Prerequisites',
+        'Prequisites',
+      ].includes(token.text)
+    ) {
+      let nextToken: any | undefined = undefined
+
+      for (let j = i + 1; j < tokens.length; j++) {
+        if (tokens[j].type === 'heading') {
+          nextToken = undefined
+          break
+        }
+
+        if (tokens[j].type === 'list') {
+          nextToken = tokens[j]
+          break
+        }
+      }
+
+      if (nextToken === undefined) {
+        continue
+      }
+
+      switch (token.text) {
+        case 'Learning objectives': {
+          learningObjectives = nextToken.raw
+          break
+        }
+        case 'Out of scope': {
+          outOfScope = nextToken.raw
+          break
+        }
+        case 'Concepts': {
+          concepts = nextToken.raw
+          break
+        }
+        case 'Prerequisites':
+        case 'Prequisites': {
+          console.log('prereqs')
+          prerequisites = nextToken.raw
+          break
+        }
+      }
+    }
+  }
+
   return (
-    <div className="card">
+    <div className="card mb-2">
       <div className="card-body">
         <h5 className="card-title">{issue.title}</h5>
-        <p className="card-text">TODO</p>
         <p className="card-text">
-          <small className="text-muted">{issue.updated_at}</small>
+          <small className="text-muted">
+            Last updated at: {issue.updatedAt}
+          </small>
         </p>
-        <a href={issue.html_url} className="card-link">
+        <a
+          href={issue.url}
+          className="card-link btn btn-sm btn-outline-primary mr-2"
+        >
           Go to issue
         </a>
-        {/* TODO: add link to new exercise issue with pre-populated data */}
+        {issue.number === 1176 ? (
+          <PageLink
+            to={`/${trackId}/new-exercise?concepts=${encodeURIComponent(
+              concepts || ''
+            )}&prerequisites=${encodeURIComponent(
+              prerequisites || ''
+            )}&outOfScope=${encodeURIComponent(
+              outOfScope || ''
+            )}&learningObjectives=${encodeURIComponent(
+              learningObjectives || ''
+            )}`}
+          >
+            Create exercise
+          </PageLink>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
 

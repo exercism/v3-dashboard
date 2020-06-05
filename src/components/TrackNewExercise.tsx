@@ -1,5 +1,5 @@
 import React, { useState, FormEvent } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, RouteComponentProps } from 'react-router-dom'
 
 import { useTrackData } from '../hooks/useTrackData'
 import { useCliToken } from '../hooks/useUserData'
@@ -18,7 +18,9 @@ export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
 }
 
-export function TrackNewExercise(): JSX.Element {
+interface TrackNewExerciseProps extends RouteComponentProps {}
+
+export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const { trackId } = useParams<TrackNewExerciseParams>()
   const trackData = useTrackData(trackId)
   const [exerciseName, setExerciseName] = useExerciseName()
@@ -32,6 +34,31 @@ export function TrackNewExercise(): JSX.Element {
   const [cliToken, setCliToken] = useCliToken()
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
+
+  console.log(props.location)
+
+  const params = new URLSearchParams(props.location.search)
+  const conceptsParam = params.get('concepts')
+  const prerequisitesParam = params.get('prerequisites')
+  const outOfScopeParam = params.get('outOfScope')
+  const learningObjectivesParam = params.get('learningObjectives')
+
+  if (conceptsParam) {
+    console.log('set concepts to ' + conceptsParam)
+    setConcepts(conceptsParam)
+  }
+
+  if (prerequisitesParam) {
+    setPrerequisites(prerequisitesParam)
+  }
+
+  if (outOfScopeParam) {
+    setOutOfScope(outOfScopeParam)
+  }
+
+  if (learningObjectivesParam) {
+    setLearningObjectives(learningObjectivesParam)
+  }
 
   const clearData = () => {
     setExerciseName('')

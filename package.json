@@ -10,7 +10,7 @@
     "@octokit/graphql": "^4.5.0",
     "js-levenshtein": "^1.1.6",
     "localforage": "^1.7.3",
-    "markdown": "^0.5.0",
+    "marked": "^1.1.0",
     "react": "~16.13.1",
     "react-dom": "~16.13.1",
     "react-fast-compare": "^3.2.0",
