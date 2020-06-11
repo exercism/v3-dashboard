@@ -11,7 +11,7 @@ interface PageLinkProps<T = {}>
 export function PageLink({ to, children, state }: PageLinkProps): JSX.Element {
   const { params } = useRouteMatch()
   const path = generatePath(to, params)
-  const pathWithState = { pathname: path, state: state }
+  const pathWithState = { pathname: path, state: state || {} }
 
   return (
     <NavLink

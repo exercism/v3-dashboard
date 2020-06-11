@@ -50,20 +50,11 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
 
   const prepopulate = props.location.state
 
-  if (prepopulate.concepts) {
-    setConcepts(prepopulate.concepts)
-  }
-
-  if (prepopulate.prerequisites) {
-    setPrerequisites(prepopulate.prerequisites)
-  }
-
-  if (prepopulate.outOfScope) {
-    setOutOfScope(prepopulate.outOfScope)
-  }
-
-  if (prepopulate.learningObjectives) {
-    setLearningObjectives(prepopulate.learningObjectives)
+  if (prepopulate) {
+    setConcepts(prepopulate.concepts || '')
+    setPrerequisites(prepopulate.prerequisites || '')
+    setOutOfScope(prepopulate.outOfScope || '')
+    setLearningObjectives(prepopulate.learningObjectives || '')
   }
 
   const clearData = () => {

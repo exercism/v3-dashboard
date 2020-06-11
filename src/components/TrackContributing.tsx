@@ -183,15 +183,15 @@ function NewConceptExerciseIssue({
             Last updated at: {issue.updatedAt}
           </small>
         </p>
-        <a
-          href={issue.url}
-          className="card-link btn btn-sm btn-outline-primary mr-2"
-        >
-          Go to issue
-        </a>
         <PageLink to={`/${trackId}/new-exercise`} state={state}>
           Create exercise
         </PageLink>
+        <a
+          href={issue.url}
+          className="card-link btn btn-sm btn-outline-primary ml-2"
+        >
+          Go to issue
+        </a>
       </div>
     </div>
   )
