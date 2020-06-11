@@ -48,27 +48,22 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
 
-  console.log(props.location)
+  const prepopulate = props.location.state
 
-  const conceptsParam = props.location.state.concepts
-  const prerequisitesParam = props.location.state.prerequisites
-  const outOfScopeParam = props.location.state.outOfScope
-  const learningObjectivesParam = props.location.state.learningObjectives
-
-  if (conceptsParam) {
-    setConcepts(conceptsParam)
+  if (prepopulate.concepts) {
+    setConcepts(prepopulate.concepts)
   }
 
-  if (prerequisitesParam) {
-    setPrerequisites(prerequisitesParam)
+  if (prepopulate.prerequisites) {
+    setPrerequisites(prepopulate.prerequisites)
   }
 
-  if (outOfScopeParam) {
-    setOutOfScope(outOfScopeParam)
+  if (prepopulate.outOfScope) {
+    setOutOfScope(prepopulate.outOfScope)
   }
 
-  if (learningObjectivesParam) {
-    setLearningObjectives(learningObjectivesParam)
+  if (prepopulate.learningObjectives) {
+    setLearningObjectives(prepopulate.learningObjectives)
   }
 
   const clearData = () => {
