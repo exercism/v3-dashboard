@@ -1,5 +1,3 @@
-declare module 'marked'
-
 type TrackIdentifier =
   | 'bash'
   | 'c'

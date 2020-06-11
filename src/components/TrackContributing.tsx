@@ -1,6 +1,4 @@
-/// <reference path="../declarations.d.ts" />
-
-import marked from 'marked'
+import { Parser, Node } from 'commonmark'
 import React, { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -73,7 +71,7 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
 }
 
 interface NewConceptExerciseConceptsProps {
-  concepts: string | undefined
+  concepts: Node[]
 }
 
 function NewConceptExerciseConcepts({
@@ -81,21 +79,18 @@ function NewConceptExerciseConcepts({
 }: NewConceptExerciseConceptsProps): JSX.Element {
   return (
     <dl className="card-text row">
-      {concepts
-        ?.split('\n')
-        .filter((concept) => concept)
-        .map((concept) => (
-          <Fragment key={concept}>
-            <dt className="col-sm-3">
-              <code>
-                {concept.slice(2, concept.indexOf(':')).replace(/`/g, '')}
-              </code>
-            </dt>
-            <dd className="col-sm-9">
-              {concept.slice(concept.indexOf(':') + 1)}
-            </dd>
-          </Fragment>
-        ))}
+      {concepts.map((concept, i) => (
+        <Fragment key={`concept-${i}`}>
+          <dt className="col-sm-3">
+            {renderNode(concept.firstChild?.firstChild)}
+          </dt>
+          <dd className="col-sm-9">
+            {renderNode(concept.firstChild?.firstChild?.next, (value) =>
+              value.replace(/^:\s*/, '')
+            )}
+          </dd>
+        </Fragment>
+      ))}
     </dl>
   )
 }
@@ -105,82 +100,97 @@ interface NewConceptExerciseToImplementProps {
   trackId: TrackIdentifier
 }
 
+interface NewConceptExerciseIssueData {
+  outOfScope: Node[] | undefined
+  prerequisites: Node[] | undefined
+  concepts: Node[] | undefined
+  learningObjectives: Node[] | undefined
+}
+
+function parseIssueData(markdown: string): NewConceptExerciseIssueData {
+  const listSections = parseListSections(markdown)
+
+  return {
+    outOfScope: listSections['Out of scope'],
+    prerequisites: listSections['Prerequisites'] || listSections['Prequisites'],
+    concepts: listSections['Concepts'],
+    learningObjectives: listSections['Learning objectives'],
+  }
+}
+
+function parseListSections(markdown: string): { [heading: string]: Node[] } {
+  const parser = new Parser()
+  const parsed = parser.parse(markdown)
+
+  let node = parsed.firstChild
+  let currentSection: string | undefined
+
+  const sections: { [key: string]: Node[] } = {}
+
+  while (node?.next) {
+    if (node.type === 'heading' && node.firstChild?.literal) {
+      currentSection = node.firstChild.literal
+      sections[currentSection] = []
+    } else if (node.type === 'list' && currentSection) {
+      let child = node.firstChild
+
+      while (child) {
+        if (child.type === 'item') {
+          sections[currentSection].push(child)
+        }
+
+        child = child.next
+      }
+    }
+
+    node = node.next
+  }
+
+  return sections
+}
+
+function renderNode(
+  node: Node | null | undefined,
+  map?: (value: string) => string
+): JSX.Element {
+  if (!node?.literal) {
+    return <></>
+  }
+
+  const text = map ? map(node.literal) : node.literal
+  return node.type === 'code' ? <code>{text}</code> : <span>{text}</span>
+}
+
 function NewConceptExerciseToImplement({
   issue,
   trackId,
 }: NewConceptExerciseToImplementProps): JSX.Element {
-  const tokens = marked.lexer(issue.body)
+  const issueData = parseIssueData(issue.body)
+  const lines = issue.body.split('\n')
 
-  let learningObjectives: string | undefined = undefined
-  let outOfScope: string | undefined = undefined
-  let concepts: string | undefined = undefined
-  let prerequisites: string | undefined = undefined
-
-  for (let i = 0; i < tokens.length - 1; i++) {
-    const token = tokens[i]
-
-    if (
-      token.type === 'heading' &&
-      [
-        'Learning objectives',
-        'Out of scope',
-        'Concepts',
-        'Prerequisites',
-        'Prequisites',
-      ].includes(token.text)
-    ) {
-      let nextToken: any | undefined = undefined
-
-      for (let j = i + 1; j < tokens.length; j++) {
-        if (tokens[j].type === 'heading') {
-          nextToken = undefined
-          break
-        }
-
-        if (tokens[j].type === 'list') {
-          nextToken = tokens[j]
-          break
-        }
-      }
-
-      if (nextToken === undefined) {
-        continue
-      }
-
-      switch (token.text) {
-        case 'Learning objectives': {
-          learningObjectives = nextToken.raw
-          break
-        }
-        case 'Out of scope': {
-          outOfScope = nextToken.raw
-          break
-        }
-        case 'Concepts': {
-          concepts = nextToken.raw
-          break
-        }
-        case 'Prerequisites':
-        case 'Prequisites': {
-          prerequisites = nextToken.raw
-          break
-        }
-      }
+  const nodesToMarkdown = (node: Node[]): string => {
+    if (node.length == 0) {
+      return ''
     }
+
+    const startLine = node[0].sourcepos[0][0]
+    const endLine = node[node.length - 1].sourcepos[1][0]
+
+    return lines.slice(startLine, endLine).join('\n')
   }
 
   const locationState: TrackNewExerciseLocationState = {
-    learningObjectives,
-    outOfScope,
-    concepts,
-    prerequisites,
+    learningObjectives: nodesToMarkdown(issueData.learningObjectives || []),
+    outOfScope: nodesToMarkdown(issueData.outOfScope || []),
+    concepts: nodesToMarkdown(issueData.concepts || []),
+    prerequisites: nodesToMarkdown(issueData.prerequisites || []),
   }
 
   return (
     <div className="card mb-2">
       <div className="card-body">
         <h5 className="card-title">{issue.title}</h5>
-        <NewConceptExerciseConcepts concepts={concepts} />
+        <NewConceptExerciseConcepts concepts={issueData.concepts || []} />
         <p className="card-text">
           <small className="text-muted">
             Last updated at: {issue.updatedAt}
