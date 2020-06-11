@@ -9,12 +9,10 @@ type FetchAction<T> =
 type FetchState<T> = { result: T | undefined; loading: boolean }
 
 function readCache<T>(key: string): T | undefined {
-  console.log('using readCache ' + key)
   return CACHE[key]
 }
 
 function writeCache<T>(key: string, value: T): void {
-  console.log('using writeCache ' + key)
   CACHE[key] = value
 }
 
@@ -40,72 +38,6 @@ function fetchReducer<T>(
 }
 
 // TODO: take rate limiting into account
-
-export function useGithubApi<T, U = T>({
-  repository,
-  path,
-  params,
-  mapper,
-}: {
-  repository: string
-  path: string
-  params?: string | undefined
-  mapper?: (from: T) => U
-}): {
-  url: string
-  rawUrl: string
-  done: boolean
-  result: U | undefined
-} {
-  const key = `${repository}/${path}?${params}`
-  const [state, dispatch] = useReducer(fetchReducer, {
-    ...initialState<T>(),
-    result: readCache(key),
-  })
-
-  const url = `https://github.com/exercism/${repository}/${path}?${params}`
-  const rawUrl = `https://api.github.com/repos/exercism/${repository}/${path}?${params}`
-
-  useEffect(() => {
-    if (state.result !== undefined) {
-      return
-    }
-
-    console.log('not reading from cache')
-
-    let active = true
-
-    fetch(rawUrl, { method: 'GET' })
-      .then((result) =>
-        Promise.resolve(result.ok).then((ok) => ok && result.json())
-      )
-      .then((json) => {
-        if (active) {
-          const typedResult = json as T
-          const mappedResult = mapper ? mapper(typedResult) : typedResult
-
-          writeCache<T | U>(key, mappedResult)
-          dispatch({ type: 'result', result: mappedResult, key })
-        }
-      })
-      .catch(() => {
-        if (active) {
-          dispatch({ type: 'error' })
-        }
-      })
-
-    return (): void => {
-      active = false
-    }
-  }, [key, rawUrl, state, mapper])
-
-  return {
-    url,
-    rawUrl,
-    done: !state.loading,
-    result: state.result as U | undefined, // TODO: don't use cast
-  }
-}
 
 export function useGithubApiMatches<T>({
   repository,
@@ -136,7 +68,6 @@ export function useGithubApiMatches<T>({
     if (state.result !== undefined) {
       return
     }
-    console.log('not reading from cache')
 
     let active = true
 
