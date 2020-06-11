@@ -1,11 +1,12 @@
 import { Parser, Node } from 'commonmark'
-import React, { Fragment } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 
 import {
-  useNewConceptExerciseIssues,
-  NewConceptExerciseIssue,
-} from '../hooks/useNewConceptExerciseIssues'
+  useCreationConceptExerciseIssues,
+  ConceptExerciseIssue,
+  useImproveConceptExerciseIssues,
+} from '../hooks/useConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
 import { PageLink } from './PageLink'
@@ -44,7 +45,12 @@ interface ContentProps {
 }
 
 function Content({ trackId, config }: ContentProps): JSX.Element {
-  const asyncNewConceptExerciseIssues = useNewConceptExerciseIssues(trackId)
+  const asyncNewConceptExerciseIssues = useCreationConceptExerciseIssues(
+    trackId
+  )
+  const asyncImproveConceptExerciseIssues = useImproveConceptExerciseIssues(
+    trackId
+  )
 
   return (
     <>
@@ -54,143 +60,124 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
         contribute to {config?.language}
       </p>
       <h3>Exercises that need implementing</h3>
-      <p>The following exercise are all open to be worked on</p>
+
       {asyncNewConceptExerciseIssues.done ? (
-        asyncNewConceptExerciseIssues.result?.map((issue) => (
-          <NewConceptExerciseToImplement
-            key={issue.number}
-            issue={issue}
-            trackId={trackId}
-          />
-        ))
+        <>
+          <p>The following exercise are all open to be worked on</p>
+          {asyncNewConceptExerciseIssues.result?.map((issue) => (
+            <NewConceptExerciseIssue
+              key={issue.number}
+              issue={issue}
+              trackId={trackId}
+            />
+          ))}
+        </>
       ) : (
-        <p>TODO: loading indicator</p>
+        <LoadingIndicator>
+          Loading new concept exercise issues...
+        </LoadingIndicator>
+      )}
+      <h3>Exercises that need improving</h3>
+      {asyncImproveConceptExerciseIssues.done ? (
+        <>
+          <p>The following exercise are all open to be improved</p>
+          {asyncImproveConceptExerciseIssues.result?.map((issue) => (
+            <ImproveConceptExerciseIssue
+              key={issue.number}
+              issue={issue}
+              trackId={trackId}
+            />
+          ))}
+        </>
+      ) : (
+        <LoadingIndicator>
+          Loading improve concept exercise issues...
+        </LoadingIndicator>
       )}
     </>
   )
 }
 
-interface NewConceptExerciseConceptsProps {
-  concepts: Node[]
-}
-
-function NewConceptExerciseConcepts({
-  concepts,
-}: NewConceptExerciseConceptsProps): JSX.Element {
-  return (
-    <dl className="card-text row">
-      {concepts.map((concept, i) => (
-        <Fragment key={`concept-${i}`}>
-          <dt className="col-sm-3">
-            {renderNode(concept.firstChild?.firstChild)}
-          </dt>
-          <dd className="col-sm-9">
-            {renderNode(concept.firstChild?.firstChild?.next, (value) =>
-              value.replace(/^:\s*/, '')
-            )}
-          </dd>
-        </Fragment>
-      ))}
-    </dl>
-  )
-}
-
 interface NewConceptExerciseToImplementProps {
-  issue: NewConceptExerciseIssue
+  issue: ConceptExerciseIssue
   trackId: TrackIdentifier
 }
 
-interface NewConceptExerciseIssueData {
-  outOfScope: Node[] | undefined
-  prerequisites: Node[] | undefined
-  concepts: Node[] | undefined
-  learningObjectives: Node[] | undefined
+interface NewConceptExerciseIssueSection {
+  heading: string
+  markdown: string | undefined
+  node: Node | undefined
 }
 
-function parseIssueData(markdown: string): NewConceptExerciseIssueData {
-  const listSections = parseListSections(markdown)
+interface NewConceptExerciseIssueSections {
+  outOfScope: NewConceptExerciseIssueSection | undefined
+  prerequisites: NewConceptExerciseIssueSection | undefined
+  concepts: NewConceptExerciseIssueSection | undefined
+  learningObjectives: NewConceptExerciseIssueSection | undefined
+}
+
+function parseIssueSections(markdown: string): NewConceptExerciseIssueSections {
+  const sections = parseListSections(markdown)
 
   return {
-    outOfScope: listSections['Out of scope'],
-    prerequisites: listSections['Prerequisites'] || listSections['Prequisites'],
-    concepts: listSections['Concepts'],
-    learningObjectives: listSections['Learning objectives'],
+    outOfScope: sections['Out of scope'],
+    prerequisites: sections['Prerequisites'] || sections['Prequisites'],
+    concepts: sections['Concepts'],
+    learningObjectives: sections['Learning objectives'],
   }
 }
 
-function parseListSections(markdown: string): { [heading: string]: Node[] } {
+function parseListSections(
+  markdown: string
+): { [heading: string]: NewConceptExerciseIssueSection } {
   const parser = new Parser()
   const parsed = parser.parse(markdown)
+  const lines = markdown.split('\n')
+
+  const headingsWithList: {
+    [heading: string]: NewConceptExerciseIssueSection
+  } = {}
 
   let node = parsed.firstChild
-  let currentSection: string | undefined
-
-  const sections: { [key: string]: Node[] } = {}
+  let currentHeading: string | undefined
 
   while (node?.next) {
     if (node.type === 'heading' && node.firstChild?.literal) {
-      currentSection = node.firstChild.literal
-      sections[currentSection] = []
-    } else if (node.type === 'list' && currentSection) {
-      let child = node.firstChild
-
-      while (child) {
-        if (child.type === 'item') {
-          sections[currentSection].push(child)
-        }
-
-        child = child.next
+      currentHeading = node.firstChild.literal
+    } else if (node.type === 'list' && currentHeading) {
+      headingsWithList[currentHeading] = {
+        node: node,
+        heading: currentHeading,
+        markdown: lines
+          .slice(node.sourcepos[0][0] - 1, node.sourcepos[1][0] - 1)
+          .join('\n'),
       }
     }
 
     node = node.next
   }
 
-  return sections
+  return headingsWithList
 }
 
-function renderNode(
-  node: Node | null | undefined,
-  map?: (value: string) => string
-): JSX.Element {
-  if (!node?.literal) {
-    return <></>
-  }
-
-  const text = map ? map(node.literal) : node.literal
-  return node.type === 'code' ? <code>{text}</code> : <span>{text}</span>
-}
-
-function NewConceptExerciseToImplement({
+function NewConceptExerciseIssue({
   issue,
   trackId,
 }: NewConceptExerciseToImplementProps): JSX.Element {
-  const issueData = parseIssueData(issue.body)
-  const lines = issue.body.split('\n')
-
-  const nodesToMarkdown = (node: Node[]): string => {
-    if (node.length == 0) {
-      return ''
-    }
-
-    const startLine = node[0].sourcepos[0][0]
-    const endLine = node[node.length - 1].sourcepos[1][0]
-
-    return lines.slice(startLine, endLine).join('\n')
-  }
-
-  const locationState: TrackNewExerciseLocationState = {
-    learningObjectives: nodesToMarkdown(issueData.learningObjectives || []),
-    outOfScope: nodesToMarkdown(issueData.outOfScope || []),
-    concepts: nodesToMarkdown(issueData.concepts || []),
-    prerequisites: nodesToMarkdown(issueData.prerequisites || []),
+  const sections = parseIssueSections(issue.body)
+  const state: TrackNewExerciseLocationState = {
+    concepts: sections.concepts?.markdown,
+    outOfScope: sections.outOfScope?.markdown,
+    prerequisites: sections.prerequisites?.markdown,
+    learningObjectives: sections.learningObjectives?.markdown,
   }
 
   return (
     <div className="card mb-2">
       <div className="card-body">
-        <h5 className="card-title">{issue.title}</h5>
-        <NewConceptExerciseConcepts concepts={issueData.concepts || []} />
+        <h5 className="card-title">
+          {issue.title.slice(issue.title.indexOf(':') + 1)}
+        </h5>
         <p className="card-text">
           <small className="text-muted">
             Last updated at: {issue.updatedAt}
@@ -202,15 +189,34 @@ function NewConceptExerciseToImplement({
         >
           Go to issue
         </a>
-        <PageLink to={`/${trackId}/new-exercise`} state={locationState}>
+        <PageLink to={`/${trackId}/new-exercise`} state={state}>
           Create exercise
         </PageLink>
       </div>
     </div>
+  )
+}
 
-    /* So intro about the exercise taken from the issue or autogenerated. - Link
-      to issue - List of links to exercises on other tracks that have implement
-      the exercise
-      <a href="Link to Form">Use this form</a> */
+function ImproveConceptExerciseIssue({
+  issue,
+  trackId,
+}: NewConceptExerciseToImplementProps): JSX.Element {
+  return (
+    <div className="card mb-2">
+      <div className="card-body">
+        <h5 className="card-title">{issue.title.replace(/^\[.+?\]\s*/, '')}</h5>
+        <p className="card-text">
+          <small className="text-muted">
+            Last updated at: {issue.updatedAt}
+          </small>
+        </p>
+        <a
+          href={issue.url}
+          className="card-link btn btn-sm btn-outline-primary mr-2"
+        >
+          Go to issue
+        </a>
+      </div>
+    </div>
   )
 }
