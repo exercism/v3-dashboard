@@ -146,6 +146,11 @@ function NewConceptExerciseToImplement({
       <div className="card-body">
         <h5 className="card-title">{issue.title}</h5>
         <p className="card-text">
+          {concepts?.split('\n').map((concept) => (
+            <div>{concept}</div>
+          ))}
+        </p>
+        <p className="card-text">
           <small className="text-muted">
             Last updated at: {issue.updatedAt}
           </small>
