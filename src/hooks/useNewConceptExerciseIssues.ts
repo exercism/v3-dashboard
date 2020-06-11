@@ -51,7 +51,7 @@ export function useNewConceptExerciseIssues(
     return () => {
       isMounted = false
     }
-  }, [state])
+  }, [trackId, state])
 
   return state
 }

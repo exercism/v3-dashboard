@@ -1,7 +1,7 @@
 /// <reference path="../declarations.d.ts" />
 
 import marked from 'marked'
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -68,6 +68,34 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
         <p>TODO: loading indicator</p>
       )}
     </>
+  )
+}
+
+interface NewConceptExerciseConceptsProps {
+  concepts: string | undefined
+}
+
+function NewConceptExerciseConcepts({
+  concepts,
+}: NewConceptExerciseConceptsProps): JSX.Element {
+  return (
+    <dl className="card-text row">
+      {concepts
+        ?.split('\n')
+        .filter((concept) => concept)
+        .map((concept) => (
+          <Fragment key={concept}>
+            <dt className="col-sm-3">
+              <code>
+                {concept.slice(2, concept.indexOf(':')).replace(/`/g, '')}
+              </code>
+            </dt>
+            <dd className="col-sm-9">
+              {concept.slice(concept.indexOf(':') + 1)}
+            </dd>
+          </Fragment>
+        ))}
+    </dl>
   )
 }
 
@@ -145,11 +173,7 @@ function NewConceptExerciseToImplement({
     <div className="card mb-2">
       <div className="card-body">
         <h5 className="card-title">{issue.title}</h5>
-        <p className="card-text">
-          {concepts?.split('\n').map((concept) => (
-            <div>{concept}</div>
-          ))}
-        </p>
+        <NewConceptExerciseConcepts concepts={concepts} />
         <p className="card-text">
           <small className="text-muted">
             Last updated at: {issue.updatedAt}
@@ -161,23 +185,7 @@ function NewConceptExerciseToImplement({
         >
           Go to issue
         </a>
-        {issue.number === 1176 ? (
-          <PageLink
-            to={`/${trackId}/new-exercise?concepts=${encodeURIComponent(
-              concepts || ''
-            )}&prerequisites=${encodeURIComponent(
-              prerequisites || ''
-            )}&outOfScope=${encodeURIComponent(
-              outOfScope || ''
-            )}&learningObjectives=${encodeURIComponent(
-              learningObjectives || ''
-            )}`}
-          >
-            Create exercise
-          </PageLink>
-        ) : (
-          <></>
-        )}
+        <PageLink to={`/${trackId}/new-exercise`}>Create exercise</PageLink>
       </div>
     </div>
 

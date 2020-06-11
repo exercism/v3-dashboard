@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useRouteMatch, generatePath } from 'react-router-dom'
 
-interface PageLinkProps {
+interface PageLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   to: string
   children: React.ReactNode
 }
