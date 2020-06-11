@@ -11,6 +11,7 @@ import {
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
 import { PageLink } from './PageLink'
+import { TrackNewExerciseLocationState } from './TrackNewExercise'
 
 export interface TrackContributingParams {
   trackId: TrackIdentifier
@@ -161,12 +162,18 @@ function NewConceptExerciseToImplement({
         }
         case 'Prerequisites':
         case 'Prequisites': {
-          console.log('prereqs')
           prerequisites = nextToken.raw
           break
         }
       }
     }
+  }
+
+  const locationState: TrackNewExerciseLocationState = {
+    learningObjectives,
+    outOfScope,
+    concepts,
+    prerequisites,
   }
 
   return (
@@ -185,7 +192,9 @@ function NewConceptExerciseToImplement({
         >
           Go to issue
         </a>
-        <PageLink to={`/${trackId}/new-exercise`}>Create exercise</PageLink>
+        <PageLink to={`/${trackId}/new-exercise`} state={locationState}>
+          Create exercise
+        </PageLink>
       </div>
     </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, FormEvent } from 'react'
+import { StaticContext } from 'react-router'
 import { useParams, RouteComponentProps } from 'react-router-dom'
 
 import { useTrackData } from '../hooks/useTrackData'
@@ -18,7 +19,19 @@ export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
 }
 
-interface TrackNewExerciseProps extends RouteComponentProps {}
+export interface TrackNewExerciseLocationState {
+  learningObjectives: string | undefined
+  outOfScope: string | undefined
+  concepts: string | undefined
+  prerequisites: string | undefined
+}
+
+interface TrackNewExerciseProps
+  extends RouteComponentProps<
+    {},
+    StaticContext,
+    TrackNewExerciseLocationState
+  > {}
 
 export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const { trackId } = useParams<TrackNewExerciseParams>()
@@ -37,14 +50,12 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
 
   console.log(props.location)
 
-  const params = new URLSearchParams(props.location.search)
-  const conceptsParam = params.get('concepts')
-  const prerequisitesParam = params.get('prerequisites')
-  const outOfScopeParam = params.get('outOfScope')
-  const learningObjectivesParam = params.get('learningObjectives')
+  const conceptsParam = props.location.state.concepts
+  const prerequisitesParam = props.location.state.prerequisites
+  const outOfScopeParam = props.location.state.outOfScope
+  const learningObjectivesParam = props.location.state.learningObjectives
 
   if (conceptsParam) {
-    console.log('set concepts to ' + conceptsParam)
     setConcepts(conceptsParam)
   }
 
