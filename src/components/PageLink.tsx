@@ -1,22 +1,25 @@
 import React from 'react'
-import { Link, useRouteMatch, generatePath } from 'react-router-dom'
+import { useRouteMatch, generatePath, NavLink } from 'react-router-dom'
 
-interface PageLinkProps {
+interface PageLinkProps<T = {}>
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   to: string
   children: React.ReactNode
+  state?: T
 }
 
-export function PageLink({ to, children }: PageLinkProps): JSX.Element {
+export function PageLink({ to, children, state }: PageLinkProps): JSX.Element {
   const { params } = useRouteMatch()
   const path = generatePath(to, params)
-  const active = useRouteMatch(to)
+  const pathWithState = { pathname: path, state: state }
 
   return (
-    <Link
-      to={path}
-      className={`btn btn-sm btn-outline-primary ${active ? 'active' : ''}`}
+    <NavLink
+      to={pathWithState}
+      activeClassName="active"
+      className={`btn btn-sm btn-outline-primary`}
     >
       {children}
-    </Link>
+    </NavLink>
   )
 }

@@ -1,5 +1,6 @@
 import React, { useState, FormEvent } from 'react'
-import { useParams } from 'react-router-dom'
+import { StaticContext } from 'react-router'
+import { useParams, RouteComponentProps } from 'react-router-dom'
 
 import { useTrackData } from '../hooks/useTrackData'
 import { useCliToken } from '../hooks/useUserData'
@@ -18,9 +19,23 @@ export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
 }
 
-export function TrackNewExercise(): JSX.Element {
-  const params = useParams<TrackNewExerciseParams>()
-  const trackData = useTrackData(params.trackId)
+export interface TrackNewExerciseLocationState {
+  learningObjectives: string | undefined
+  outOfScope: string | undefined
+  concepts: string | undefined
+  prerequisites: string | undefined
+}
+
+interface TrackNewExerciseProps
+  extends RouteComponentProps<
+    {},
+    StaticContext,
+    TrackNewExerciseLocationState
+  > {}
+
+export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
+  const { trackId } = useParams<TrackNewExerciseParams>()
+  const trackData = useTrackData(trackId)
   const [exerciseName, setExerciseName] = useExerciseName()
   const [learningObjectives, setLearningObjectives] = useLearningObjectives()
   const [outOfScope, setOutOfScope] = useOutOfScope()
@@ -32,6 +47,15 @@ export function TrackNewExercise(): JSX.Element {
   const [cliToken, setCliToken] = useCliToken()
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
+
+  const prepopulate = props.location.state
+
+  if (prepopulate) {
+    setConcepts(prepopulate.concepts || '')
+    setPrerequisites(prepopulate.prerequisites || '')
+    setOutOfScope(prepopulate.outOfScope || '')
+    setLearningObjectives(prepopulate.learningObjectives || '')
+  }
 
   const clearData = () => {
     setExerciseName('')
@@ -67,7 +91,7 @@ export function TrackNewExercise(): JSX.Element {
         Authorization: `Token token=${cliToken}`,
       },
       body: JSON.stringify({
-        track_slug: params.trackId,
+        track_slug: trackId,
         exercise_slug: exerciseName,
         example_filename: trackData.example_filename,
         example_code: example,

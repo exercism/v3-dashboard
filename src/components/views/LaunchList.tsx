@@ -8,8 +8,8 @@ import {
   useRawGithubFileDoesNotContain,
   useRawGithubFileMatches,
 } from '../../hooks/useRawGithubFile'
-import { useGithubApi } from '../../hooks/useGithubApi'
 import { useParams } from 'react-router-dom'
+import { useCreationConceptExerciseIssuesCount } from '../../hooks/useConceptExerciseIssues'
 
 export interface LaunchListParams {
   trackId: TrackIdentifier
@@ -305,10 +305,6 @@ function ReadyForLaunch({
   )
 }
 
-function matchIfTwentyOrMoreIssues(issues: unknown[]) {
-  return issues.length >= 20
-}
-
 function PreparationList({
   trackId,
   activeDetailsKey,
@@ -371,12 +367,9 @@ function PreparationList({
     refute: 'TODO',
   })
 
-  const asyncConceptExerciseIssues = useGithubApi<object[]>({
-    repository: 'v3',
-    path: `issues`,
-    params: `labels=track/${trackId},type/new-exercise&state=all`,
-    matcher: matchIfTwentyOrMoreIssues,
-  })
+  const asyncConceptExerciseIssuesCount = useCreationConceptExerciseIssuesCount(
+    trackId
+  )
 
   return (
     <section>
@@ -664,10 +657,10 @@ function PreparationList({
           </span>
 
           <span style={{ whiteSpace: 'nowrap' }}>
-            {asyncConceptExerciseIssues.done && (
+            {asyncConceptExerciseIssuesCount.done && (
               <a
                 style={{ textDecoration: 'none' }}
-                href={asyncConceptExerciseIssues.url}
+                href={`https://github.com/exercism/v3/issues?q=is%3Aissue+label%3Atrack%2F${trackId}+label%3Atype%2Fnew-exercise+`}
               >
                 <span role="img" aria-label="Issues url">
                   🔗
@@ -676,8 +669,8 @@ function PreparationList({
             )}
             <LoadingIconWithPopover
               active={activeDetailsKey === 'concept-exercise-issues'}
-              loading={!asyncConceptExerciseIssues.done}
-              valid={!!asyncConceptExerciseIssues.result}
+              loading={!asyncConceptExerciseIssuesCount.done}
+              valid={(asyncConceptExerciseIssuesCount?.result || 0) >= 20}
               onToggle={(): void => {
                 setActiveDetailsKey('concept-exercise-issues')
               }}
