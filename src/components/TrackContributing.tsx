@@ -187,7 +187,7 @@ function NewConceptExerciseIssue({
           href={issue.url}
           className="card-link btn btn-sm btn-outline-primary ml-2"
         >
-          Go to issue
+          View issue
         </a>
       </div>
     </div>
@@ -218,7 +218,7 @@ function ImproveConceptExerciseIssue({
           href={issue.url}
           className="card-link btn btn-sm btn-outline-primary mr-2"
         >
-          Go to issue
+          View issue
         </a>
       </div>
     </div>
