@@ -59,7 +59,7 @@ export function useCreationConceptExerciseIssues(
   trackId: TrackIdentifier
 ): ConceptExerciseIssueResult<ConceptExerciseIssue[]> {
   return useConceptExerciseIssuesApi(
-    `http://lvh.me:3000/git_api/tracks/${trackId}/creation_issues`
+    `http://lvh.me:3000/git_api/tracks/${trackId}/open_creation_issues`
   )
 }
 
@@ -67,7 +67,7 @@ export function useCreationConceptExerciseIssuesCount(
   trackId: TrackIdentifier
 ): ConceptExerciseIssueResult<number> {
   return useConceptExerciseIssuesApi(
-    `http://lvh.me:3000/git_api/tracks/${trackId}/creation_issues_count`
+    `http://lvh.me:3000/git_api/tracks/${trackId}/num_creation_issues`
   )
 }
 
@@ -75,6 +75,6 @@ export function useImproveConceptExerciseIssues(
   trackId: TrackIdentifier
 ): ConceptExerciseIssueResult<ConceptExerciseIssue[]> {
   return useConceptExerciseIssuesApi(
-    `http://lvh.me:3000/git_api/tracks/${trackId}/improve_issues`
+    `http://lvh.me:3000/git_api/tracks/${trackId}/open_improve_issues`
   )
 }
