@@ -3,8 +3,8 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 
 import {
-  useCreationConceptExerciseIssues,
   ConceptExerciseIssue,
+  useCreationConceptExerciseIssues,
   useImproveConceptExerciseIssues,
 } from '../hooks/useConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'

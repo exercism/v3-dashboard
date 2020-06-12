@@ -6,20 +6,18 @@ export interface ConceptExerciseIssue {
   body: string
   url: string
   updatedAt: string
-  labels: string[]
 }
 
-export type ConceptExerciseIssueResult = {
-  result: ConceptExerciseIssue[] | undefined
+export type ConceptExerciseIssueResult<T> = {
+  result: T | undefined
   error: boolean
   done: boolean
 }
 
-function useConceptExerciseIssues(
-  trackId: TrackIdentifier,
+function useConceptExerciseIssuesApi<T>(
   url: string
-): ConceptExerciseIssueResult {
-  const [state, setState] = useState<ConceptExerciseIssueResult>({
+): ConceptExerciseIssueResult<T> {
+  const [state, setState] = useState<ConceptExerciseIssueResult<T>>({
     result: undefined,
     error: false,
     done: false,
@@ -37,7 +35,7 @@ function useConceptExerciseIssues(
       .then((json) => {
         if (isMounted) {
           setState({
-            result: json as ConceptExerciseIssue[],
+            result: json as T,
             done: true,
             error: false,
           })
@@ -52,25 +50,31 @@ function useConceptExerciseIssues(
     return () => {
       isMounted = false
     }
-  }, [url, trackId, state])
+  }, [url, state])
 
   return state
 }
 
 export function useCreationConceptExerciseIssues(
   trackId: TrackIdentifier
-): ConceptExerciseIssueResult {
-  return useConceptExerciseIssues(
-    trackId,
+): ConceptExerciseIssueResult<ConceptExerciseIssue[]> {
+  return useConceptExerciseIssuesApi(
     `http://lvh.me:3000/git_api/tracks/${trackId}/creation_issues`
+  )
+}
+
+export function useCreationConceptExerciseIssuesCount(
+  trackId: TrackIdentifier
+): ConceptExerciseIssueResult<number> {
+  return useConceptExerciseIssuesApi(
+    `http://lvh.me:3000/git_api/tracks/${trackId}/creation_issues_count`
   )
 }
 
 export function useImproveConceptExerciseIssues(
   trackId: TrackIdentifier
-): ConceptExerciseIssueResult {
-  return useConceptExerciseIssues(
-    trackId,
+): ConceptExerciseIssueResult<ConceptExerciseIssue[]> {
+  return useConceptExerciseIssuesApi(
     `http://lvh.me:3000/git_api/tracks/${trackId}/improve_issues`
   )
 }
