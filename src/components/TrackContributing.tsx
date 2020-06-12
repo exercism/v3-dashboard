@@ -45,7 +45,7 @@ interface ContentProps {
 }
 
 function Content({ trackId, config }: ContentProps): JSX.Element {
-  const asyncNewConceptExerciseIssues = useCreationConceptExerciseIssues(
+  const asyncOpenConceptExerciseIssues = useCreationConceptExerciseIssues(
     trackId
   )
   const asyncImproveConceptExerciseIssues = useImproveConceptExerciseIssues(
@@ -61,10 +61,10 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
       </p>
       <h3>Exercises that need implementing</h3>
 
-      {asyncNewConceptExerciseIssues.done ? (
+      {asyncOpenConceptExerciseIssues.done ? (
         <>
           <p>The following exercise are all open to be worked on</p>
-          {asyncNewConceptExerciseIssues.result?.map((issue) => (
+          {asyncOpenConceptExerciseIssues.result?.map((issue) => (
             <NewConceptExerciseIssue
               key={issue.number}
               issue={issue}
