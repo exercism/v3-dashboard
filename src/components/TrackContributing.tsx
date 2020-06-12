@@ -82,11 +82,7 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
         <>
           <p>The following exercise are all open to be improved</p>
           {asyncImproveConceptExerciseIssues.result?.map((issue) => (
-            <ImproveConceptExerciseIssue
-              key={issue.number}
-              issue={issue}
-              trackId={trackId}
-            />
+            <ImproveConceptExerciseIssue key={issue.number} issue={issue} />
           ))}
         </>
       ) : (
@@ -96,11 +92,6 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
       )}
     </>
   )
-}
-
-interface NewConceptExerciseToImplementProps {
-  issue: ConceptExerciseIssue
-  trackId: TrackIdentifier
 }
 
 interface NewConceptExerciseIssueSection {
@@ -160,10 +151,15 @@ function parseListSections(
   return headingsWithList
 }
 
+interface NewConceptExerciseIssueProps {
+  issue: ConceptExerciseIssue
+  trackId: TrackIdentifier
+}
+
 function NewConceptExerciseIssue({
   issue,
   trackId,
-}: NewConceptExerciseToImplementProps): JSX.Element {
+}: NewConceptExerciseIssueProps): JSX.Element {
   const sections = parseIssueSections(issue.body)
   const state: TrackNewExerciseLocationState = {
     concepts: sections.concepts?.markdown,
@@ -171,13 +167,14 @@ function NewConceptExerciseIssue({
     prerequisites: sections.prerequisites?.markdown,
     learningObjectives: sections.learningObjectives?.markdown,
   }
+  const title = issue.title
+    .slice(issue.title.indexOf(':') + 1)
+    .replace(/`(.+)`/, '$1')
 
   return (
     <div className="card mb-2">
       <div className="card-body">
-        <h5 className="card-title">
-          {issue.title.slice(issue.title.indexOf(':') + 1)}
-        </h5>
+        <h5 className="card-title">{title}</h5>
         <p className="card-text">
           <small className="text-muted">
             Last updated at: {issue.updatedAt}
@@ -197,14 +194,21 @@ function NewConceptExerciseIssue({
   )
 }
 
+interface ImproveConceptExerciseIssueProps {
+  issue: ConceptExerciseIssue
+}
+
 function ImproveConceptExerciseIssue({
   issue,
-  trackId,
-}: NewConceptExerciseToImplementProps): JSX.Element {
+}: ImproveConceptExerciseIssueProps): JSX.Element {
+  const title = issue.title
+    .replace(/^\[.+?\]\s*/, '')
+    .replace(/^Improve exercise:\s*/i, '')
+
   return (
     <div className="card mb-2">
       <div className="card-body">
-        <h5 className="card-title">{issue.title.replace(/^\[.+?\]\s*/, '')}</h5>
+        <h5 className="card-title">{title}</h5>
         <p className="card-text">
           <small className="text-muted">
             Last updated at: {issue.updatedAt}
