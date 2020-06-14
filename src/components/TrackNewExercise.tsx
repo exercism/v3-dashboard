@@ -115,6 +115,10 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   }
 
   if (posting || pullRequestUrl) {
+    if(pullRequestUrl) {
+      window.location.replace(pullRequestUrl)
+    }
+    
     const postDisplay = {
       message: 'Creating new exercise...',
       step: '1',
@@ -130,8 +134,6 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     const displayStep = pullRequestUrl
       ? pullRequestDisplay.step
       : postDisplay.step
-
-    window.location.replace(pullRequestUrl)
 
     return (
       <div className="vh-70 d-flex flex-column justify-content-center align-items-center">
