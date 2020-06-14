@@ -15,6 +15,8 @@ import {
   useTasks,
 } from '../hooks/useNewExerciseData'
 
+import { LoadingIcon } from './LoadingIcon'
+
 export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
 }
@@ -112,24 +114,31 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
       })
   }
 
-  if (pullRequestUrl) {
+  if (posting || pullRequestUrl) {
+    const postDisplay = {
+      message: 'Creating new exercise...',
+      step: '1',
+    }
+    const pullRequestDisplay = {
+      message: 'Redirecting to create pull request...',
+      step: '2',
+    }
+
+    const displayMessage = pullRequestUrl
+      ? pullRequestDisplay.message
+      : postDisplay.message
+    const displayStep = pullRequestUrl
+      ? pullRequestDisplay.step
+      : postDisplay.step
+
     window.location.replace(pullRequestUrl)
 
     return (
-      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
-        <div className="col-12 mb-2">
-          <p>Redirecting to create pull request...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (posting) {
-    return (
-      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
-        <div className="col-12 mb-2">
-          <p>Creating new exercise...</p>
-        </div>
+      <div className="vh-70 d-flex flex-column justify-content-center align-items-center">
+        <LoadingIcon />
+        <p>
+          {displayMessage} ({displayStep}/2)
+        </p>
       </div>
     )
   }
