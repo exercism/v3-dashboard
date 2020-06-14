@@ -56,21 +56,33 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
     <>
       <h2>Contributing to {config?.language} </h2>
       <p>
-        On this page you'll find various ways in which you'll be able to
-        contribute to {config?.language}
+        On this page you&apos;ll find various ways in which you&apos;ll be able
+        to contribute to {config?.language}
       </p>
       <h3>Exercises that need implementing</h3>
 
       {asyncOpenConceptExerciseIssues.done ? (
         <>
-          <p>The following exercise are all open to be worked on</p>
-          {asyncOpenConceptExerciseIssues.result?.map((issue) => (
-            <NewConceptExerciseIssue
-              key={issue.number}
-              issue={issue}
-              trackId={trackId}
-            />
-          ))}
+          {asyncOpenConceptExerciseIssues.result!.length > 0 ? (
+            <>
+              <p>The following exercises are all open to be improved</p>
+              {asyncOpenConceptExerciseIssues.result?.map((issue) => (
+                <NewConceptExerciseIssue
+                  key={issue.number}
+                  issue={issue}
+                  trackId={trackId}
+                />
+              ))}
+            </>
+          ) : (
+            <p>
+              There are no open exercises that need implementing{' '}
+              <span role="img" aria-label="party-popper">
+                🎉
+              </span>
+              !
+            </p>
+          )}
         </>
       ) : (
         <LoadingIndicator>
@@ -80,10 +92,22 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
       <h3>Exercises that need improving</h3>
       {asyncImproveConceptExerciseIssues.done ? (
         <>
-          <p>The following exercise are all open to be improved</p>
-          {asyncImproveConceptExerciseIssues.result?.map((issue) => (
-            <ImproveConceptExerciseIssue key={issue.number} issue={issue} />
-          ))}
+          {asyncImproveConceptExerciseIssues.result!.length > 0 ? (
+            <>
+              <p>The following exercises are all open to be improved</p>
+              {asyncImproveConceptExerciseIssues.result?.map((issue) => (
+                <ImproveConceptExerciseIssue key={issue.number} issue={issue} />
+              ))}
+            </>
+          ) : (
+            <p>
+              There are no open exercises that need improving{' '}
+              <span role="img" aria-label="party-popper">
+                🎉
+              </span>
+              !
+            </p>
+          )}
         </>
       ) : (
         <LoadingIndicator>
