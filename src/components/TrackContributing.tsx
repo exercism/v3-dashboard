@@ -184,21 +184,26 @@ function NewConceptExerciseIssue({
   issue,
   trackId,
 }: NewConceptExerciseIssueProps): JSX.Element {
+  const exerciseName = issue.title
+    .slice(issue.title.indexOf(':') + 1)
+    .replace(/`(.+)`/, '$1')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+
   const sections = parseIssueSections(issue.body)
   const state: TrackNewExerciseLocationState = {
+    exerciseName: exerciseName,
     concepts: sections.concepts?.markdown,
     outOfScope: sections.outOfScope?.markdown,
     prerequisites: sections.prerequisites?.markdown,
     learningObjectives: sections.learningObjectives?.markdown,
   }
-  const title = issue.title
-    .slice(issue.title.indexOf(':') + 1)
-    .replace(/`(.+)`/, '$1')
 
   return (
     <div className="card mb-2">
       <div className="card-body">
-        <h5 className="card-title">{title}</h5>
+        <h5 className="card-title">{exerciseName}</h5>
         <p className="card-text">
           <small className="text-muted">
             Last updated at: {issue.updatedAt}

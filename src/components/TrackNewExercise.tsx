@@ -20,6 +20,7 @@ export interface TrackNewExerciseParams {
 }
 
 export interface TrackNewExerciseLocationState {
+  exerciseName: string | undefined
   learningObjectives: string | undefined
   outOfScope: string | undefined
   concepts: string | undefined
@@ -51,6 +52,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const prepopulate = props.location.state
 
   if (prepopulate) {
+    setExerciseName(prepopulate.exerciseName || '')
     setConcepts(prepopulate.concepts || '')
     setPrerequisites(prepopulate.prerequisites || '')
     setOutOfScope(prepopulate.outOfScope || '')
