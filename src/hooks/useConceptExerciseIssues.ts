@@ -11,7 +11,7 @@ export interface ConceptExerciseIssue {
 export type ConceptExerciseIssueResult<T> = {
   result: T | undefined
   error: boolean
-  done: boolean
+  loading: boolean
 }
 
 function useConceptExerciseIssuesApi<T>(
@@ -20,11 +20,11 @@ function useConceptExerciseIssuesApi<T>(
   const [state, setState] = useState<ConceptExerciseIssueResult<T>>({
     result: undefined,
     error: false,
-    done: false,
+    loading: true,
   })
 
   useEffect(() => {
-    if (state.done === true) {
+    if (!state.loading) {
       return
     }
 
@@ -36,14 +36,14 @@ function useConceptExerciseIssuesApi<T>(
         if (!requestIsStale) {
           setState({
             result: json as T,
-            done: true,
+            loading: false,
             error: false,
           })
         }
       })
       .catch(() => {
         if (!requestIsStale) {
-          setState({ result: undefined, done: true, error: true })
+          setState({ result: undefined, loading: false, error: true })
         }
       })
 

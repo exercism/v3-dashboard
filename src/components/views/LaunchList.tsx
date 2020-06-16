@@ -657,7 +657,7 @@ function PreparationList({
           </span>
 
           <span style={{ whiteSpace: 'nowrap' }}>
-            {asyncConceptExerciseIssuesCount.done && (
+            {asyncConceptExerciseIssuesCount.loading && (
               <a
                 style={{ textDecoration: 'none' }}
                 href={`https://github.com/exercism/v3/issues?q=is%3Aissue+label%3Atrack%2F${trackId}+label%3Atype%2Fnew-exercise+`}
@@ -669,7 +669,7 @@ function PreparationList({
             )}
             <LoadingIconWithPopover
               active={activeDetailsKey === 'concept-exercise-issues'}
-              loading={!asyncConceptExerciseIssuesCount.done}
+              loading={!asyncConceptExerciseIssuesCount.loading}
               valid={(asyncConceptExerciseIssuesCount?.result || 0) >= 20}
               onToggle={(): void => {
                 setActiveDetailsKey('concept-exercise-issues')

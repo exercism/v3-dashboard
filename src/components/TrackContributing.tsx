@@ -122,12 +122,16 @@ interface NewConceptExerciseIssuesProps {
 function NewConceptExerciseIssues({
   trackId,
 }: NewConceptExerciseIssuesProps): JSX.Element {
-  const { done, result } = useCreationConceptExerciseIssues(trackId)
+  const { loading, result } = useCreationConceptExerciseIssues(trackId)
 
   return (
     <>
       <h3>Exercises that need implementing</h3>
-      {done ? (
+      {loading ? (
+        <LoadingIndicator>
+          Loading new concept exercise issues...
+        </LoadingIndicator>
+      ) : (
         <>
           {result!.length > 0 ? (
             <>
@@ -150,10 +154,6 @@ function NewConceptExerciseIssues({
             </p>
           )}
         </>
-      ) : (
-        <LoadingIndicator>
-          Loading new concept exercise issues...
-        </LoadingIndicator>
       )}
     </>
   )
@@ -214,12 +214,16 @@ interface ImproveConceptExerciseIssuesProps {
 function ImproveConceptExerciseIssues({
   trackId,
 }: ImproveConceptExerciseIssuesProps): JSX.Element {
-  const { done, result } = useImproveConceptExerciseIssues(trackId)
+  const { loading, result } = useImproveConceptExerciseIssues(trackId)
 
   return (
     <>
       <h3>Exercises that need improving</h3>
-      {done ? (
+      {loading ? (
+        <LoadingIndicator>
+          Loading improve concept exercise issues...
+        </LoadingIndicator>
+      ) : (
         <>
           {result!.length > 0 ? (
             <>
@@ -238,10 +242,6 @@ function ImproveConceptExerciseIssues({
             </p>
           )}
         </>
-      ) : (
-        <LoadingIndicator>
-          Loading improve concept exercise issues...
-        </LoadingIndicator>
       )}
     </>
   )
