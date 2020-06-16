@@ -115,10 +115,10 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   }
 
   if (posting || pullRequestUrl) {
-    if(pullRequestUrl) {
+    if (pullRequestUrl) {
       window.location.replace(pullRequestUrl)
     }
-    
+
     const postDisplay = {
       message: 'Creating new exercise...',
       step: '1',
