@@ -30,7 +30,7 @@ function useConceptExerciseIssuesApi<T>(
 
     let isMounted = true
 
-    fetch(url)
+    fetch(url, { headers: { accept: 'application/json' } })
       .then((response) => response.json())
       .then((json) => {
         if (isMounted) {
