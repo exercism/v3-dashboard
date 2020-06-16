@@ -133,10 +133,10 @@ function NewConceptExerciseIssues({
         </LoadingIndicator>
       ) : (
         <>
-          {result!.length > 0 ? (
+          {result && result.length > 0 ? (
             <>
               <p>The following exercises are all open to be improved</p>
-              {result!.map((issue) => (
+              {result.map((issue) => (
                 <NewConceptExerciseIssue
                   key={issue.number}
                   issue={issue}
@@ -225,10 +225,10 @@ function ImproveConceptExerciseIssues({
         </LoadingIndicator>
       ) : (
         <>
-          {result!.length > 0 ? (
+          {result && result.length > 0 ? (
             <>
               <p>The following exercises are all open to be improved</p>
-              {result!.map((issue) => (
+              {result.map((issue) => (
                 <ImproveConceptExerciseIssue key={issue.number} issue={issue} />
               ))}
             </>
