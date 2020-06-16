@@ -115,6 +115,10 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   }
 
   if (posting || pullRequestUrl) {
+    if(pullRequestUrl) {
+      window.location.replace(pullRequestUrl)
+    }
+    
     const postDisplay = {
       message: 'Creating new exercise...',
       step: '1',
@@ -125,8 +129,6 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     }
     const { message, step } = pullRequestUrl ? pullRequestDisplay : postDisplay
     const totalSteps = '2'
-
-    window.location.replace(pullRequestUrl)
 
     return (
       <SubmitIndicator message={message} step={step} totalSteps={totalSteps} />
