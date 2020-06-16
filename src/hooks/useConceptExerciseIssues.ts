@@ -28,12 +28,12 @@ function useConceptExerciseIssuesApi<T>(
       return
     }
 
-    let isMounted = true
+    let requestIsStale = false
 
     fetch(url, { headers: { accept: 'application/json' } })
       .then((response) => response.json())
       .then((json) => {
-        if (isMounted) {
+        if (!requestIsStale) {
           setState({
             result: json as T,
             done: true,
@@ -42,13 +42,13 @@ function useConceptExerciseIssuesApi<T>(
         }
       })
       .catch(() => {
-        if (isMounted) {
+        if (!requestIsStale) {
           setState({ result: undefined, done: true, error: true })
         }
       })
 
     return () => {
-      isMounted = false
+      requestIsStale = true
     }
   }, [url, state])
 
