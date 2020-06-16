@@ -135,7 +135,7 @@ function NewConceptExerciseIssues({
         <>
           {result && result.length > 0 ? (
             <>
-              <p>The following exercises are all open to be improved</p>
+              <p>The following exercises are all open to be implemented</p>
               {result.map((issue) => (
                 <NewConceptExerciseIssue
                   key={issue.number}
