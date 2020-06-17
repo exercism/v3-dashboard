@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react'
+import React, { useState, FormEvent, useEffect } from 'react'
 import { StaticContext } from 'react-router'
 import { useParams, RouteComponentProps } from 'react-router-dom'
 
@@ -51,13 +51,24 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
 
   const prepopulate = props.location.state
 
-  if (prepopulate) {
+  useEffect(() => {
+    if (!prepopulate) {
+      return
+    }
+
     setExerciseName(prepopulate.exerciseName || '')
     setConcepts(prepopulate.concepts || '')
     setPrerequisites(prepopulate.prerequisites || '')
     setOutOfScope(prepopulate.outOfScope || '')
     setLearningObjectives(prepopulate.learningObjectives || '')
-  }
+  }, [
+    prepopulate,
+    setExerciseName,
+    setConcepts,
+    setPrerequisites,
+    setOutOfScope,
+    setLearningObjectives,
+  ])
 
   const clearData = () => {
     setExerciseName('')
@@ -86,7 +97,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     ].join('\n\n')
     const instructions = `${story}\n\n${tasks}`
 
-    fetch('https://exercism.io/git_api/concept_exercises', {
+    fetch(`${process.env.REACT_APP_EXERCISM_HOST}/git_api/concept_exercises`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -45,13 +45,6 @@ interface ContentProps {
 }
 
 function Content({ trackId, config }: ContentProps): JSX.Element {
-  const asyncOpenConceptExerciseIssues = useCreationConceptExerciseIssues(
-    trackId
-  )
-  const asyncImproveConceptExerciseIssues = useImproveConceptExerciseIssues(
-    trackId
-  )
-
   return (
     <>
       <h2>Contributing to {config?.language} </h2>
@@ -59,61 +52,8 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
         On this page you&apos;ll find various ways in which you&apos;ll be able
         to contribute to {config?.language}
       </p>
-      <h3>Exercises that need implementing</h3>
-
-      {asyncOpenConceptExerciseIssues.done ? (
-        <>
-          {asyncOpenConceptExerciseIssues.result!.length > 0 ? (
-            <>
-              <p>The following exercises are all open to be improved</p>
-              {asyncOpenConceptExerciseIssues.result?.map((issue) => (
-                <NewConceptExerciseIssue
-                  key={issue.number}
-                  issue={issue}
-                  trackId={trackId}
-                />
-              ))}
-            </>
-          ) : (
-            <p>
-              There are no open exercises that need implementing{' '}
-              <span role="img" aria-label="party-popper">
-                🎉
-              </span>
-              !
-            </p>
-          )}
-        </>
-      ) : (
-        <LoadingIndicator>
-          Loading new concept exercise issues...
-        </LoadingIndicator>
-      )}
-      <h3>Exercises that need improving</h3>
-      {asyncImproveConceptExerciseIssues.done ? (
-        <>
-          {asyncImproveConceptExerciseIssues.result!.length > 0 ? (
-            <>
-              <p>The following exercises are all open to be improved</p>
-              {asyncImproveConceptExerciseIssues.result?.map((issue) => (
-                <ImproveConceptExerciseIssue key={issue.number} issue={issue} />
-              ))}
-            </>
-          ) : (
-            <p>
-              There are no open exercises that need improving{' '}
-              <span role="img" aria-label="party-popper">
-                🎉
-              </span>
-              !
-            </p>
-          )}
-        </>
-      ) : (
-        <LoadingIndicator>
-          Loading improve concept exercise issues...
-        </LoadingIndicator>
-      )}
+      <NewConceptExerciseIssues trackId={trackId} />
+      <ImproveConceptExerciseIssues trackId={trackId} />
     </>
   )
 }
@@ -175,6 +115,50 @@ function parseListSections(
   return headingsWithList
 }
 
+interface NewConceptExerciseIssuesProps {
+  trackId: TrackIdentifier
+}
+
+function NewConceptExerciseIssues({
+  trackId,
+}: NewConceptExerciseIssuesProps): JSX.Element {
+  const { loading, result } = useCreationConceptExerciseIssues(trackId)
+
+  return (
+    <>
+      <h3>Exercises that need implementing</h3>
+      {loading ? (
+        <LoadingIndicator>
+          Loading new concept exercise issues...
+        </LoadingIndicator>
+      ) : (
+        <>
+          {result && result.length > 0 ? (
+            <>
+              <p>The following exercises are all open to be implemented</p>
+              {result.map((issue) => (
+                <NewConceptExerciseIssue
+                  key={issue.number}
+                  issue={issue}
+                  trackId={trackId}
+                />
+              ))}
+            </>
+          ) : (
+            <p>
+              There are no open exercises that need implementing{' '}
+              <span role="img" aria-label="party-popper">
+                🎉
+              </span>
+              !
+            </p>
+          )}
+        </>
+      )}
+    </>
+  )
+}
+
 interface NewConceptExerciseIssueProps {
   issue: ConceptExerciseIssue
   trackId: TrackIdentifier
@@ -221,6 +205,46 @@ function NewConceptExerciseIssue({
         </a>
       </div>
     </div>
+  )
+}
+
+interface ImproveConceptExerciseIssuesProps {
+  trackId: TrackIdentifier
+}
+
+function ImproveConceptExerciseIssues({
+  trackId,
+}: ImproveConceptExerciseIssuesProps): JSX.Element {
+  const { loading, result } = useImproveConceptExerciseIssues(trackId)
+
+  return (
+    <>
+      <h3>Exercises that need improving</h3>
+      {loading ? (
+        <LoadingIndicator>
+          Loading improve concept exercise issues...
+        </LoadingIndicator>
+      ) : (
+        <>
+          {result && result.length > 0 ? (
+            <>
+              <p>The following exercises are all open to be improved</p>
+              {result.map((issue) => (
+                <ImproveConceptExerciseIssue key={issue.number} issue={issue} />
+              ))}
+            </>
+          ) : (
+            <p>
+              There are no open exercises that need improving{' '}
+              <span role="img" aria-label="party-popper">
+                🎉
+              </span>
+              !
+            </p>
+          )}
+        </>
+      )}
+    </>
   )
 }
 
