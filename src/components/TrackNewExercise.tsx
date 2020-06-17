@@ -15,6 +15,8 @@ import {
   useTasks,
 } from '../hooks/useNewExerciseData'
 
+import { SubmitIndicator } from './SubmitIndicator'
+
 export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
 }
@@ -125,25 +127,24 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
       })
   }
 
-  if (pullRequestUrl) {
-    window.location.replace(pullRequestUrl)
+  if (posting || pullRequestUrl) {
+    if (pullRequestUrl) {
+      window.location.replace(pullRequestUrl)
+    }
+
+    const postDisplay = {
+      message: 'Creating new exercise...',
+      step: '1',
+    }
+    const pullRequestDisplay = {
+      message: 'Redirecting to create pull request...',
+      step: '2',
+    }
+    const { message, step } = pullRequestUrl ? pullRequestDisplay : postDisplay
+    const totalSteps = '2'
 
     return (
-      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
-        <div className="col-12 mb-2">
-          <p>Redirecting to create pull request...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (posting) {
-    return (
-      <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
-        <div className="col-12 mb-2">
-          <p>Creating new exercise...</p>
-        </div>
-      </div>
+      <SubmitIndicator message={message} step={step} totalSteps={totalSteps} />
     )
   }
 
