@@ -190,6 +190,7 @@ function NewConceptExerciseIssue({
     .trim()
     .toLowerCase()
     .replace(/\s+/g, '-')
+  const exerciseLastUpdated = new Date(issue.updatedAt).toDateString()
 
   const sections = parseIssueSections(issue.body)
   const state: TrackNewExerciseLocationState = {
@@ -206,7 +207,7 @@ function NewConceptExerciseIssue({
         <h5 className="card-title">{exerciseName}</h5>
         <p className="card-text">
           <small className="text-muted">
-            Last updated at: {issue.updatedAt}
+            Last updated: {exerciseLastUpdated}
           </small>
         </p>
         <PageLink to={`/${trackId}/new-exercise`} state={state}>
@@ -233,6 +234,7 @@ function ImproveConceptExerciseIssue({
   const title = issue.title
     .replace(/^\[.+?\]\s*/, '')
     .replace(/^Improve exercise:\s*/i, '')
+  const exerciseLastUpdated = new Date(issue.updatedAt).toDateString()
 
   return (
     <div className="card mb-2">
@@ -240,7 +242,7 @@ function ImproveConceptExerciseIssue({
         <h5 className="card-title">{title}</h5>
         <p className="card-text">
           <small className="text-muted">
-            Last updated at: {issue.updatedAt}
+            Last updated: {exerciseLastUpdated}
           </small>
         </p>
         <a
