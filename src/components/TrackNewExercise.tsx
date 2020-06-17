@@ -14,6 +14,7 @@ import {
   useStory,
   useTasks,
   useIssueUrl,
+  useIntroduction,
 } from '../hooks/useNewExerciseData'
 
 import { SubmitIndicator } from './SubmitIndicator'
@@ -50,6 +51,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const [tasks, setTasks] = useTasks()
   const [example, setExample] = useExample()
   const [issueUrl, setIssueUrl] = useIssueUrl()
+  const [introduction, setIntroduction] = useIntroduction()
   const [cliToken, setCliToken] = useCliToken()
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
@@ -87,6 +89,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     setTasks('')
     setExample('')
     setIssueUrl('')
+    setIntroduction('')
   }
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
@@ -117,6 +120,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
         example_filename: trackData.example_filename,
         example_code: example,
         instructions_markdown: instructions,
+        introduction_markdown: introduction,
         design_markdown: design,
       }),
     })
@@ -366,6 +370,41 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
                 placeholder="Add idiomatic example implementation of the instructions' tasks"
                 onChange={(e) => setExample(e.target.value)}
                 required
+              />
+            </div>
+            <div className="form-group">
+              <label>
+                <strong>Introduction</strong> (optional)
+              </label>
+              <p className="form-text">
+                Introduce the concept(s) that the exercise teaches to the
+                student. The information provided should give the student just
+                enough context to figure out the solution themselves. Proper
+                technical terms should be used so that the student can easily
+                search for more information. Links should be used sparingly, if
+                at all. Code examples should only be used to introduce new
+                syntax (students should not need to search the web for examples
+                of syntax). In other cases provide descriptions or links instead
+                of code. Check out{' '}
+                <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#docsintroductionmd">
+                  the documentation
+                </a>
+                ,{' '}
+                <a href="https://www.youtube.com/watch?v=gkbBqd7hPrA&t=77">
+                  this video
+                </a>{' '}
+                or this{' '}
+                <a href="https://github.com/exercism/v3/blob/master/languages/csharp/exercises/concept/strings/.docs/introduction.md">
+                  example introduction document
+                </a>{' '}
+                for more information .
+              </p>
+              <textarea
+                className="form-control"
+                rows={5}
+                value={introduction}
+                placeholder='A `string` in C# is an object that represents immutable text as a sequence of Unicode characters (letters, digits, punctuation, etc.). Double quotes are used to define a `string` instance:&#10;```csharp&#10;string fruit = "Apple";&#10;```'
+                onChange={(e) => setIntroduction(e.target.value)}
               />
             </div>
             <div className="form-group">
