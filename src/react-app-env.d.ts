@@ -2,6 +2,6 @@
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    readonly REACT_APP_EXERCISM_HOST: string
+    readonly REACT_APP_EXERCISM_HOST: string | undefined
   }
 }
