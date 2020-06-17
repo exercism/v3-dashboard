@@ -16,7 +16,7 @@ export function SubmitIndicator({
     <div className="vh-70 d-flex flex-column justify-content-center align-items-center">
       <LoadingIndicator />
       <p>
-        {message} {step}/{totalSteps}
+        {message} ({step}/{totalSteps})
       </p>
     </div>
   )
