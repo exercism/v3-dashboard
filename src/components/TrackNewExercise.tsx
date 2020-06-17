@@ -13,6 +13,7 @@ import {
   usePrerequisites,
   useStory,
   useTasks,
+  useIssueUrl,
 } from '../hooks/useNewExerciseData'
 
 import { SubmitIndicator } from './SubmitIndicator'
@@ -27,6 +28,7 @@ export interface TrackNewExerciseLocationState {
   outOfScope: string | undefined
   concepts: string | undefined
   prerequisites: string | undefined
+  issueUrl: string | undefined
 }
 
 interface TrackNewExerciseProps
@@ -47,6 +49,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const [story, setStory] = useStory()
   const [tasks, setTasks] = useTasks()
   const [example, setExample] = useExample()
+  const [issueUrl, setIssueUrl] = useIssueUrl()
   const [cliToken, setCliToken] = useCliToken()
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
@@ -63,6 +66,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     setPrerequisites(prepopulate.prerequisites || '')
     setOutOfScope(prepopulate.outOfScope || '')
     setLearningObjectives(prepopulate.learningObjectives || '')
+    setIssueUrl(prepopulate.issueUrl || '')
   }, [
     prepopulate,
     setExerciseName,
@@ -70,6 +74,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     setPrerequisites,
     setOutOfScope,
     setLearningObjectives,
+    setIssueUrl,
   ])
 
   const clearData = () => {
@@ -81,6 +86,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     setStory('')
     setTasks('')
     setExample('')
+    setIssueUrl('')
   }
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
@@ -115,11 +121,12 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
       }),
     })
       .then((response) => response.json())
-      .then((data) =>
+      .then((data) => {
+        const body = issueUrl ? `Closes ${issueUrl}` : ''
         setPullRequestUrl(
-          `https://github.com/exercism/v3/compare/master...exercism-bot:${data.branch_name}?expand=1`
+          `https://github.com/exercism/v3/compare/master...exercism-bot:${data.branch_name}?expand=1&body=${body}`
         )
-      )
+      })
       .catch(() => setPosting(false))
       .finally(() => {
         clearData()
@@ -359,6 +366,26 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
                 placeholder="Add idiomatic example implementation of the instructions' tasks"
                 onChange={(e) => setExample(e.target.value)}
                 required
+              />
+            </div>
+            <div className="form-group">
+              <label>
+                <strong>GitHub issue URL</strong> (optional)
+              </label>
+              <p className="form-text">
+                The URL of the GitHub issue describing this exercise. Check out
+                the{' '}
+                <a href="https://github.com/exercism/v3/issues?q=is%3Aissue+is%3Aopen+label%3Atype%2Fnew-exercise">
+                  open new exercise issues
+                </a>{' '}
+                to see if there is an issue describing this exercise.
+              </p>
+              <input
+                type="url"
+                className="form-control"
+                value={issueUrl}
+                placeholder="https://github.com/exercism/v3/issues/1234"
+                onChange={(e) => setIssueUrl(e.target.value)}
               />
             </div>
           </fieldset>

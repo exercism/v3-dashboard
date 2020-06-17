@@ -183,6 +183,7 @@ function NewConceptExerciseIssue({
     outOfScope: sections.outOfScope?.markdown,
     prerequisites: sections.prerequisites?.markdown,
     learningObjectives: sections.learningObjectives?.markdown,
+    issueUrl: issue.url,
   }
 
   return (

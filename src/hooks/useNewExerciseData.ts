@@ -10,6 +10,7 @@ interface NewExerciseData {
   story?: string
   tasks?: string
   example?: string
+  issueUrl?: string
 }
 
 const NEW_EXERCISE_DATA = new StoredMemoryValue<NewExerciseData>(
@@ -42,3 +43,4 @@ export const usePrerequisites = () => useNewExerciseField('prerequisites')
 export const useStory = () => useNewExerciseField('story')
 export const useTasks = () => useNewExerciseField('tasks')
 export const useExample = () => useNewExerciseField('example')
+export const useIssueUrl = () => useNewExerciseField('issueUrl')
