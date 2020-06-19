@@ -1,11 +1,11 @@
-import { Parser, Node } from 'commonmark'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
 import {
-  ConceptExerciseIssue,
-  useCreationConceptExerciseIssues,
-  useImproveConceptExerciseIssues,
+  useOpenCreationConceptExerciseIssues,
+  useOpenImproveConceptExerciseIssues,
+  OpenCreationConceptExerciseIssueData,
+  OpenImproveConceptExerciseIssueData,
 } from '../hooks/useConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
@@ -52,77 +52,20 @@ function Content({ trackId, config }: ContentProps): JSX.Element {
         On this page you&apos;ll find various ways in which you&apos;ll be able
         to contribute to {config?.language}
       </p>
-      <NewConceptExerciseIssues trackId={trackId} />
-      <ImproveConceptExerciseIssues trackId={trackId} />
+      <OpenCreationConceptExerciseIssues trackId={trackId} />
+      <OpenImproveConceptExerciseIssues trackId={trackId} />
     </>
   )
 }
 
-interface NewConceptExerciseIssueSection {
-  heading: string
-  markdown: string | undefined
-  node: Node | undefined
-}
-
-interface NewConceptExerciseIssueSections {
-  outOfScope: NewConceptExerciseIssueSection | undefined
-  prerequisites: NewConceptExerciseIssueSection | undefined
-  concepts: NewConceptExerciseIssueSection | undefined
-  learningObjectives: NewConceptExerciseIssueSection | undefined
-}
-
-function parseIssueSections(markdown: string): NewConceptExerciseIssueSections {
-  const sections = parseListSections(markdown)
-
-  return {
-    outOfScope: sections['Out of scope'],
-    prerequisites: sections['Prerequisites'] || sections['Prequisites'],
-    concepts: sections['Concepts'],
-    learningObjectives: sections['Learning objectives'],
-  }
-}
-
-function parseListSections(
-  markdown: string
-): { [heading: string]: NewConceptExerciseIssueSection } {
-  const parser = new Parser()
-  const parsed = parser.parse(markdown)
-  const lines = markdown.split('\n')
-
-  const headingsWithList: {
-    [heading: string]: NewConceptExerciseIssueSection
-  } = {}
-
-  let node = parsed.firstChild
-  let currentHeading: string | undefined
-
-  while (node?.next) {
-    if (node.type === 'heading' && node.firstChild?.literal) {
-      currentHeading = node.firstChild.literal
-    } else if (node.type === 'list' && currentHeading) {
-      headingsWithList[currentHeading] = {
-        node: node,
-        heading: currentHeading,
-        markdown: lines
-          .slice(node.sourcepos[0][0] - 1, node.sourcepos[1][0] - 1)
-          .join('\n'),
-      }
-    }
-
-    node = node.next
-  }
-
-  return headingsWithList
-}
-
-interface NewConceptExerciseIssuesProps {
+interface OpenCreationConceptExerciseIssuesProps {
   trackId: TrackIdentifier
 }
 
-function NewConceptExerciseIssues({
+function OpenCreationConceptExerciseIssues({
   trackId,
-}: NewConceptExerciseIssuesProps): JSX.Element {
-  const { loading, result } = useCreationConceptExerciseIssues(trackId)
+}: OpenCreationConceptExerciseIssuesProps): JSX.Element {
+  const { loading, result } = useOpenCreationConceptExerciseIssues(trackId)
 
   return (
     <>
@@ -137,7 +80,7 @@ function NewConceptExerciseIssues({
             <>
               <p>The following exercises are all open to be implemented</p>
               {result.map((issue) => (
-                <NewConceptExerciseIssue
+                <OpenCreationConceptExerciseIssue
                   key={issue.number}
                   issue={issue}
                   trackId={trackId}
@@ -159,40 +102,31 @@ function NewConceptExerciseIssues({
   )
 }
 
-interface NewConceptExerciseIssueProps {
-  issue: ConceptExerciseIssue
+interface OpenCreationConceptExerciseIssueProps {
+  issue: OpenCreationConceptExerciseIssueData
   trackId: TrackIdentifier
 }
 
-function NewConceptExerciseIssue({
+function OpenCreationConceptExerciseIssue({
   issue,
   trackId,
-}: NewConceptExerciseIssueProps): JSX.Element {
-  const exerciseName = issue.title
-    .slice(issue.title.indexOf(':') + 1)
-    .replace(/`(.+)`/, '$1')
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-  const exerciseLastUpdated = new Date(issue.updatedAt).toDateString()
-
-  const sections = parseIssueSections(issue.body)
+}: OpenCreationConceptExerciseIssueProps): JSX.Element {
   const state: TrackNewExerciseLocationState = {
-    exerciseName: exerciseName,
-    concepts: sections.concepts?.markdown,
-    outOfScope: sections.outOfScope?.markdown,
-    prerequisites: sections.prerequisites?.markdown,
-    learningObjectives: sections.learningObjectives?.markdown,
+    exerciseName: issue.concept,
+    concepts: issue.sections.concepts?.markdown,
+    outOfScope: issue.sections.outOfScope?.markdown,
+    prerequisites: issue.sections.prerequisites?.markdown,
+    learningObjectives: issue.sections.learningObjectives?.markdown,
     issueUrl: issue.url,
   }
 
   return (
     <div className="card mb-2">
       <div className="card-body">
-        <h5 className="card-title">{exerciseName}</h5>
+        <h5 className="card-title">{issue.concept}</h5>
         <p className="card-text">
           <small className="text-muted">
-            Last updated: {exerciseLastUpdated}
+            Last updated: {issue.updatedAt.toDateString()}
           </small>
         </p>
         <PageLink to={`/${trackId}/new-exercise`} state={state}>
@@ -209,14 +143,14 @@ function NewConceptExerciseIssue({
   )
 }
 
-interface ImproveConceptExerciseIssuesProps {
+interface OpenImproveConceptExerciseIssuesProps {
   trackId: TrackIdentifier
 }
 
-function ImproveConceptExerciseIssues({
+function OpenImproveConceptExerciseIssues({
   trackId,
-}: ImproveConceptExerciseIssuesProps): JSX.Element {
-  const { loading, result } = useImproveConceptExerciseIssues(trackId)
+}: OpenImproveConceptExerciseIssuesProps): JSX.Element {
+  const { loading, result } = useOpenImproveConceptExerciseIssues(trackId)
 
   return (
     <>
@@ -231,7 +165,10 @@ function ImproveConceptExerciseIssues({
             <>
               <p>The following exercises are all open to be improved</p>
               {result.map((issue) => (
-                <ImproveConceptExerciseIssue key={issue.number} issue={issue} />
+                <OpenImproveConceptExerciseIssue
+                  key={issue.number}
+                  issue={issue}
+                />
               ))}
             </>
           ) : (
@@ -249,25 +186,20 @@ function ImproveConceptExerciseIssues({
   )
 }
 
-interface ImproveConceptExerciseIssueProps {
-  issue: ConceptExerciseIssue
+interface OpenImproveConceptExerciseIssueProps {
+  issue: OpenImproveConceptExerciseIssueData
 }
 
-function ImproveConceptExerciseIssue({
+function OpenImproveConceptExerciseIssue({
   issue,
-}: ImproveConceptExerciseIssueProps): JSX.Element {
-  const title = issue.title
-    .replace(/^\[.+?\]\s*/, '')
-    .replace(/^Improve exercise:\s*/i, '')
-  const exerciseLastUpdated = new Date(issue.updatedAt).toDateString()
-
+}: OpenImproveConceptExerciseIssueProps): JSX.Element {
   return (
     <div className="card mb-2">
       <div className="card-body">
-        <h5 className="card-title">{title}</h5>
+        <h5 className="card-title">{issue.subject}</h5>
         <p className="card-text">
           <small className="text-muted">
-            Last updated: {exerciseLastUpdated}
+            Last updated: {issue.updatedAt.toDateString()}
           </small>
         </p>
         <a
