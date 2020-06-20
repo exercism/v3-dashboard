@@ -8,6 +8,7 @@
   "main": "src/index.tsx",
   "dependencies": {
     "commonmark": "^0.29.1",
+    "d3": "^5.16.0",
     "js-levenshtein": "^1.1.6",
     "localforage": "^1.7.4",
     "react": "~16.13.1",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.4",
+    "@types/d3": "^5.7.2",
     "@types/jest": "^26.0.0",
     "@types/react": "~16.9.36",
     "@types/react-dom": "~16.9.8",
