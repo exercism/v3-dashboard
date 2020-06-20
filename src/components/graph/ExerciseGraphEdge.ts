@@ -1,10 +1,10 @@
-import { uuid } from './graph-types'
+import { ExerciseGraphNode } from './ExerciseGraphNode'
 
 export class ExerciseGraphEdge {
-  public from: uuid
-  public to: uuid
+  public from: ExerciseGraphNode
+  public to: ExerciseGraphNode
 
-  constructor(from: uuid, to: uuid) {
+  constructor(from: ExerciseGraphNode, to: ExerciseGraphNode) {
     this.from = from
     this.to = to
   }

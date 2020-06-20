@@ -9,9 +9,9 @@ const makeAdjacencyMatrix = (graph: ExerciseGraph): adjacencyMatrix => {
   }
 
   graph.edges.forEach((edge) => {
-    const from = graph.lookupByUuid.get(edge.from)
-    const to = graph.lookupByUuid.get(edge.to)
-    adjacencyMatrix[from.index].push(to.index)
+    const from = edge.from.index
+    const to = edge.to.index
+    adjacencyMatrix[from].push(to)
   })
 
   return adjacencyMatrix
@@ -43,8 +43,8 @@ const containsCycle = (graph: ExerciseGraph, adj: adjacencyMatrix): boolean => {
           stack.push(next)
         } else if (isOnStack[next]) {
           console.error(
-            `Graph Cycle Detected '${graph.lookupByIndex.get(n).slug}' to '${
-              graph.lookupByIndex.get(next).slug
+            `Graph Cycle Detected '${graph.lookupByIndex.get(n)?.slug}' to '${
+              graph.lookupByIndex.get(next)?.slug
             }'`
           )
           return true
@@ -69,7 +69,7 @@ const nodesByDepth = (
   }
 
   // Nodes with inDegree of 0 are source nodes (roots) of the graph
-  const sourceNodes = []
+  const sourceNodes: Array<number> = []
   inDegrees.forEach((inDegree, i) => {
     if (inDegree === 0) sourceNodes.push(i)
   })

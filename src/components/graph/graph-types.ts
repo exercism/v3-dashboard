@@ -1,10 +1,11 @@
 export type uuid = string
+export type slug = string
 
 export type nodeData = {
   slug: string
   uuid: uuid
-  concepts: [string]
-  prerequisites: [string]
+  readonly concepts: Array<string>
+  readonly prerequisites: Array<string>
 }
 
 export type edgeData = {
@@ -16,7 +17,7 @@ export type configData = {
   language: string
   blurb: string
   exercises: {
-    concept: [nodeData]
+    readonly concept: Array<nodeData>
   }
 }
 
