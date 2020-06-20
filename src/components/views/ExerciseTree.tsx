@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
+import { ExerciseTreeGraph } from '../graph/ExerciseTreeGraph'
+
 export function ExerciseTree(): JSX.Element {
   const [library, setLibrary] = useState()
 
@@ -43,5 +45,5 @@ export function ExerciseTree(): JSX.Element {
     return <span>loading...</span>
   }
 
-  return <p>Coming soon!</p>
+  return <ExerciseTreeGraph />
 }
