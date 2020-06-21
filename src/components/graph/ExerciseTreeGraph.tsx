@@ -6,7 +6,7 @@ import { ExerciseGraphLayout } from './ExerciseGraphLayout'
 
 import { CheckOrCross } from '../CheckOrCross'
 
-import { slug } from './graph-types'
+import { slug, position } from './graph-types'
 
 type ExerciseTreeGraphProps = {
   config?: TrackConfiguration
@@ -66,7 +66,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     })
 
     // compute node positions
-    const nodePositions = new Map<slug, { x: number; y: number }>()
+    const nodePositions = new Map<slug, position>()
     nodesByDepth.forEach((layer, i) => {
       layer.forEach((node, j) => {
         const position = {
@@ -187,11 +187,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
   }
 }
 
-type position = {
-  x: number
-  y: number
-}
-
+// Use function to retrieve map value so as to not have to handle potential undefined in graph block
 function get_position_from(map: Map<slug, position>, key: slug): position {
   const value = map.get(key)
   if (value) return value

@@ -22,3 +22,8 @@ export type configData = {
 }
 
 export type adjacencyMatrix = Array<Array<number>>
+
+export type position = {
+  x: number
+  y: number
+}
