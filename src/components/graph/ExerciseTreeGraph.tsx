@@ -148,30 +148,36 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       // text
       nodeGroup
         .append('text')
-        // If rotating, comment below
-        // .attr('x', (d, i) => (xDelta + xDelta * i + 15))
-        // .attr('y', y + 4)
-        // If rotating, comment above
         .style('font-size', 16)
         .style('fill', '#000')
         .text((d) => d.slug)
         .attr('x', 0)
         .attr('y', 0)
-        //if not rotating, comment below
         .attr('transform', (d, i) => {
           const { x, y } = get_position_from(nodePositions, d.slug)
           return `translate(${x + 14}, ${y}), rotate(-12)`
         })
-      //if not rotating, comment above
     })
 
-    // TODO: Need to attach event listeners for path
-    // TODO: Add teardown for listeners in 'componentWillUnmount()'
+    exerciseGraph.nodes
+      .map((node): string => node.slug)
+      .forEach((node) => {
+        const elem = document.getElementById(node)
+        if (!elem) return
+        elem.addEventListener('mouseover', handleCircleMouseover)
+        elem.addEventListener('mouseout', handleCircleMouseout)
+      })
   }
 
-  // public componentWillUnmount(): void {
-  //   undefined
-  // }
+  public componentWillUnmount(): void {
+    const circles = Array.from(
+      document.querySelectorAll<SVGCircleElement>('svg#concept-map circle')
+    )
+    for (const circle of circles) {
+      circle.removeEventListener('mouseover', handleCircleMouseover)
+      circle.removeEventListener('mouseout', handleCircleMouseout)
+    }
+  }
 
   public render(): JSX.Element {
     if (!this.props.config) {
@@ -192,4 +198,98 @@ function get_position_from(map: Map<slug, position>, key: slug): position {
   const value = map.get(key)
   if (value) return value
   throw new Error("key doesn't exist")
+}
+
+/**
+ * handleCircleMouseover
+ * This event handler highlights the current circle, paths leading from (source) and into (target)
+ * and dims all of the rest.
+ */
+function handleCircleMouseover(event: MouseEvent): void {
+  // highlight circle on mouseover
+  const targetCircle = event.target as SVGCircleElement
+  targetCircle.classList.add('highlight-circle')
+  // highlight source lines on mouseover
+  const sourceLines = Array.from(
+    document.querySelectorAll<SVGPathElement>(
+      `[data-source="${targetCircle.id}"]`
+    )
+  )
+  for (const line of sourceLines) {
+    line.classList.add('highlight-source')
+  }
+  //highlight target lines on mouseover
+  const targetLines = Array.from(
+    document.querySelectorAll<SVGPathElement>(
+      `[data-target="${targetCircle.id}"]`
+    )
+  )
+  for (const line of targetLines) {
+    line.classList.add('highlight-target')
+  }
+  //dim all other circles on mouseover
+  const otherCircles = Array.from(
+    document.querySelectorAll<SVGCircleElement>(
+      `circle:not([id="${targetCircle.id}"])`
+    )
+  )
+  for (const circle of otherCircles) {
+    circle.classList.add('dim')
+    ;(circle.nextSibling as SVGTextElement).classList.add('dim')
+  }
+  // dim all other lines on mouseover
+  const query = `path:not([data-source="${targetCircle.id}"]):not([data-target="${targetCircle.id}"])`
+  const otherLines = Array.from(
+    document.querySelectorAll<SVGPathElement>(query)
+  )
+  for (const line of otherLines) {
+    line.classList.add('dim')
+  }
+}
+
+/**
+ * handleCircleMouseout
+ * This event handler removes highlights the current circle, paths leading from (source) and into (target)
+ * and removes dimming from all of the rest.
+ */
+function handleCircleMouseout(event: MouseEvent): void {
+  // highlight circle on mouseover
+  const targetCircle = event.target as SVGCircleElement
+  targetCircle.classList.remove('highlight-circle')
+  // highlight source lines on mouseover
+  const sourceLines = Array.from(
+    document.querySelectorAll<SVGPathElement>(
+      `[data-source="${targetCircle.id}"]`
+    )
+  )
+  for (const line of sourceLines) {
+    line.classList.remove('highlight-source')
+  }
+  //highlight target lines on mouseover
+  const targetLines = Array.from(
+    document.querySelectorAll<SVGPathElement>(
+      `[data-target="${targetCircle.id}"]`
+    )
+  )
+  for (const line of targetLines) {
+    line.classList.remove('highlight-target')
+  }
+  //dim all other circles on mouseover
+  const otherCircles = Array.from(
+    document.querySelectorAll<SVGCircleElement>(
+      `circle:not([id="${targetCircle.id}"])`
+    )
+  )
+  for (const circle of otherCircles) {
+    circle.classList.remove('dim')
+    ;(circle.nextSibling as SVGTextElement).classList.remove('dim')
+  }
+  // dim all other lines on mouseover
+  const query = `path:not([data-source="${targetCircle.id}"]):not([data-target="${targetCircle.id}"])`
+  const otherLines = Array.from(
+    document.querySelectorAll<SVGPathElement>(query)
+  )
+  for (const line of otherLines) {
+    line.classList.remove('dim')
+  }
 }
