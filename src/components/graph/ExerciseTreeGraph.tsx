@@ -6,7 +6,7 @@ import { ExerciseGraphLayout } from './ExerciseGraphLayout'
 
 import { CheckOrCross } from '../CheckOrCross'
 
-import { adjustment } from './graph-util'
+import { slug } from './graph-types'
 
 type ExerciseTreeGraphProps = {
   config?: TrackConfiguration
@@ -26,15 +26,58 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     const exerciseGraph = new ExerciseGraph(this.props.config)
     const exerciseLayout = new ExerciseGraphLayout(exerciseGraph)
 
-    const maxDepthWidth = exerciseLayout.width
+    // const maxDepthWidth = exerciseLayout.width
     const nodesByDepth = exerciseLayout.nodesOrderedByDepth
 
-    const widthPerMaxColumn = 150
-    const heightPerNodeRow = 100
-    const padding = 40
-    const width = maxDepthWidth * widthPerMaxColumn + 2 * padding
-    const height = nodesByDepth.length * heightPerNodeRow
+    const containerWidth = graphContainer?.clientWidth ?? 650
+    const padding = 20
+    const layerHeight = 100
+
+    const width = containerWidth
+    const height = nodesByDepth.length * layerHeight + padding * 2
     const circleRadius = 10
+
+    // computer layer columns
+    const xAdjust = -40
+    const layerXOffset = new Array(nodesByDepth.length)
+    const layerXAdjust = new Array(nodesByDepth.length).fill(0)
+    nodesByDepth.forEach((layer, i) => {
+      layerXOffset[i] = Math.floor(
+        (containerWidth - padding * 2) / (layer.length + 1)
+      )
+
+      const prevLayer = nodesByDepth[i - 1]
+      if (prevLayer && prevLayer.length === layer.length) {
+        layerXAdjust[i] = layerXAdjust[i - 1] + 5
+      }
+    })
+
+    console.log({
+      containerWidth,
+      padding,
+      layerHeight,
+      width,
+      height,
+      circleRadius,
+      xAdjust,
+      layerXOffset,
+      layerXAdjust,
+      nodesByDepth,
+    })
+
+    // compute node positions
+    const nodePositions = new Map<slug, { x: number; y: number }>()
+    nodesByDepth.forEach((layer, i) => {
+      layer.forEach((node, j) => {
+        const position = {
+          x: layerXOffset[i] * (j + 1) + layerXAdjust[i] + xAdjust + padding,
+          y: layerHeight * i + layerHeight / 2 + padding,
+        }
+        nodePositions.set(node.slug, position)
+      })
+    })
+
+    console.log(nodePositions)
 
     const graph = d3
       .select(graphContainer)
@@ -42,59 +85,6 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       .attr('id', 'concept-map')
       .attr('width', width)
       .attr('height', height)
-
-    const circles = graph.append('g').attr('class', 'nodes')
-
-    const rows = circles
-      .selectAll('g.row')
-      .data(nodesByDepth)
-      .enter()
-      .append('g')
-      .attr('class', 'row')
-
-    rows.each(function (row, rowIndex) {
-      const xDelta = width / (row.length + 1)
-      const y = heightPerNodeRow / 2 + heightPerNodeRow * rowIndex
-
-      const nodeGroup = d3
-        .select(this)
-        .selectAll('circle')
-        .data(row)
-        .enter()
-        .append('g')
-
-      nodeGroup
-        .append('circle')
-        .attr('id', (d) => d.slug)
-        .attr('r', circleRadius)
-        .attr(
-          'cx',
-          (d, i) => xDelta + xDelta * i - padding + adjustment(rowIndex, 50)
-        )
-        .attr('cy', y)
-        .style('fill', 'lightsteelblue')
-        .style('stroke', 'black')
-        .style('stroke-width', 1)
-
-      nodeGroup
-        .append('text')
-        // If rotating, comment below
-        // .attr('x', (d, i) => (xDelta + xDelta * i + 15))
-        // .attr('y', y + 4)
-        // If rotating, comment above
-        .style('font-size', 16)
-        .style('fill', '#fff')
-        .text((d) => d.slug)
-        .attr('x', 0)
-        .attr('y', 0)
-        //if not rotating, comment below
-        .attr('transform', (d, i) => {
-          const x =
-            xDelta + xDelta * i + 14 - padding + adjustment(rowIndex, 50)
-          return `translate(${x}, ${y + 1}), rotate(-10)`
-        })
-      //if not rotating, comment above
-    })
 
     // Draw edges as paths
     const paths = graph.append('g').attr('class', 'paths')
@@ -107,32 +97,76 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       .attr('data-source', (edge) => edge.from.slug)
       .attr('data-target', (edge) => edge.to.slug)
       .attr('d', (edge, i) => {
-        const source = d3.select(`#${edge.from.slug}`)
-        const target = d3.select(`#${edge.to.slug}`)
+        const source = get_position_from(nodePositions, edge.from.slug)
+        const target = get_position_from(nodePositions, edge.to.slug)
 
         const linkGenerator = d3.linkVertical()
 
         return linkGenerator({
-          source: [
-            (source.attr('cx') as unknown) as number,
-            (source.attr('cy') as unknown) as number,
-          ],
-          target: [
-            (target.attr('cx') as unknown) as number,
-            (target.attr('cy') as unknown) as number,
-          ],
+          source: [source.x, source.y],
+          target: [target.x, target.y],
         })
       })
-      .attr('stroke', '#2a2a2a')
+      .attr('stroke', '#c3c3c3')
       .attr('fill', 'none')
 
-    // TODO: Need to attach event listeners for path
-    // TODO: Need to rearrange order for nodes
-    //       - either like before, patching it
-    //       - or pre-compute the positions of each node, then draw them in the correct order
-    // TODO: Add teardown for listeners in 'componentWillUnmount()'
+    // Draw nodes
+    const circles = graph.append('g').attr('class', 'nodes')
 
-    // FIXME: scale, sizing colors
+    const rows = circles
+      .selectAll('g.row')
+      .data(nodesByDepth)
+      .enter()
+      .append('g')
+      .attr('class', 'row')
+
+    rows.each(function (row, rowIndex) {
+      const nodeGroup = d3
+        .select(this)
+        .selectAll('circle')
+        .data(row)
+        .enter()
+        .append('g')
+
+      // Circle
+      nodeGroup
+        .append('circle')
+        .attr('id', (d) => d.slug)
+        .attr('r', circleRadius)
+        .attr('cx', (d) => {
+          const { x } = get_position_from(nodePositions, d.slug)
+          return x
+        })
+        .attr('cy', (d) => {
+          const { y } = get_position_from(nodePositions, d.slug)
+          return y
+        })
+        .style('fill', 'lightsteelblue')
+        .style('stroke', 'black')
+        .style('stroke-width', 1)
+
+      // text
+      nodeGroup
+        .append('text')
+        // If rotating, comment below
+        // .attr('x', (d, i) => (xDelta + xDelta * i + 15))
+        // .attr('y', y + 4)
+        // If rotating, comment above
+        .style('font-size', 16)
+        .style('fill', '#000')
+        .text((d) => d.slug)
+        .attr('x', 0)
+        .attr('y', 0)
+        //if not rotating, comment below
+        .attr('transform', (d, i) => {
+          const { x, y } = get_position_from(nodePositions, d.slug)
+          return `translate(${x + 14}, ${y}), rotate(-12)`
+        })
+      //if not rotating, comment above
+    })
+
+    // TODO: Need to attach event listeners for path
+    // TODO: Add teardown for listeners in 'componentWillUnmount()'
   }
 
   // public componentWillUnmount(): void {
@@ -144,6 +178,22 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       return <CheckOrCross value={false} />
     }
 
-    return <div ref={this.graphRef} />
+    return (
+      <div className="text-center">
+        <h1>{this.props.config.language} Concept Exercises</h1>
+        <div id="graph-container" ref={this.graphRef} />
+      </div>
+    )
   }
+}
+
+type position = {
+  x: number
+  y: number
+}
+
+function get_position_from(map: Map<slug, position>, key: slug): position {
+  const value = map.get(key)
+  if (value) return value
+  throw new Error("key doesn't exist")
 }
