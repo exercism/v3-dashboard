@@ -78,21 +78,22 @@ const nodesByDepth = (
   let maxDepth = 0
   const maxNodeDepths = new Array(adj.length).fill(0)
   for (const sourceNode of sourceNodes) {
-    const traverse = (node: number, depth = 0): void => {
+    const traverse = (node: number, depth = 0): number => {
       if (depth > maxNodeDepths[node]) {
         maxNodeDepths[node] = depth
-
-        if (depth > maxDepth) {
-          maxDepth = depth
-        }
       }
 
       const children = adj[node]
-      children.forEach((child) => {
-        traverse(child, depth + 1)
-      })
+      return children.reduce((maxDepth: number, child: number) => {
+        const childDepth = traverse(child, depth + 1)
+        return childDepth > maxDepth ? childDepth : maxDepth
+      }, depth)
     }
-    traverse(sourceNode)
+
+    const iterMaxDepth = traverse(sourceNode)
+    if (iterMaxDepth > maxDepth) {
+      maxDepth = iterMaxDepth
+    }
   }
 
   // order the nodes by depth then index

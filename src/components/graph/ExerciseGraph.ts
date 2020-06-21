@@ -1,4 +1,4 @@
-import { nodeData, uuid, configData } from './graph-types'
+import { uuid } from './graph-types'
 import { ExerciseGraphEdge } from './ExerciseGraphEdge'
 import { ExerciseGraphNode } from './ExerciseGraphNode'
 

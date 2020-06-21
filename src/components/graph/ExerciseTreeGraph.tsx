@@ -5,7 +5,6 @@ import { ExerciseGraph } from './ExerciseGraph'
 import { ExerciseGraphLayout } from './ExerciseGraphLayout'
 
 import { CheckOrCross } from '../CheckOrCross'
-import { ExerciseGraphEdge } from './ExerciseGraphEdge'
 
 import { adjustment } from './graph-util'
 
