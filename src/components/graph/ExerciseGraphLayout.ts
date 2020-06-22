@@ -106,13 +106,45 @@ const nodesByDepth = (
   return nodesByDepth
 }
 
+const missingByDepth = (
+  graph: ExerciseGraph,
+  nodesByDepth: Array<Array<ExerciseGraphNode>>
+): Array<Array<string>> => {
+  // create map for layer position for a missing concept
+  const missingVisited = new Map<string, boolean>()
+
+  // compute missing concept layers
+  const missingByDepth = new Array<Array<string>>()
+  nodesByDepth.forEach((layer, i) => {
+    missingByDepth.push([])
+    layer.forEach((node) => {
+      const missingPrereqs = graph.lookupMissingConceptsForExercise.get(
+        node.slug
+      )
+      if (!missingPrereqs) return
+
+      missingPrereqs.forEach((prereq) => {
+        const visited = missingVisited.get(prereq)
+        if (visited) return
+        missingByDepth[i].push(prereq)
+        missingVisited.set(prereq, true)
+      })
+    })
+  })
+
+  return missingByDepth
+}
+
 export class ExerciseGraphLayout {
   public graph: ExerciseGraph
   private adjacency: adjacencyMatrix
   public nodesOrderedByDepth: Array<Array<ExerciseGraphNode>>
+  public missingOrderedByDepth: Array<Array<string>>
 
-  public depth: number
-  public width: number
+  public nodeDepth: number
+  public missingDepth: number
+  public nodeWidth: number
+  public missingWidth: number
 
   constructor(graph: ExerciseGraph) {
     this.graph = graph
@@ -123,8 +155,17 @@ export class ExerciseGraphLayout {
     }
 
     this.nodesOrderedByDepth = nodesByDepth(this.graph, this.adjacency)
-    this.depth = this.nodesOrderedByDepth.length
-    this.width = this.nodesOrderedByDepth.reduce(
+    this.missingOrderedByDepth = missingByDepth(
+      this.graph,
+      this.nodesOrderedByDepth
+    )
+    this.nodeDepth = this.nodesOrderedByDepth.length
+    this.missingDepth = this.missingOrderedByDepth.length
+    this.nodeWidth = this.nodesOrderedByDepth.reduce(
+      (maxWidth, row) => (row.length > maxWidth ? row.length : maxWidth),
+      0
+    )
+    this.missingWidth = this.missingOrderedByDepth.reduce(
       (maxWidth, row) => (row.length > maxWidth ? row.length : maxWidth),
       0
     )

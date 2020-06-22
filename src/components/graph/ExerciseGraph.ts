@@ -1,31 +1,7 @@
-import { uuid } from './graph-types'
+import { uuid, slug } from './graph-types'
 import { ExerciseGraphEdge } from './ExerciseGraphEdge'
 import { ExerciseGraphNode } from './ExerciseGraphNode'
-
-const computeEdges = (
-  nodes: Array<ExerciseGraphNode>,
-  lookupByConcept: Map<string, ExerciseGraphNode>,
-  warnings: Array<string>
-): Array<ExerciseGraphEdge> => {
-  const edges: Array<ExerciseGraphEdge> = []
-
-  nodes.forEach((node: ExerciseGraphNode) => {
-    node.prerequisites.forEach((prereq) => {
-      const from = lookupByConcept.get(prereq)
-
-      if (!from) {
-        const warning = `ℹ️ the '${prereq}' concept doesn't have an exercise.`
-        warnings.push(warning)
-        return
-      }
-
-      const edge = new ExerciseGraphEdge(from, node)
-      edges.push(edge)
-    })
-  })
-
-  return edges
-}
+import { TrackNewExercise } from '../TrackNewExercise'
 
 export class ExerciseGraph {
   public language: string
@@ -39,6 +15,9 @@ export class ExerciseGraph {
   public lookupByIndex: Map<number, ExerciseGraphNode>
   public uuidOf: Map<ExerciseGraphNode, uuid>
   public indexOf: Map<ExerciseGraphNode, number>
+
+  public missingConcepts: Set<string>
+  public lookupMissingConceptsForExercise: Map<slug, Array<string>>
 
   public warnings: Array<string>
 
@@ -54,16 +33,19 @@ export class ExerciseGraph {
     this.uuidOf = new Map()
     this.indexOf = new Map()
 
+    this.missingConcepts = new Set()
+    this.lookupMissingConceptsForExercise = new Map()
+
     this.nodes = concept.map(({ slug, uuid, concepts, prerequisites }, i) =>
       this.addNode(i, slug, uuid, [...concepts], [...prerequisites])
     )
-    this.edges = computeEdges(this.nodes, this.lookupByConcept, this.warnings)
+    this.edges = this.computeEdges()
   }
 
   /**
    * addNode
    */
-  public addNode(
+  private addNode(
     index: number,
     slug: string,
     uuid: string,
@@ -82,5 +64,37 @@ export class ExerciseGraph {
     node.concepts.forEach((concept) => this.lookupByConcept.set(concept, node))
     this.uuidOf.set(node, node.uuid)
     return node
+  }
+
+  private computeEdges(): Array<ExerciseGraphEdge> {
+    const edges: Array<ExerciseGraphEdge> = []
+
+    this.nodes.forEach((node: ExerciseGraphNode) => {
+      node.prerequisites.forEach((prereq) => {
+        const from = this.lookupByConcept.get(prereq)
+
+        if (!from) {
+          this.missingConcepts.add(prereq)
+          this.addMissingConcept(node.slug, prereq)
+          const warning = `ℹ️ the '${prereq}' concept doesn't have an exercise.`
+          this.warnings.push(warning)
+          return
+        }
+
+        const edge = new ExerciseGraphEdge(from, node)
+        edges.push(edge)
+      })
+    })
+
+    return edges
+  }
+
+  private addMissingConcept(slug: slug, concept: string): void {
+    let knownMissing = this.lookupMissingConceptsForExercise.get(slug)
+    if (!knownMissing) {
+      knownMissing = []
+      this.lookupMissingConceptsForExercise.set(slug, knownMissing)
+    }
+    knownMissing.push(concept)
   }
 }
