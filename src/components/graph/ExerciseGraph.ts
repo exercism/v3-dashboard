@@ -1,7 +1,6 @@
 import { uuid, slug } from './graph-types'
 import { ExerciseGraphEdge } from './ExerciseGraphEdge'
 import { ExerciseGraphNode } from './ExerciseGraphNode'
-import { TrackNewExercise } from '../TrackNewExercise'
 
 export class ExerciseGraph {
   public language: string
