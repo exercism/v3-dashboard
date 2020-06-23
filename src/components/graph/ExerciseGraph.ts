@@ -12,25 +12,17 @@ export class ExerciseGraph {
   public lookupByUuid: Map<uuid, ExerciseGraphNode>
   public lookupByConcept: Map<string, ExerciseGraphNode>
   public lookupByIndex: Map<number, ExerciseGraphNode>
-  public uuidOf: Map<ExerciseGraphNode, uuid>
-  public indexOf: Map<ExerciseGraphNode, number>
 
   public missingConcepts: Set<string>
   public lookupMissingConceptsForExercise: Map<slug, Array<string>>
 
-  public warnings: Array<string>
-
   constructor({ blurb, language, exercises: { concept } }: TrackConfiguration) {
-    this.warnings = []
-
     this.language = language
     this.blurb = blurb
 
     this.lookupByUuid = new Map()
     this.lookupByConcept = new Map()
     this.lookupByIndex = new Map()
-    this.uuidOf = new Map()
-    this.indexOf = new Map()
 
     this.missingConcepts = new Set()
     this.lookupMissingConceptsForExercise = new Map()
@@ -43,6 +35,8 @@ export class ExerciseGraph {
 
   /**
    * addNode
+   * adds a node to the graph on construction of the graph
+   * builds indexes for fast look up of data.
    */
   private addNode(
     index: number,
@@ -61,10 +55,13 @@ export class ExerciseGraph {
     this.lookupByUuid.set(node.uuid, node)
     this.lookupByIndex.set(node.index, node)
     node.concepts.forEach((concept) => this.lookupByConcept.set(concept, node))
-    this.uuidOf.set(node, node.uuid)
     return node
   }
 
+  /**
+   * computeEdges
+   * this computes all edges from the nodes.  Each edge is defined as exercise -> exercise
+   */
   private computeEdges(): Array<ExerciseGraphEdge> {
     const edges: Array<ExerciseGraphEdge> = []
 
@@ -75,8 +72,6 @@ export class ExerciseGraph {
         if (!from) {
           this.missingConcepts.add(prereq)
           this.addMissingConcept(node.slug, prereq)
-          const warning = `ℹ️ the '${prereq}' concept doesn't have an exercise.`
-          this.warnings.push(warning)
           return
         }
 

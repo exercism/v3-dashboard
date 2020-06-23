@@ -23,15 +23,14 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     if (!this.props.config) return
 
     const graphContainer = this.graphRef.current
-    const exerciseGraph = new ExerciseGraph(this.props.config)
+    const trackGraph = new ExerciseGraph(this.props.config)
 
-    if (exerciseGraph.nodes.length === 0)
-      return displayNoExercises(graphContainer)
+    if (trackGraph.nodes.length === 0) return displayNoExercises(graphContainer)
 
-    const exerciseLayout = new ExerciseGraphLayout(exerciseGraph)
-
-    const nodesByDepth = exerciseLayout.nodesOrderedByDepth
-    const missingByDepth = exerciseLayout.missingOrderedByDepth
+    const exerciseLayout = new ExerciseGraphLayout(trackGraph)
+    const layerCount = exerciseLayout.layerCount
+    const exerciseLayers = exerciseLayout.exerciseLayers
+    const conceptLayers = exerciseLayout.conceptLayers
 
     const containerWidth = graphContainer?.clientWidth ?? 650
     const padding = 20
@@ -40,8 +39,8 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     const width = containerWidth
     const height =
-      nodesByDepth.length * layerHeight +
-      missingByDepth.length * (layerHeight / 2) +
+      layerCount * layerHeight +
+      layerCount * (layerHeight / 2) +
       padding * 2 +
       headerPadding
     const circleRadius = 10
@@ -54,28 +53,28 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
      * so that the dependency lines aren't completely straight/overlapping
      */
     const xAdjust = -40
-    const layerXOffset = new Array(nodesByDepth.length)
-    const layerXAdjust = new Array(nodesByDepth.length).fill(0)
-    nodesByDepth.forEach((layer, i) => {
-      layerXOffset[i] = Math.floor(
+    const exerciseXOffset = new Array(layerCount)
+    const exerciseXAdjust = new Array(layerCount).fill(0)
+    exerciseLayers.forEach((layer, i) => {
+      exerciseXOffset[i] = Math.floor(
         (containerWidth - padding * 2) / (layer.length + 1)
       )
 
-      const prevLayer = nodesByDepth[i - 1]
+      const prevLayer = exerciseLayers[i - 1]
       if (prevLayer && prevLayer.length === layer.length) {
-        layerXAdjust[i] = layerXAdjust[i - 1] + 5
+        exerciseXAdjust[i] = exerciseXAdjust[i - 1] + 5
       }
     })
 
     /**
      * Compute amount to offset each node from the left
      */
-    const missingXAdjust = -25
-    const missingLayerXOffset = new Array(missingByDepth.length)
-    missingByDepth.forEach((layer, i) => {
+    const conceptXAdjust = -25
+    const conceptXOffset = new Array(conceptLayers.length)
+    conceptLayers.forEach((layer, i) => {
       if (layer.length === 0) return
 
-      missingLayerXOffset[i] = Math.floor(
+      conceptXOffset[i] = Math.floor(
         (containerWidth - padding * 2) / (layer.length + 1)
       )
     })
@@ -88,16 +87,12 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     let countWithMissingLayers = 0
     const missingPositions = new Map<string, position>()
     const nodePositions = new Map<slug, position>()
-    nodesByDepth.forEach((layer, i) => {
+    exerciseLayers.forEach((layer, i) => {
       // calculate missing concept position
-      const missingLayer = missingByDepth[i]
+      const missingLayer = conceptLayers[i]
       missingLayer.forEach((prereq, j) => {
         const position = {
-          x:
-            missingLayerXOffset[i] * (j + 1) +
-            xAdjust +
-            missingXAdjust +
-            padding,
+          x: conceptXOffset[i] * (j + 1) + xAdjust + conceptXAdjust + padding,
           y:
             layerHeight * i +
             layerHeight / 4 +
@@ -116,7 +111,11 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       //calculate exercise node positions
       layer.forEach((node, j) => {
         const position = {
-          x: layerXOffset[i] * (j + 1) + layerXAdjust[i] + xAdjust + padding,
+          x:
+            exerciseXOffset[i] * (j + 1) +
+            exerciseXAdjust[i] +
+            xAdjust +
+            padding,
           y:
             layerHeight * i +
             layerHeight / 2 +
@@ -171,12 +170,12 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     conceptPaths
       .selectAll('g.concept-paths')
-      .data(exerciseGraph.nodes)
+      .data(trackGraph.nodes)
       .enter()
       .append('g')
       .attr('class', 'concept-paths')
       .each(function (node) {
-        const missing = exerciseGraph.lookupMissingConceptsForExercise.get(
+        const missing = trackGraph.lookupMissingConceptsForExercise.get(
           node.slug
         )
         console.log({ selection: d3.select(this), missing })
@@ -212,7 +211,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     const missingRows = squares
       .selectAll('g.concept-row')
-      .data(missingByDepth)
+      .data(conceptLayers)
       .enter()
       .append('g')
       .attr('class', 'concept-row')
@@ -267,7 +266,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     const rows = circles
       .selectAll('g.row')
-      .data(nodesByDepth)
+      .data(exerciseLayers)
       .enter()
       .append('g')
       .attr('class', 'row')
@@ -311,7 +310,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         })
     })
 
-    exerciseGraph.nodes
+    trackGraph.nodes
       .map((node): string => node.slug)
       .forEach((node) => {
         const elem = document.getElementById(node)
