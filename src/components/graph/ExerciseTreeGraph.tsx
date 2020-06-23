@@ -7,9 +7,9 @@ import { ExerciseGraphLayout } from './ExerciseGraphLayout'
 
 import { CheckOrCross } from '../CheckOrCross'
 
-import { slug, position } from './graph-types'
+import { Slug, Position } from './graph-types'
 
-type ExerciseTreeGraphProps = {
+export interface ExerciseTreeGraphProps {
   config?: TrackConfiguration
 }
 
@@ -21,15 +21,18 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
   }
 
   public componentDidMount(): void {
-    if (!this.props.config) return
+    if (!this.props.config) {
+      return
+    }
 
     const graphContainer = this.graphRef.current
     const containerWidth = graphContainer?.clientWidth ?? 650
 
     const trackGraph = new ExerciseGraph(this.props.config)
 
-    if (trackGraph.exercises.length === 0)
+    if (trackGraph.exercises.length === 0) {
       return displayNoExercises(graphContainer)
+    }
 
     const layoutOptions = {
       width: containerWidth,
@@ -69,11 +72,8 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       .attr('data-source', (edge) => edge.from.slug)
       .attr('data-target', (edge) => edge.to.slug)
       .attr('d', (edge, i) => {
-        const source = get_position_from(
-          layout.exercisePositions,
-          edge.from.slug
-        )
-        const target = get_position_from(layout.exercisePositions, edge.to.slug)
+        const source = getPositionFrom(layout.exercisePositions, edge.from.slug)
+        const target = getPositionFrom(layout.exercisePositions, edge.to.slug)
 
         const linkGenerator = linkVertical()
 
@@ -100,8 +100,9 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         const missing = trackGraph.lookupMissingConceptsForExercise.get(
           node.slug
         )
-        console.log({ selection: select(this), missing })
-        if (!missing) return
+        if (!missing) {
+          return
+        }
 
         select(this)
           .selectAll('path.concept-path')
@@ -112,11 +113,8 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
           .attr('data-target', node.slug)
           .attr('class', 'concept-path')
           .attr('d', (d, i) => {
-            const source = get_position_from(layout.conceptPositions, d)
-            const target = get_position_from(
-              layout.exercisePositions,
-              node.slug
-            )
+            const source = getPositionFrom(layout.conceptPositions, d)
+            const target = getPositionFrom(layout.exercisePositions, node.slug)
 
             const linkGenerator = linkVertical()
 
@@ -158,11 +156,11 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('rx', squareCornerRadius)
         .attr('ry', squareCornerRadius)
         .attr('x', (d) => {
-          const { x } = get_position_from(layout.conceptPositions, d)
+          const { x } = getPositionFrom(layout.conceptPositions, d)
           return x - squareLength / 2
         })
         .attr('y', (d) => {
-          const { y } = get_position_from(layout.conceptPositions, d)
+          const { y } = getPositionFrom(layout.conceptPositions, d)
           return y - squareLength / 2
         })
         .style('fill', 'lightpink')
@@ -178,7 +176,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('x', 0)
         .attr('y', 0)
         .attr('transform', (d, i) => {
-          const { x, y } = get_position_from(layout.conceptPositions, d)
+          const { x, y } = getPositionFrom(layout.conceptPositions, d)
           return `translate(${x + 14}, ${y}), rotate(-12)`
         })
     })
@@ -208,11 +206,11 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('id', (d) => d.slug)
         .attr('r', circleRadius)
         .attr('cx', (d) => {
-          const { x } = get_position_from(layout.exercisePositions, d.slug)
+          const { x } = getPositionFrom(layout.exercisePositions, d.slug)
           return x
         })
         .attr('cy', (d) => {
-          const { y } = get_position_from(layout.exercisePositions, d.slug)
+          const { y } = getPositionFrom(layout.exercisePositions, d.slug)
           return y
         })
         .style('fill', 'lightsteelblue')
@@ -228,7 +226,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('x', 0)
         .attr('y', 0)
         .attr('transform', (d, i) => {
-          const { x, y } = get_position_from(layout.exercisePositions, d.slug)
+          const { x, y } = getPositionFrom(layout.exercisePositions, d.slug)
           return `translate(${x + 14}, ${y}), rotate(-12)`
         })
     })
@@ -390,10 +388,10 @@ function displayNoExercises(container: HTMLDivElement | null): void {
 /**
  * Use function to retrieve map value so as to not have to handle potential undefined in graph block
  */
-function get_position_from(
-  map: Map<slug | string, position>,
-  key: slug | string
-): position {
+function getPositionFrom(
+  map: Map<Slug | string, Position>,
+  key: Slug | string
+): Position {
   const value = map.get(key)
   if (value) return value
   throw new Error("key doesn't exist")

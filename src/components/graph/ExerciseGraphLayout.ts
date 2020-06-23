@@ -1,16 +1,23 @@
 import { ExerciseGraph } from './ExerciseGraph'
-import { adjacencyMatrix, position, slug } from './graph-types'
+import { AdjacencyMatrix, Position, Slug } from './graph-types'
 import { ExerciseGraphNode } from './ExerciseGraphNode'
+import GraphError from './GraphError'
 
-type options = {
-  width: number
-  padding: number
-  headerPadding: number
-  exerciseLayerHeight: number
-  conceptLayerHeight: number
+type ExerciseLayer = ExerciseGraphNode[]
+type ExerciseLayers = ExerciseLayer[]
+
+type ConceptLayer = string[]
+type ConceptLayers = ConceptLayer[]
+
+export interface LayoutOptions {
+  readonly width: number
+  readonly padding: number
+  readonly headerPadding: number
+  readonly exerciseLayerHeight: number
+  readonly conceptLayerHeight: number
 }
 
-export class ExerciseGraphLayout {
+export class ExerciseGraphLayout implements LayoutOptions {
   public graph: ExerciseGraph
 
   // layout options
@@ -22,18 +29,18 @@ export class ExerciseGraphLayout {
 
   public height: number
 
-  private adjacency: adjacencyMatrix
+  private adjacency: AdjacencyMatrix
 
-  public exerciseLayers: Array<Array<ExerciseGraphNode>>
-  public conceptLayers: Array<Array<string>>
+  public exerciseLayers: ExerciseLayers
+  public conceptLayers: ConceptLayers
 
   public exerciseLayerCount: number
   public conceptLayerCount: number
 
-  public exercisePositions: Map<slug, position>
-  public conceptPositions: Map<string, position>
+  public exercisePositions: Map<Slug, Position>
+  public conceptPositions: Map<string, Position>
 
-  constructor(graph: ExerciseGraph, options: options) {
+  constructor(graph: ExerciseGraph, options: LayoutOptions) {
     this.graph = graph
 
     this.padding = options.padding
@@ -45,7 +52,9 @@ export class ExerciseGraphLayout {
     this.adjacency = makeAdjacencyMatrix(graph)
 
     if (this.containsCycle()) {
-      throw new Error('🔥 Cannot continue. See error log.')
+      throw new GraphError(
+        '🔥 Cannot continue. This graph contains a cycle. Creating a cyclic exercise dependency. See error log.'
+      )
     }
 
     this.exerciseLayers = []
@@ -54,6 +63,9 @@ export class ExerciseGraphLayout {
 
     this.exerciseLayerCount = this.exerciseLayers.length
     this.conceptLayerCount = this.conceptLayers.filter(
+      // When created, there are equal number of conceptLayers to exercise layers
+      // Filter empty layers so that the y-position of each node (exercise and concept)
+      // can be calculated correctly
       (l) => l.length > 0
     ).length
 
@@ -66,8 +78,6 @@ export class ExerciseGraphLayout {
     this.exercisePositions = new Map()
     this.conceptPositions = new Map()
     this.computePositions()
-
-    console.log(this)
   }
 
   /**
@@ -76,15 +86,15 @@ export class ExerciseGraphLayout {
    *   - Points at a larger problem with the exercise concept pre-requisites
    */
   private containsCycle(): boolean {
-    const visited: Array<boolean> = new Array(this.adjacency.length).fill(false)
-    const isOnStack: Array<boolean> = new Array(this.adjacency.length).fill(
-      false
-    )
-    const stack: Array<number> = []
+    const visited: boolean[] = new Array(this.adjacency.length).fill(false)
+    const isOnStack: boolean[] = new Array(this.adjacency.length).fill(false)
+    const stack: number[] = []
 
     // Attempt to start from each node in the case the graph is disjunct
     for (let source = 0; source < this.adjacency.length; source += 1) {
-      if (visited[source]) continue
+      if (visited[source]) {
+        continue
+      }
       stack.push(source)
 
       // loop until the stack is empty (i.e. you have visited all of the nodes)
@@ -122,7 +132,7 @@ export class ExerciseGraphLayout {
    * that are not yet represented in an exercise.
    */
   private computeNodeDepths(): void {
-    const inDegrees = this.findIndegreeOfExercises()
+    const inDegrees = this.findInDegreeOfExercises()
     const sourceExercises = this.findSourceExercises(inDegrees)
     const exerciseDepths = this.findExerciseDepths(sourceExercises)
     const maximumDepth = Math.max.apply(null, exerciseDepths)
@@ -138,27 +148,28 @@ export class ExerciseGraphLayout {
    * node (the number of edges pointing to the node)
    *
    * Return an array of numbers, where each index (representing
-   * an ExerciseGraphNode) holds the indegree value
+   * an ExerciseGraphNode) holds the inDegree value
    */
-  private findIndegreeOfExercises(): Array<number> {
-    const indegrees = new Array(this.adjacency.length).fill(0)
+  private findInDegreeOfExercises(): number[] {
+    const inDegrees = new Array(this.adjacency.length).fill(0)
     for (const tos of this.adjacency) {
       for (const to of tos) {
-        indegrees[to] += 1
+        inDegrees[to] += 1
       }
     }
-    return indegrees
+    return inDegrees
   }
 
   /**
    * Nodes with inDegree of 0 are source nodes (roots) of the graph
    */
-  private findSourceExercises(inDegrees: Array<number>): Array<number> {
-    const sources: Array<number> = []
-    inDegrees.forEach((inDegree, i) => {
-      if (inDegree === 0) sources.push(i)
-    })
-    return sources
+  private findSourceExercises(inDegrees: readonly number[]): number[] {
+    return inDegrees.reduce((sources, inDegree, i) => {
+      if (inDegree === 0) {
+        sources.push(i)
+      }
+      return sources
+    }, [] as number[])
   }
 
   /**
@@ -166,7 +177,7 @@ export class ExerciseGraphLayout {
    * to each exercise from any source.  This places an exercise
    * after all of its prerequisites.
    */
-  private findExerciseDepths(sources: Array<number>): Array<number> {
+  private findExerciseDepths(sources: readonly number[]): number[] {
     const maxDepths = new Array(this.adjacency.length).fill(0)
     for (const source of sources) {
       const traverse = (index: number, depth = 0): void => {
@@ -186,9 +197,9 @@ export class ExerciseGraphLayout {
    * order the exercises by depth then index into layers
    */
   private constructExerciseLayers(
-    exerciseDepths: Array<number>,
+    exerciseDepths: readonly number[],
     maxDepth: number
-  ): Array<Array<ExerciseGraphNode>> {
+  ): ExerciseLayers {
     const exerciseLayers = new Array(maxDepth + 1)
 
     exerciseDepths.forEach((nodeDepth, nodeIndex) => {
@@ -203,28 +214,30 @@ export class ExerciseGraphLayout {
    * order the concepts without exercises by the depth of their dependent exercise
    */
   private constructConceptLayers(
-    exerciseLayers: Array<Array<ExerciseGraphNode>>
-  ): Array<Array<string>> {
+    exerciseLayers: ExerciseLayers
+  ): ConceptLayers {
     // create map for layer position for a missing concept in case the concept is listed
     // by multiple exercises
     const conceptsVisited = new Map<string, boolean>()
 
     // compute missing concept layers
-    const conceptLayers = new Array<Array<string>>()
+    const conceptLayers = new Array<ConceptLayer>()
     exerciseLayers.forEach((layer, i) => {
       conceptLayers.push([])
       layer.forEach((node) => {
-        const missingPrereqs = this.graph.lookupMissingConceptsForExercise.get(
+        const missingPrerequisites = this.graph.lookupMissingConceptsForExercise.get(
           node.slug
         )
-        if (!missingPrereqs) return
+        if (!missingPrerequisites) {
+          return
+        }
 
-        missingPrereqs.forEach((prereq) => {
-          const visited = conceptsVisited.get(prereq)
-          if (visited) return
-          conceptLayers[i].push(prereq)
-          conceptsVisited.set(prereq, true)
-        })
+        missingPrerequisites
+          .filter((prerequisite) => !conceptsVisited.get(prerequisite))
+          .forEach((prerequisite) => {
+            conceptLayers[i].push(prerequisite)
+            conceptsVisited.set(prerequisite, true)
+          })
       })
     })
 
@@ -238,30 +251,31 @@ export class ExerciseGraphLayout {
      * so that the dependency lines aren't completely straight/overlapping
      */
     const xAdjust = -40
-    const exerciseXOffset = new Array(this.exerciseLayerCount)
-    const exerciseXAdjust = new Array(this.exerciseLayerCount).fill(0)
-    this.exerciseLayers.forEach((layer, i) => {
-      exerciseXOffset[i] = Math.floor(
-        (this.width - this.padding * 2) / (layer.length + 1)
-      )
-
-      const prevLayer = this.exerciseLayers[i - 1]
-      if (prevLayer && prevLayer.length === layer.length) {
-        exerciseXAdjust[i] = exerciseXAdjust[i - 1] + 5
-      }
-    })
+    const exerciseXOffset = this.exerciseLayers.map((layer, i) =>
+      Math.floor((this.width - this.padding * 2) / (layer.length + 1))
+    )
+    const exerciseXAdjust = this.exerciseLayers.reduce(
+      (adjustments, exerciseLayer, i, exerciseLayers) => {
+        const previousLayer = exerciseLayers[i - 1]
+        const lastAdjustment = adjustments[adjustments.length - 1]
+        const adjustment =
+          previousLayer && previousLayer.length === exerciseLayer.length
+            ? lastAdjustment + 5
+            : 0
+        adjustments.push(adjustment)
+        return adjustments
+      },
+      [] as number[]
+    )
 
     /**
      * Compute amount to offset each node from the left
      */
     const conceptXAdjust = -25
-    const conceptXOffset = new Array(this.conceptLayers.length)
-    this.conceptLayers.forEach((layer, i) => {
-      if (layer.length === 0) return
-
-      conceptXOffset[i] = Math.floor(
-        (this.width - this.padding * 2) / (layer.length + 1)
-      )
+    const conceptXOffset = this.conceptLayers.map((layer, i) => {
+      return layer.length === 0
+        ? 0
+        : Math.floor((this.width - this.padding * 2) / (layer.length + 1))
     })
 
     /**
@@ -273,7 +287,7 @@ export class ExerciseGraphLayout {
     this.exerciseLayers.forEach((layer, i) => {
       // calculate missing concept position
       const missingLayer = this.conceptLayers[i]
-      missingLayer.forEach((prereq, j) => {
+      missingLayer.forEach((prerequisite, j) => {
         const position = {
           x:
             conceptXOffset[i] * (j + 1) +
@@ -287,7 +301,7 @@ export class ExerciseGraphLayout {
             this.padding +
             this.headerPadding,
         }
-        this.conceptPositions.set(prereq, position)
+        this.conceptPositions.set(prerequisite, position)
       })
 
       const layerHasMissing = missingLayer.length > 0
@@ -321,8 +335,8 @@ export class ExerciseGraphLayout {
  * creates an adjacency matrix to track which nodes touch each other node
  * this is used later to determine the layers of the DAG (directed acyclic graph)
  */
-function makeAdjacencyMatrix(graph: ExerciseGraph): adjacencyMatrix {
-  const adjacencyMatrix: adjacencyMatrix = new Array(graph.exercises.length)
+function makeAdjacencyMatrix(graph: ExerciseGraph): AdjacencyMatrix {
+  const adjacencyMatrix: AdjacencyMatrix = new Array(graph.exercises.length)
   for (let index = 0; index < adjacencyMatrix.length; index++) {
     adjacencyMatrix[index] = []
   }

@@ -1,18 +1,18 @@
-import { uuid } from './graph-types'
+import { UUID } from './graph-types'
 
 export class ExerciseGraphNode {
   public index: number
   public slug: string
-  public uuid: uuid
-  public concepts: Array<string>
-  public prerequisites: Array<string>
+  public uuid: UUID
+  public concepts: string[]
+  public prerequisites: string[]
 
   constructor(
     index: number,
     slug: string,
-    uuid: uuid,
-    concepts: Array<string>,
-    prerequisites: Array<string>
+    uuid: UUID,
+    concepts: string[],
+    prerequisites: string[]
   ) {
     this.index = index
     this.slug = slug
