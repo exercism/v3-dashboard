@@ -1,5 +1,6 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { select, selectAll } from 'd3-selection'
+import { linkVertical } from 'd3-shape'
 
 import { ExerciseGraph } from './ExerciseGraph'
 import { ExerciseGraphLayout } from './ExerciseGraphLayout'
@@ -49,8 +50,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     /**
      * Create graph container
      */
-    const graph = d3
-      .select(graphContainer)
+    const graph = select(graphContainer)
       .append('svg')
       .attr('id', 'concept-map')
       .attr('width', layout.width)
@@ -75,7 +75,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         )
         const target = get_position_from(layout.exercisePositions, edge.to.slug)
 
-        const linkGenerator = d3.linkVertical()
+        const linkGenerator = linkVertical()
 
         return linkGenerator({
           source: [source.x, source.y],
@@ -100,10 +100,10 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         const missing = trackGraph.lookupMissingConceptsForExercise.get(
           node.slug
         )
-        console.log({ selection: d3.select(this), missing })
+        console.log({ selection: select(this), missing })
         if (!missing) return
 
-        d3.select(this)
+        select(this)
           .selectAll('path.concept-path')
           .data(missing)
           .enter()
@@ -118,7 +118,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
               node.slug
             )
 
-            const linkGenerator = d3.linkVertical()
+            const linkGenerator = linkVertical()
 
             return linkGenerator({
               source: [source.x, source.y],
@@ -142,8 +142,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       .attr('class', 'concept-row')
 
     missingRows.each(function (row, rowIndex) {
-      const conceptGroup = d3
-        .select(this)
+      const conceptGroup = select(this)
         .selectAll('g.missing-group')
         .data(row)
         .enter()
@@ -197,8 +196,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       .attr('class', 'row')
 
     rows.each(function (row, rowIndex) {
-      const nodeGroup = d3
-        .select(this)
+      const nodeGroup = select(this)
         .selectAll('circle')
         .data(row)
         .enter()
@@ -348,11 +346,11 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       .style('fill', 'rgba(0,0,0,0)')
 
     showLegend.on('mouseover', () => {
-      d3.select('g.legend').attr('visibility', 'visible')
+      select('g.legend').attr('visibility', 'visible')
     })
 
-    d3.select('g.legend > rect.overlay').on('mouseout', () => {
-      d3.select('g.legend').attr('visibility', 'hidden')
+    select('g.legend > rect.overlay').on('mouseout', () => {
+      select('g.legend').attr('visibility', 'hidden')
     })
   }
 
@@ -365,8 +363,8 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       circle.removeEventListener('mouseout', handleCircleMouseout)
     }
 
-    d3.select('g.show-legend').on('mouseover', null)
-    d3.select('g.legend > rect.overlay').on('mouseout', null)
+    select('g.show-legend').on('mouseover', null)
+    select('g.legend > rect.overlay').on('mouseout', null)
   }
 
   public render(): JSX.Element {
@@ -386,7 +384,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
  * displayNoExercises
  */
 function displayNoExercises(container: HTMLDivElement | null): void {
-  d3.select(container).append('p').text('No exercises to display as tree.')
+  select(container).append('p').text('No exercises to display as tree.')
 }
 
 /**
