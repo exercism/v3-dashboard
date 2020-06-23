@@ -1,47 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import { useParams } from 'react-router-dom'
+
+import { useRemoteConfig } from '../../hooks/useRemoteConfig'
+
+import { CheckOrCross } from '../CheckOrCross'
+import { LoadingIndicator } from '../LoadingIndicator'
+import { ExerciseTreeGraph } from '../graph/ExerciseTreeGraph'
+
+export interface ExerciseTreeParams {
+  trackId: TrackIdentifier
+}
 
 export function ExerciseTree(): JSX.Element {
-  const [library, setLibrary] = useState()
+  const params = useParams<ExerciseTreeParams>()
 
-  useEffect(() => {
-    let active = true
+  const { config, done } = useRemoteConfig(params.trackId)
 
-    const element = document.getElementById('d3-script')
-
-    if (element) {
-      const currentD3 = (window as any).d3
-
-      if (currentD3) {
-        setLibrary(currentD3)
-        return
-      }
-
-      element.onload = (): void => {
-        active && setLibrary((window as any).d3)
-      }
-
-      return (): void => {
-        active = false
-      }
-    }
-
-    const newElement = document.createElement('script')
-    newElement.onload = (): void => {
-      active && setLibrary((window as any).d3)
-    }
-    newElement.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.min.js'
-    newElement.id = 'd3-script'
-
-    document.body.appendChild(newElement)
-    return (): void => {
-      active = false
-    }
-  }, [])
-
-  if (!library) {
-    return <span>loading...</span>
+  if (!config) {
+    return done ? <CheckOrCross value={false} /> : <LoadingIndicator />
   }
 
-  return <p>Coming soon!</p>
+  return <ExerciseTreeGraph config={config} />
 }
