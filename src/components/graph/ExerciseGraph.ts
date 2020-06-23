@@ -7,7 +7,7 @@ export class ExerciseGraph {
   public blurb: string
 
   public edges: Array<ExerciseGraphEdge>
-  public nodes: Array<ExerciseGraphNode>
+  public exercises: Array<ExerciseGraphNode>
 
   public lookupByUuid: Map<uuid, ExerciseGraphNode>
   public lookupByConcept: Map<string, ExerciseGraphNode>
@@ -27,7 +27,7 @@ export class ExerciseGraph {
     this.missingConcepts = new Set()
     this.lookupMissingConceptsForExercise = new Map()
 
-    this.nodes = concept.map(({ slug, uuid, concepts, prerequisites }, i) =>
+    this.exercises = concept.map(({ slug, uuid, concepts, prerequisites }, i) =>
       this.addNode(i, slug, uuid, [...concepts], [...prerequisites])
     )
     this.edges = this.computeEdges()
@@ -65,7 +65,7 @@ export class ExerciseGraph {
   private computeEdges(): Array<ExerciseGraphEdge> {
     const edges: Array<ExerciseGraphEdge> = []
 
-    this.nodes.forEach((node: ExerciseGraphNode) => {
+    this.exercises.forEach((node: ExerciseGraphNode) => {
       node.prerequisites.forEach((prereq) => {
         const from = this.lookupByConcept.get(prereq)
 

@@ -23,109 +23,28 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     if (!this.props.config) return
 
     const graphContainer = this.graphRef.current
+    const containerWidth = graphContainer?.clientWidth ?? 650
+
     const trackGraph = new ExerciseGraph(this.props.config)
 
-    if (trackGraph.nodes.length === 0) return displayNoExercises(graphContainer)
+    if (trackGraph.exercises.length === 0)
+      return displayNoExercises(graphContainer)
 
-    const exerciseLayout = new ExerciseGraphLayout(trackGraph)
-    const layerCount = exerciseLayout.layerCount
-    const exerciseLayers = exerciseLayout.exerciseLayers
-    const conceptLayers = exerciseLayout.conceptLayers
+    const layoutOptions = {
+      width: containerWidth,
+      padding: 20,
+      headerPadding: 70,
+      exerciseLayerHeight: 100,
+      conceptLayerHeight: 50,
+    }
 
-    const containerWidth = graphContainer?.clientWidth ?? 650
-    const padding = 20
-    const headerPadding = 70
-    const layerHeight = 100
+    const layout = new ExerciseGraphLayout(trackGraph, layoutOptions)
+    const exerciseLayers = layout.exerciseLayers
+    const conceptLayers = layout.conceptLayers
 
-    const width = containerWidth
-    const height =
-      layerCount * layerHeight +
-      layerCount * (layerHeight / 2) +
-      padding * 2 +
-      headerPadding
     const circleRadius = 10
     const squareLength = 20
     const squareCornerRadius = 5
-
-    /**
-     * Compute amount to offset each exercise node from the left for each row
-     * Also, if the rows have the same number of exercises, slightly offset each one
-     * so that the dependency lines aren't completely straight/overlapping
-     */
-    const xAdjust = -40
-    const exerciseXOffset = new Array(layerCount)
-    const exerciseXAdjust = new Array(layerCount).fill(0)
-    exerciseLayers.forEach((layer, i) => {
-      exerciseXOffset[i] = Math.floor(
-        (containerWidth - padding * 2) / (layer.length + 1)
-      )
-
-      const prevLayer = exerciseLayers[i - 1]
-      if (prevLayer && prevLayer.length === layer.length) {
-        exerciseXAdjust[i] = exerciseXAdjust[i - 1] + 5
-      }
-    })
-
-    /**
-     * Compute amount to offset each node from the left
-     */
-    const conceptXAdjust = -25
-    const conceptXOffset = new Array(conceptLayers.length)
-    conceptLayers.forEach((layer, i) => {
-      if (layer.length === 0) return
-
-      conceptXOffset[i] = Math.floor(
-        (containerWidth - padding * 2) / (layer.length + 1)
-      )
-    })
-
-    /**
-     * Compute the positions of missing concept and exercise nodes before drawing them
-     * So that the paths can be drawn first, then the nodes.  This is needed because of
-     * SVG immediate mode rendering.
-     */
-    let countWithMissingLayers = 0
-    const missingPositions = new Map<string, position>()
-    const nodePositions = new Map<slug, position>()
-    exerciseLayers.forEach((layer, i) => {
-      // calculate missing concept position
-      const missingLayer = conceptLayers[i]
-      missingLayer.forEach((prereq, j) => {
-        const position = {
-          x: conceptXOffset[i] * (j + 1) + xAdjust + conceptXAdjust + padding,
-          y:
-            layerHeight * i +
-            layerHeight / 4 +
-            (countWithMissingLayers * layerHeight) / 2 +
-            padding +
-            headerPadding,
-        }
-        missingPositions.set(prereq, position)
-      })
-
-      const layerHasMissing = missingLayer.length > 0
-      if (layerHasMissing) {
-        countWithMissingLayers += 1
-      }
-
-      //calculate exercise node positions
-      layer.forEach((node, j) => {
-        const position = {
-          x:
-            exerciseXOffset[i] * (j + 1) +
-            exerciseXAdjust[i] +
-            xAdjust +
-            padding,
-          y:
-            layerHeight * i +
-            layerHeight / 2 +
-            (countWithMissingLayers * layerHeight) / 2 +
-            padding +
-            headerPadding,
-        }
-        nodePositions.set(node.slug, position)
-      })
-    })
 
     /**
      * Create graph container
@@ -134,8 +53,8 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       .select(graphContainer)
       .append('svg')
       .attr('id', 'concept-map')
-      .attr('width', width)
-      .attr('height', height)
+      .attr('width', layout.width)
+      .attr('height', layout.height)
 
     /**
      * Draw dependency paths from exercise to exercise
@@ -144,14 +63,17 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     paths
       .selectAll('g.paths')
-      .data(exerciseLayout.graph.edges)
+      .data(layout.graph.edges)
       .enter()
       .append('path')
       .attr('data-source', (edge) => edge.from.slug)
       .attr('data-target', (edge) => edge.to.slug)
       .attr('d', (edge, i) => {
-        const source = get_position_from(nodePositions, edge.from.slug)
-        const target = get_position_from(nodePositions, edge.to.slug)
+        const source = get_position_from(
+          layout.exercisePositions,
+          edge.from.slug
+        )
+        const target = get_position_from(layout.exercisePositions, edge.to.slug)
 
         const linkGenerator = d3.linkVertical()
 
@@ -170,7 +92,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     conceptPaths
       .selectAll('g.concept-paths')
-      .data(trackGraph.nodes)
+      .data(trackGraph.exercises)
       .enter()
       .append('g')
       .attr('class', 'concept-paths')
@@ -190,8 +112,11 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
           .attr('data-target', node.slug)
           .attr('class', 'concept-path')
           .attr('d', (d, i) => {
-            const source = get_position_from(missingPositions, d)
-            const target = get_position_from(nodePositions, node.slug)
+            const source = get_position_from(layout.conceptPositions, d)
+            const target = get_position_from(
+              layout.exercisePositions,
+              node.slug
+            )
 
             const linkGenerator = d3.linkVertical()
 
@@ -234,11 +159,11 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('rx', squareCornerRadius)
         .attr('ry', squareCornerRadius)
         .attr('x', (d) => {
-          const { x } = get_position_from(missingPositions, d)
+          const { x } = get_position_from(layout.conceptPositions, d)
           return x - squareLength / 2
         })
         .attr('y', (d) => {
-          const { y } = get_position_from(missingPositions, d)
+          const { y } = get_position_from(layout.conceptPositions, d)
           return y - squareLength / 2
         })
         .style('fill', 'lightpink')
@@ -254,7 +179,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('x', 0)
         .attr('y', 0)
         .attr('transform', (d, i) => {
-          const { x, y } = get_position_from(missingPositions, d)
+          const { x, y } = get_position_from(layout.conceptPositions, d)
           return `translate(${x + 14}, ${y}), rotate(-12)`
         })
     })
@@ -285,11 +210,11 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('id', (d) => d.slug)
         .attr('r', circleRadius)
         .attr('cx', (d) => {
-          const { x } = get_position_from(nodePositions, d.slug)
+          const { x } = get_position_from(layout.exercisePositions, d.slug)
           return x
         })
         .attr('cy', (d) => {
-          const { y } = get_position_from(nodePositions, d.slug)
+          const { y } = get_position_from(layout.exercisePositions, d.slug)
           return y
         })
         .style('fill', 'lightsteelblue')
@@ -305,12 +230,12 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .attr('x', 0)
         .attr('y', 0)
         .attr('transform', (d, i) => {
-          const { x, y } = get_position_from(nodePositions, d.slug)
+          const { x, y } = get_position_from(layout.exercisePositions, d.slug)
           return `translate(${x + 14}, ${y}), rotate(-12)`
         })
     })
 
-    trackGraph.nodes
+    trackGraph.exercises
       .map((node): string => node.slug)
       .forEach((node) => {
         const elem = document.getElementById(node)
