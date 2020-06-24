@@ -170,7 +170,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       // text
       conceptGroup
         .append('text')
-        .style('font-size', 16)
+        .style('font-size', '16px')
         .style('fill', '#000')
         .text((d) => d)
         .attr('x', 0)
@@ -220,7 +220,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       // text
       nodeGroup
         .append('text')
-        .style('font-size', 16)
+        .style('font-size', '16px')
         .style('fill', '#000')
         .text((d) => d.slug)
         .attr('x', 0)
@@ -246,7 +246,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     graph
       .append('text')
-      .style('font-size', 48)
+      .style('font-size', '48px')
       .style('fill', '#000')
       .text(`${this.props.config.language} Concept Exercises`)
       .attr('x', '50%')
@@ -271,7 +271,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     showLegend
       .append('text')
-      .style('font-size', 16)
+      .style('font-size', '16px')
       .style('fill', '#EAF2F8')
       .text('ℹ')
       .attr('x', 25)
@@ -320,7 +320,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     legend
       .append('text')
-      .style('font-size', 14)
+      .style('font-size', '14px')
       .style('fill', '#000')
       .text('implemented exercises')
       .attr('x', 35)
@@ -328,7 +328,7 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
 
     legend
       .append('text')
-      .style('font-size', 14)
+      .style('font-size', '14px')
       .style('fill', '#000')
       .text('concepts missing an exercise')
       .attr('x', 35)
