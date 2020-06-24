@@ -1,33 +1,34 @@
 import { useEffect, useState } from 'react'
 
-export interface StoryImplementation {
-  track: string
+export interface TrackConcept {
+  url?: string
+  name: string
+}
+
+export interface TrackConceptExercise {
+  url: string
   slug: string
-  exercise: string
-  url: string
+  concepts: TrackConcept[]
 }
 
-export interface StoryConcept {
-  url: string
+export interface TrackExercises {
+  concept: TrackConceptExercise[]
+}
+
+export interface Track {
   name: string
+  slug: string
+  exercises: TrackExercises
 }
 
-export interface Story {
-  url: string
-  name: string
-  description: string
-  concept: StoryConcept
-  implementations: StoryImplementation[]
-}
-
-export interface StoriesResult {
-  result: Story[] | undefined
+export interface TracksResult {
+  result: Track[] | undefined
   error: boolean
   loading: boolean
 }
 
-export function useStories(): StoriesResult {
-  const [state, setState] = useState<StoriesResult>({
+export function useTracks(): TracksResult {
+  const [state, setState] = useState<TracksResult>({
     result: undefined,
     error: false,
     loading: true,
@@ -41,14 +42,14 @@ export function useStories(): StoriesResult {
     let requestIsStale = false
 
     fetch(
-      'https://raw.githubusercontent.com/exercism/v3/master/reference/stories/stories.json',
+      'https://raw.githubusercontent.com/exercism/v3/master/languages/languages.json',
       { headers: { accept: 'application/json' } }
     )
       .then((response) => response.json())
       .then((json) => {
         if (!requestIsStale) {
           setState({
-            result: json as Story[],
+            result: json as Track[],
             loading: false,
             error: false,
           })
