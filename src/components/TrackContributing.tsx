@@ -120,8 +120,6 @@ function OpenCreationConceptExerciseIssue({
     issueUrl: issue.url,
   }
 
-  console.log(issue)
-
   return (
     <div className="card mb-2">
       <div className="card-body">

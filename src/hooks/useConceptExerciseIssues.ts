@@ -61,7 +61,7 @@ export interface OpenCreationConceptExerciseIssueData {
   url: string
   updatedAt: Date
   sections: OpenCreationConceptExerciseIssueSections
-  story: OpenCreationConceptExerciseIssueStory | undefined
+  stories: OpenCreationConceptExerciseIssueStory[] | undefined
   implementations:
     | OpenCreationConceptExerciseIssueExistingImplementation[]
     | undefined
@@ -205,15 +205,15 @@ export function useOpenCreationConceptExerciseIssues(
         .replace(/\s+/g, '-')
     }
 
-    function storyForConcept(
+    function storiesForConcept(
       issue: ConceptExerciseIssue
-    ): OpenCreationConceptExerciseIssueStory | undefined {
+    ): OpenCreationConceptExerciseIssueStory[] | undefined {
       if (!storiesResult.result) {
         return undefined
       }
 
       const concept = conceptFromIssue(issue)
-      return storiesResult.result.find(
+      return storiesResult.result.filter(
         (story) => story.concept.name === concept
       )
     }
@@ -221,13 +221,37 @@ export function useOpenCreationConceptExerciseIssues(
     function implementationsOfConcept(
       issue: ConceptExerciseIssue
     ): OpenCreationConceptExerciseIssueExistingImplementation[] | undefined {
-      if (!tracksResult.loading) {
+      if (!tracksResult.result) {
         return undefined
       }
 
-      // const concept = conceptFromIssue(issue)
-      // tracksResult.result?.map(track => track.exercises.concept.find(exercise => exercise.concepts.includes()))
-      return []
+      const concept = conceptFromIssue(issue)
+      const implementations = []
+
+      for (const track of tracksResult.result || []) {
+        for (const exercise of track.exercises.concept) {
+          if (
+            !exercise.concepts.some(
+              (exerciseConcept) => exerciseConcept.name === concept
+            )
+          ) {
+            continue
+          }
+
+          const implementation: OpenCreationConceptExerciseIssueExistingImplementation = {
+            exercise: {
+              url: exercise.url,
+              slug: exercise.slug,
+            },
+            track: {
+              name: track.name,
+              slug: track.slug,
+            },
+          }
+          implementations.push(implementation)
+        }
+      }
+      return implementations
     }
 
     function createOpenCreationConceptExerciseIssueData(
@@ -240,7 +264,7 @@ export function useOpenCreationConceptExerciseIssues(
         url: issue.url,
         updatedAt: new Date(issue.updatedAt),
         sections: parseIssueSections(issue.body),
-        story: storyForConcept(issue),
+        stories: storiesForConcept(issue),
         implementations: implementationsOfConcept(issue),
       }
     }
