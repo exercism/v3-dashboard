@@ -1,5 +1,5 @@
 import React from 'react'
-import { select, selectAll } from 'd3-selection'
+import { select } from 'd3-selection'
 import { linkVertical } from 'd3-shape'
 
 import { ExerciseGraph } from './ExerciseGraph'
