@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Parser, Node } from 'commonmark'
 
+import { useStories } from './useStories'
+import { useTracks } from './useTracks'
+
 interface ConceptExerciseIssue {
   number: number
   title: string
@@ -31,6 +34,26 @@ export interface OpenCreationConceptExerciseIssueSections {
   learningObjectives: OpenCreationConceptExerciseIssueSection | undefined
 }
 
+export interface OpenCreationConceptExerciseIssueStory {
+  url: string
+  name: string
+}
+
+export interface OpenCreationConceptExerciseIssueExistingImplementationExercise {
+  url: string
+  slug: string
+}
+
+export interface OpenCreationConceptExerciseIssueExistingImplementationTrack {
+  name: string
+  slug: string
+}
+
+export interface OpenCreationConceptExerciseIssueExistingImplementation {
+  track: OpenCreationConceptExerciseIssueExistingImplementationTrack
+  exercise: OpenCreationConceptExerciseIssueExistingImplementationExercise
+}
+
 export interface OpenCreationConceptExerciseIssueData {
   concept: string
   number: number
@@ -38,6 +61,10 @@ export interface OpenCreationConceptExerciseIssueData {
   url: string
   updatedAt: Date
   sections: OpenCreationConceptExerciseIssueSections
+  story: OpenCreationConceptExerciseIssueStory | undefined
+  implementations:
+    | OpenCreationConceptExerciseIssueExistingImplementation[]
+    | undefined
 }
 
 export interface OpenImproveConceptExerciseIssuesResult
@@ -145,27 +172,89 @@ function parseListSections(
 export function useOpenCreationConceptExerciseIssues(
   trackId: TrackIdentifier
 ): OpenCreationConceptExerciseIssuesResult {
-  function concept(issue: ConceptExerciseIssue): string {
-    return issue.title
-      .slice(issue.title.indexOf(':') + 1)
-      .replace(/`(.+)`/, '$1')
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, '-')
+  const initial: OpenCreationConceptExerciseIssuesResult = {
+    result: undefined,
+    error: false,
+    loading: true,
   }
+  const [result, setResult] = useState(initial)
 
-  return useConceptExerciseIssuesApi(
+  const storiesResult = useStories()
+  const tracksResult = useTracks()
+  const issuesApiResult = useConceptExerciseIssuesApi(
     `${process.env.REACT_APP_EXERCISM_HOST}/git_api/tracks/${trackId}/open_creation_issues`,
-    (issues) =>
-      (issues as ConceptExerciseIssue[]).map((issue) => ({
-        concept: concept(issue),
+    (issues) => issues as ConceptExerciseIssue[]
+  )
+
+  useEffect(() => {
+    if (
+      issuesApiResult.loading ||
+      storiesResult.loading ||
+      tracksResult.loading ||
+      result.result
+    ) {
+      return
+    }
+
+    function conceptFromIssue(issue: ConceptExerciseIssue): string {
+      return issue.title
+        .slice(issue.title.indexOf(':') + 1)
+        .replace(/`(.+)`/, '$1')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+    }
+
+    function storyForConcept(
+      issue: ConceptExerciseIssue
+    ): OpenCreationConceptExerciseIssueStory | undefined {
+      if (!storiesResult.result) {
+        return undefined
+      }
+
+      const concept = conceptFromIssue(issue)
+      return storiesResult.result.find(
+        (story) => story.concept.name === concept
+      )
+    }
+
+    function implementationsOfConcept(
+      issue: ConceptExerciseIssue
+    ): OpenCreationConceptExerciseIssueExistingImplementation[] | undefined {
+      if (!tracksResult.loading) {
+        return undefined
+      }
+
+      // const concept = conceptFromIssue(issue)
+      // tracksResult.result?.map(track => track.exercises.concept.find(exercise => exercise.concepts.includes()))
+      return []
+    }
+
+    function createOpenCreationConceptExerciseIssueData(
+      issue: ConceptExerciseIssue
+    ): OpenCreationConceptExerciseIssueData {
+      return {
+        concept: conceptFromIssue(issue),
         number: issue.number,
         title: issue.title,
         url: issue.url,
         updatedAt: new Date(issue.updatedAt),
         sections: parseIssueSections(issue.body),
-      }))
-  )
+        story: storyForConcept(issue),
+        implementations: implementationsOfConcept(issue),
+      }
+    }
+
+    setResult({
+      result: issuesApiResult.result?.map(
+        createOpenCreationConceptExerciseIssueData
+      ),
+      error: issuesApiResult.error,
+      loading: issuesApiResult.loading,
+    })
+  }, [result, setResult, storiesResult, tracksResult, issuesApiResult])
+
+  return result
 }
 
 export function useCreationConceptExerciseIssuesCount(
