@@ -6,6 +6,9 @@ import {
   useOpenImproveConceptExerciseIssues,
   OpenCreationConceptExerciseIssueData,
   OpenImproveConceptExerciseIssueData,
+  OpenCreationConceptExerciseIssueExistingImplementationData,
+  OpenCreationConceptExerciseIssueStoryData,
+  OpenCreationConceptExerciseIssueReferenceDocumentData,
 } from '../hooks/useConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
@@ -124,6 +127,13 @@ function OpenCreationConceptExerciseIssue({
     <div className="card mb-2">
       <div className="card-body">
         <h5 className="card-title">{issue.concept}</h5>
+        <OpenCreationConceptExerciseIssueReferenceDocument
+          concept={issue.referenceDocument}
+        />
+        <OpenCreationConceptExerciseIssueImplementations
+          implementations={issue.implementations}
+        />
+        <OpenCreationConceptExerciseIssueStories stories={issue.stories} />
         <p className="card-text">
           <small className="text-muted">
             Last updated: {issue.updatedAt.toDateString()}
@@ -139,6 +149,74 @@ function OpenCreationConceptExerciseIssue({
           View issue
         </a>
       </div>
+    </div>
+  )
+}
+
+interface OpenCreationConceptExerciseIssueReferenceDocumentProps {
+  concept: OpenCreationConceptExerciseIssueReferenceDocumentData
+}
+
+function OpenCreationConceptExerciseIssueReferenceDocument({
+  concept,
+}: OpenCreationConceptExerciseIssueReferenceDocumentProps): JSX.Element {
+  if (!concept.url) {
+    return <></>
+  }
+
+  return (
+    <div className="card-text">
+      Reference document: <a href={concept.url}>{concept.name}</a>
+    </div>
+  )
+}
+
+interface OpenCreationConceptExerciseIssueImplementationsProps {
+  implementations:
+    | OpenCreationConceptExerciseIssueExistingImplementationData[]
+    | undefined
+}
+
+function OpenCreationConceptExerciseIssueImplementations({
+  implementations,
+}: OpenCreationConceptExerciseIssueImplementationsProps): JSX.Element {
+  if (implementations === undefined || implementations.length === 0) {
+    return <></>
+  }
+
+  return (
+    <div className="card-text">
+      Existing implementations:{' '}
+      {implementations.map((implementation, index) => (
+        <span key={index}>
+          {index > 0 ? ', ' : ''}
+          <a href={implementation.exercise.url}>{implementation.track.name}</a>
+        </span>
+      ))}
+    </div>
+  )
+}
+
+interface OpenCreationConceptExerciseIssueStoriesProps {
+  stories: OpenCreationConceptExerciseIssueStoryData[] | undefined
+}
+
+function OpenCreationConceptExerciseIssueStories({
+  stories,
+}: OpenCreationConceptExerciseIssueStoriesProps): JSX.Element {
+  if (stories === undefined || stories.length === 0) {
+    return <></>
+  }
+
+  return (
+    <div className="card-text">
+      Used in story:{' '}
+      {stories.map((story, index) => (
+        <span key={index}>
+          {index > 0 ? ', ' : ''}
+          <a href={story.url}>{story.name}</a>
+        </span>
+      ))}
     </div>
   )
 }
