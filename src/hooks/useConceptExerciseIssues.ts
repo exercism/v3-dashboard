@@ -108,11 +108,19 @@ function useConceptExerciseIssuesApi<T>(
       .then((response) => response.json())
       .then((json) => {
         if (!requestIsStale) {
-          setState({
-            result: mapper(json),
-            loading: false,
-            error: false,
-          })
+          if (json.error) {
+            setState({
+              result: undefined,
+              loading: false,
+              error: true,
+            })
+          } else {
+            setState({
+              result: mapper(json),
+              loading: false,
+              error: false,
+            })
+          }
         }
       })
       .catch(() => {
@@ -124,7 +132,7 @@ function useConceptExerciseIssuesApi<T>(
     return () => {
       requestIsStale = true
     }
-  }, [url, mapper, state])
+  }, [url, mapper, state, setState])
 
   return state
 }
@@ -303,7 +311,7 @@ export function useOpenCreationConceptExerciseIssues(
     }
 
     setResult({
-      result: issuesApiResult.result?.map(
+      result: (issuesApiResult.result || [])?.map(
         createOpenCreationConceptExerciseIssueData
       ),
       error: issuesApiResult.error,
