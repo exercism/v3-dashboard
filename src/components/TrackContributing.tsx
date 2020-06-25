@@ -6,6 +6,8 @@ import {
   useOpenImproveConceptExerciseIssues,
   OpenCreationConceptExerciseIssueData,
   OpenImproveConceptExerciseIssueData,
+  OpenCreationConceptExerciseIssueExistingImplementation,
+  OpenCreationConceptExerciseIssueStory,
 } from '../hooks/useConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
@@ -124,6 +126,12 @@ function OpenCreationConceptExerciseIssue({
     <div className="card mb-2">
       <div className="card-body">
         <h5 className="card-title">{issue.concept}</h5>
+        <OpenCreationConceptExerciseIssueImplementations
+          implementations={issue.implementations || []}
+        />
+        <OpenCreationConceptExerciseIssueStories
+          stories={issue.stories || []}
+        />
         <p className="card-text">
           <small className="text-muted">
             Last updated: {issue.updatedAt.toDateString()}
@@ -140,6 +148,54 @@ function OpenCreationConceptExerciseIssue({
         </a>
       </div>
     </div>
+  )
+}
+
+interface OpenCreationConceptExerciseIssueImplementationsProps {
+  implementations: OpenCreationConceptExerciseIssueExistingImplementation[]
+}
+
+function OpenCreationConceptExerciseIssueImplementations({
+  implementations,
+}: OpenCreationConceptExerciseIssueImplementationsProps): JSX.Element {
+  if (implementations.length === 0) {
+    return <></>
+  }
+
+  return (
+    <p className="card-text">
+      Existing implementations:{' '}
+      {implementations.map((implementation, index) => (
+        <span>
+          {index > 0 ? ', ' : ''}
+          <a href={implementation.exercise.url}>{implementation.track.name}</a>
+        </span>
+      ))}
+    </p>
+  )
+}
+
+interface OpenCreationConceptExerciseIssueStoriesProps {
+  stories: OpenCreationConceptExerciseIssueStory[]
+}
+
+function OpenCreationConceptExerciseIssueStories({
+  stories,
+}: OpenCreationConceptExerciseIssueStoriesProps): JSX.Element {
+  if (stories.length === 0) {
+    return <></>
+  }
+
+  return (
+    <p className="card-text">
+      Used in story:{' '}
+      {stories.map((story, index) => (
+        <span>
+          {index > 0 ? ', ' : ''}
+          <a href={story.url}>{story.name}</a>
+        </span>
+      ))}
+    </p>
   )
 }
 
