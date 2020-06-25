@@ -16,6 +16,7 @@ import { SwitchToggle } from './SwitchToggle'
 import { ExerciseDetails } from './views/ExerciseDetails'
 import { LaunchList } from './views/LaunchList'
 import { ExerciseTree } from './views/ExerciseTree'
+import { ExerciseList } from './views/ExerciseList'
 
 import { useActionableState } from '../hooks/useActionableOnly'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
@@ -94,6 +95,7 @@ function TrackView(): JSX.Element | null {
       <Route path={`${path}/details`} component={ExerciseDetails} />
       <Route path={`${path}/launch`} component={LaunchList} />
       <Route path={`${path}/tree`} component={ExerciseTree} />
+      <Route path={`${path}/list`} component={ExerciseList} />
       <Redirect to={`${path}/launch`} />
     </Switch>
   )
@@ -106,6 +108,7 @@ function TrackMaintainingViewSelect(): JSX.Element {
     <div className="btn-group w-100">
       <PageLink to={`${path}/launch`}>Launch</PageLink>
       <PageLink to={`${path}/tree`}>Tree</PageLink>
+      <PageLink to={`${path}/list`}>List</PageLink>
     </div>
   )
 }
