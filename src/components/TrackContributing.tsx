@@ -163,7 +163,7 @@ function OpenCreationConceptExerciseIssueImplementations({
   }
 
   return (
-    <p className="card-text">
+    <div className="card-text">
       Existing implementations:{' '}
       {implementations.map((implementation, index) => (
         <span>
@@ -171,7 +171,7 @@ function OpenCreationConceptExerciseIssueImplementations({
           <a href={implementation.exercise.url}>{implementation.track.name}</a>
         </span>
       ))}
-    </p>
+    </div>
   )
 }
 
@@ -187,7 +187,7 @@ function OpenCreationConceptExerciseIssueStories({
   }
 
   return (
-    <p className="card-text">
+    <div className="card-text">
       Used in story:{' '}
       {stories.map((story, index) => (
         <span>
@@ -195,7 +195,7 @@ function OpenCreationConceptExerciseIssueStories({
           <a href={story.url}>{story.name}</a>
         </span>
       ))}
-    </p>
+    </div>
   )
 }
 
