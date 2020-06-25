@@ -6,8 +6,9 @@ import {
   useOpenImproveConceptExerciseIssues,
   OpenCreationConceptExerciseIssueData,
   OpenImproveConceptExerciseIssueData,
-  OpenCreationConceptExerciseIssueExistingImplementation,
-  OpenCreationConceptExerciseIssueStory,
+  OpenCreationConceptExerciseIssueExistingImplementationData,
+  OpenCreationConceptExerciseIssueStoryData,
+  OpenCreationConceptExerciseIssueReferenceDocumentData,
 } from '../hooks/useConceptExerciseIssues'
 import { useRemoteConfig } from '../hooks/useRemoteConfig'
 import { LoadingIndicator } from './LoadingIndicator'
@@ -126,6 +127,9 @@ function OpenCreationConceptExerciseIssue({
     <div className="card mb-2">
       <div className="card-body">
         <h5 className="card-title">{issue.concept}</h5>
+        <OpenCreationConceptExerciseIssueReferenceDocument
+          concept={issue.referenceDocument}
+        />
         <OpenCreationConceptExerciseIssueImplementations
           implementations={issue.implementations || []}
         />
@@ -151,8 +155,26 @@ function OpenCreationConceptExerciseIssue({
   )
 }
 
+interface OpenCreationConceptExerciseIssueReferenceDocumentProps {
+  concept: OpenCreationConceptExerciseIssueReferenceDocumentData
+}
+
+function OpenCreationConceptExerciseIssueReferenceDocument({
+  concept,
+}: OpenCreationConceptExerciseIssueReferenceDocumentProps): JSX.Element {
+  if (!concept.url) {
+    return <></>
+  }
+
+  return (
+    <div className="card-text">
+      Reference document: <a href={concept.url}>{concept.name}</a>
+    </div>
+  )
+}
+
 interface OpenCreationConceptExerciseIssueImplementationsProps {
-  implementations: OpenCreationConceptExerciseIssueExistingImplementation[]
+  implementations: OpenCreationConceptExerciseIssueExistingImplementationData[]
 }
 
 function OpenCreationConceptExerciseIssueImplementations({
@@ -166,7 +188,7 @@ function OpenCreationConceptExerciseIssueImplementations({
     <div className="card-text">
       Existing implementations:{' '}
       {implementations.map((implementation, index) => (
-        <span>
+        <span key={index}>
           {index > 0 ? ', ' : ''}
           <a href={implementation.exercise.url}>{implementation.track.name}</a>
         </span>
@@ -176,7 +198,7 @@ function OpenCreationConceptExerciseIssueImplementations({
 }
 
 interface OpenCreationConceptExerciseIssueStoriesProps {
-  stories: OpenCreationConceptExerciseIssueStory[]
+  stories: OpenCreationConceptExerciseIssueStoryData[]
 }
 
 function OpenCreationConceptExerciseIssueStories({
@@ -190,7 +212,7 @@ function OpenCreationConceptExerciseIssueStories({
     <div className="card-text">
       Used in story:{' '}
       {stories.map((story, index) => (
-        <span>
+        <span key={index}>
           {index > 0 ? ', ' : ''}
           <a href={story.url}>{story.name}</a>
         </span>

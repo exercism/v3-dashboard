@@ -21,20 +21,20 @@ interface ConceptExerciseIssuesResult<T> {
 export interface OpenCreationConceptExerciseIssuesResult
   extends ConceptExerciseIssuesResult<OpenCreationConceptExerciseIssueData[]> {}
 
-export interface OpenCreationConceptExerciseIssueSection {
+export interface OpenCreationConceptExerciseIssueSectionData {
   heading: string
   markdown: string | undefined
   node: Node | undefined
 }
 
-export interface OpenCreationConceptExerciseIssueSections {
-  outOfScope: OpenCreationConceptExerciseIssueSection | undefined
-  prerequisites: OpenCreationConceptExerciseIssueSection | undefined
-  concepts: OpenCreationConceptExerciseIssueSection | undefined
-  learningObjectives: OpenCreationConceptExerciseIssueSection | undefined
+export interface OpenCreationConceptExerciseIssueSectionsData {
+  outOfScope: OpenCreationConceptExerciseIssueSectionData | undefined
+  prerequisites: OpenCreationConceptExerciseIssueSectionData | undefined
+  concepts: OpenCreationConceptExerciseIssueSectionData | undefined
+  learningObjectives: OpenCreationConceptExerciseIssueSectionData | undefined
 }
 
-export interface OpenCreationConceptExerciseIssueStory {
+export interface OpenCreationConceptExerciseIssueStoryData {
   url: string
   name: string
 }
@@ -44,14 +44,19 @@ export interface OpenCreationConceptExerciseIssueExistingImplementationExercise 
   slug: string
 }
 
-export interface OpenCreationConceptExerciseIssueExistingImplementationTrack {
+export interface OpenCreationConceptExerciseIssueExistingImplementationTrackData {
   name: string
   slug: string
 }
 
-export interface OpenCreationConceptExerciseIssueExistingImplementation {
-  track: OpenCreationConceptExerciseIssueExistingImplementationTrack
+export interface OpenCreationConceptExerciseIssueExistingImplementationData {
+  track: OpenCreationConceptExerciseIssueExistingImplementationTrackData
   exercise: OpenCreationConceptExerciseIssueExistingImplementationExercise
+}
+
+export interface OpenCreationConceptExerciseIssueReferenceDocumentData {
+  name: string
+  url?: string
 }
 
 export interface OpenCreationConceptExerciseIssueData {
@@ -60,10 +65,11 @@ export interface OpenCreationConceptExerciseIssueData {
   title: string
   url: string
   updatedAt: Date
-  sections: OpenCreationConceptExerciseIssueSections
-  stories: OpenCreationConceptExerciseIssueStory[] | undefined
+  referenceDocument: OpenCreationConceptExerciseIssueReferenceDocumentData
+  sections: OpenCreationConceptExerciseIssueSectionsData
+  stories: OpenCreationConceptExerciseIssueStoryData[] | undefined
   implementations:
-    | OpenCreationConceptExerciseIssueExistingImplementation[]
+    | OpenCreationConceptExerciseIssueExistingImplementationData[]
     | undefined
 }
 
@@ -125,7 +131,7 @@ function useConceptExerciseIssuesApi<T>(
 
 function parseIssueSections(
   markdown: string
-): OpenCreationConceptExerciseIssueSections {
+): OpenCreationConceptExerciseIssueSectionsData {
   const sections = parseListSections(markdown)
 
   return {
@@ -138,13 +144,13 @@ function parseIssueSections(
 
 function parseListSections(
   markdown: string
-): { [heading: string]: OpenCreationConceptExerciseIssueSection } {
+): { [heading: string]: OpenCreationConceptExerciseIssueSectionData } {
   const parser = new Parser()
   const parsed = parser.parse(markdown)
   const lines = markdown.split('\n')
 
   const headingsWithList: {
-    [heading: string]: OpenCreationConceptExerciseIssueSection
+    [heading: string]: OpenCreationConceptExerciseIssueSectionData
   } = {}
 
   let node = parsed.firstChild
@@ -205,9 +211,33 @@ export function useOpenCreationConceptExerciseIssues(
         .replace(/\s+/g, '-')
     }
 
+    function referenceDocumentFromIssue(
+      issue: ConceptExerciseIssue
+    ): OpenCreationConceptExerciseIssueReferenceDocumentData {
+      const concept = conceptFromIssue(issue)
+
+      for (const track of tracksResult.result || []) {
+        for (const exercise of track.exercises.concept) {
+          const exerciseConcept = exercise.concepts.find(
+            (exerciseConcept) => exerciseConcept.name === concept
+          )
+
+          if (exerciseConcept) {
+            return {
+              name: exerciseConcept.name,
+              url: exerciseConcept.url,
+            }
+          }
+        }
+      }
+      return {
+        name: concept,
+      }
+    }
+
     function storiesForConcept(
       issue: ConceptExerciseIssue
-    ): OpenCreationConceptExerciseIssueStory[] | undefined {
+    ): OpenCreationConceptExerciseIssueStoryData[] | undefined {
       if (!storiesResult.result) {
         return undefined
       }
@@ -220,7 +250,9 @@ export function useOpenCreationConceptExerciseIssues(
 
     function implementationsOfConcept(
       issue: ConceptExerciseIssue
-    ): OpenCreationConceptExerciseIssueExistingImplementation[] | undefined {
+    ):
+      | OpenCreationConceptExerciseIssueExistingImplementationData[]
+      | undefined {
       if (!tracksResult.result) {
         return undefined
       }
@@ -238,7 +270,7 @@ export function useOpenCreationConceptExerciseIssues(
             continue
           }
 
-          const implementation: OpenCreationConceptExerciseIssueExistingImplementation = {
+          const implementation: OpenCreationConceptExerciseIssueExistingImplementationData = {
             exercise: {
               url: exercise.url,
               slug: exercise.slug,
@@ -265,6 +297,7 @@ export function useOpenCreationConceptExerciseIssues(
         updatedAt: new Date(issue.updatedAt),
         sections: parseIssueSections(issue.body),
         stories: storiesForConcept(issue),
+        referenceDocument: referenceDocumentFromIssue(issue),
         implementations: implementationsOfConcept(issue),
       }
     }
