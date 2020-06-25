@@ -131,11 +131,9 @@ function OpenCreationConceptExerciseIssue({
           concept={issue.referenceDocument}
         />
         <OpenCreationConceptExerciseIssueImplementations
-          implementations={issue.implementations || []}
+          implementations={issue.implementations}
         />
-        <OpenCreationConceptExerciseIssueStories
-          stories={issue.stories || []}
-        />
+        <OpenCreationConceptExerciseIssueStories stories={issue.stories} />
         <p className="card-text">
           <small className="text-muted">
             Last updated: {issue.updatedAt.toDateString()}
@@ -174,13 +172,15 @@ function OpenCreationConceptExerciseIssueReferenceDocument({
 }
 
 interface OpenCreationConceptExerciseIssueImplementationsProps {
-  implementations: OpenCreationConceptExerciseIssueExistingImplementationData[]
+  implementations:
+    | OpenCreationConceptExerciseIssueExistingImplementationData[]
+    | undefined
 }
 
 function OpenCreationConceptExerciseIssueImplementations({
   implementations,
 }: OpenCreationConceptExerciseIssueImplementationsProps): JSX.Element {
-  if (implementations.length === 0) {
+  if (implementations === undefined || implementations.length === 0) {
     return <></>
   }
 
@@ -198,13 +198,13 @@ function OpenCreationConceptExerciseIssueImplementations({
 }
 
 interface OpenCreationConceptExerciseIssueStoriesProps {
-  stories: OpenCreationConceptExerciseIssueStoryData[]
+  stories: OpenCreationConceptExerciseIssueStoryData[] | undefined
 }
 
 function OpenCreationConceptExerciseIssueStories({
   stories,
 }: OpenCreationConceptExerciseIssueStoriesProps): JSX.Element {
-  if (stories.length === 0) {
+  if (stories === undefined || stories.length === 0) {
     return <></>
   }
 
