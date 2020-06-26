@@ -77,8 +77,10 @@ export function TrackAside({ trackId }: TrackAsideProps): JSX.Element {
         </AsideItem>
 
         <AsideItem disabled={actionableOnly}>
-          <span>Create Concept exercise issues</span>
-          <IssuesLink
+          <IssuesLink trackId={trackId} type="new-exercise">
+            Create Concept exercise issues
+          </IssuesLink>
+          <IssuesCount
             issues={openCreationIssues}
             trackId={trackId}
             type="new-exercise"
@@ -86,8 +88,10 @@ export function TrackAside({ trackId }: TrackAsideProps): JSX.Element {
         </AsideItem>
 
         <AsideItem disabled={actionableOnly}>
-          <span>Improve Concept exercise issues</span>
-          <IssuesLink
+          <IssuesLink trackId={trackId} type="improve-exercise">
+            Improve Concept exercise issues
+          </IssuesLink>
+          <IssuesCount
             issues={openImproveIssues}
             trackId={trackId}
             type="improve-exercise"
@@ -153,7 +157,25 @@ function AsideItem({
   )
 }
 
+type IssueType = 'new-exercise' | 'improve-exercise'
+
 interface IssuesLinkProps {
+  children: React.ReactNode
+  trackId: TrackIdentifier
+  type: IssueType
+}
+
+function IssuesLink({ children, trackId, type }: IssuesLinkProps): JSX.Element {
+  return (
+    <a
+      href={`https://github.com/exercism/v3/issues?q=is%3Aissue+is%3Aopen+label%3Atrack%2F${trackId}+label%3Atype%2F${type}`}
+    >
+      {children}
+    </a>
+  )
+}
+
+interface IssuesCountProps {
   issues:
     | Array<
         | OpenImproveConceptExerciseIssueData
@@ -164,17 +186,15 @@ interface IssuesLinkProps {
   type: 'new-exercise' | 'improve-exercise'
 }
 
-function IssuesLink({ issues, trackId, type }: IssuesLinkProps): JSX.Element {
+function IssuesCount({ issues, trackId, type }: IssuesCountProps): JSX.Element {
   if (issues === undefined) {
     return <LoadingIndicator />
   }
 
   return (
-    <a
-      href={`https://github.com/exercism/v3/issues?q=is%3Aissue+is%3Aopen+label%3Atrack%2F${trackId}+label%3Atype%2F${type}`}
-    >
+    <IssuesLink trackId={trackId} type={type}>
       {issues.length}
-    </a>
+    </IssuesLink>
   )
 }
 
