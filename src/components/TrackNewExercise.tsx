@@ -441,14 +441,22 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
               or by running <code>exercism configure</code> and examining its
               output.
             </p>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-              value={cliToken}
-              onChange={(e) => setCliToken(e.target.value)}
-              required
-            />
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                value={cliToken}
+                onChange={(e) => setCliToken(e.target.value)}
+                required
+              />
+              <input
+                type="button"
+                className="form-control btn btn-danger col-md-1 ml-1"
+                onClick={(e) => setCliToken('')}
+                value="Clear"
+              />
+            </div>
           </div>
           <div className="form-group">
             <input
