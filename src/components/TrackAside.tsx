@@ -5,6 +5,13 @@ import { LoadingIconWithPopover } from './Popover'
 import { useToggleState } from '../hooks/useToggleState'
 import { useKeyPressListener } from '../hooks/useKeyListener'
 import { useActionableState } from '../hooks/useActionableOnly'
+import {
+  useOpenImproveConceptExerciseIssues,
+  useOpenCreationConceptExerciseIssues,
+  OpenImproveConceptExerciseIssueData,
+  OpenCreationConceptExerciseIssueData,
+} from '../hooks/useConceptExerciseIssues'
+import { LoadingIndicator } from './LoadingIndicator'
 
 export interface TrackAsideProps {
   trackId: TrackIdentifier
@@ -12,6 +19,12 @@ export interface TrackAsideProps {
 
 export function TrackAside({ trackId }: TrackAsideProps): JSX.Element {
   const { done: doneConfig, config } = useRemoteConfig(trackId)
+  const { result: openCreationIssues } = useOpenCreationConceptExerciseIssues(
+    trackId
+  )
+  const { result: openImproveIssues } = useOpenImproveConceptExerciseIssues(
+    trackId
+  )
   const { done, data } = useTrackAsideData(trackId)
   const [actionableOnly] = useActionableState()
 
@@ -61,6 +74,24 @@ export function TrackAside({ trackId }: TrackAsideProps): JSX.Element {
             config.exercises &&
             config.exercises.practice &&
             config.exercises.practice.length}
+        </AsideItem>
+
+        <AsideItem disabled={actionableOnly}>
+          <span>Create Concept exercise issues</span>
+          <IssuesLink
+            issues={openCreationIssues}
+            trackId={trackId}
+            type="new-exercise"
+          />
+        </AsideItem>
+
+        <AsideItem disabled={actionableOnly}>
+          <span>Improve Concept exercise issues</span>
+          <IssuesLink
+            issues={openImproveIssues}
+            trackId={trackId}
+            type="improve-exercise"
+          />
         </AsideItem>
 
         <AsideItem disabled={actionableOnly && data['testRunner'] === true}>
@@ -119,6 +150,31 @@ function AsideItem({
     >
       {children}
     </li>
+  )
+}
+
+interface IssuesLinkProps {
+  issues:
+    | Array<
+        | OpenImproveConceptExerciseIssueData
+        | OpenCreationConceptExerciseIssueData
+      >
+    | undefined
+  trackId: TrackIdentifier
+  type: 'new-exercise' | 'improve-exercise'
+}
+
+function IssuesLink({ issues, trackId, type }: IssuesLinkProps): JSX.Element {
+  if (issues === undefined) {
+    return <LoadingIndicator />
+  }
+
+  return (
+    <a
+      href={`https://github.com/exercism/v3/issues?q=is%3Aissue+is%3Aopen+label%3Atrack%2F${trackId}+label%3Atype%2F${type}`}
+    >
+      {issues.length}
+    </a>
   )
 }
 
