@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useRemoteConfig } from '../../hooks/useRemoteConfig'
 
 import { LoadingIndicator } from '../LoadingIndicator'
+import { useConcepts, Concept as ConceptData } from '../../hooks/useConcepts'
 
 export interface ExerciseList {
   trackId: TrackIdentifier
@@ -11,10 +12,11 @@ export interface ExerciseList {
 
 export function ExerciseList(): JSX.Element {
   const params = useParams<ExerciseList>()
+  const { result: conceptsResult, loading: conceptsLoading } = useConcepts()
 
   const { config, done } = useRemoteConfig(params.trackId)
 
-  if (!done) {
+  if (!done || conceptsLoading) {
     return <LoadingIndicator />
   }
 
@@ -41,14 +43,77 @@ export function ExerciseList(): JSX.Element {
         </tr>
       </thead>
       <tbody>
-        {conceptExercises.map((exercise) => (
-          <tr key={exercise.uuid}>
-            <th scope="row">{exercise.slug} </th>
-            <td>{exercise.concepts.join(', ')}</td>
-            <td>{exercise.prerequisites.join(', ')}</td>
-          </tr>
-        ))}
+        <ExerciseRows
+          exercises={config.exercises.concept}
+          conceptData={conceptsResult || []}
+        />
       </tbody>
     </table>
   )
+}
+
+interface ExerciseRowsProps {
+  exercises: readonly ExerciseConfiguration[]
+  conceptData: readonly ConceptData[]
+}
+
+function ExerciseRows({
+  exercises,
+  conceptData: concepts,
+}: ExerciseRowsProps): JSX.Element {
+  const sortedExercises = [...exercises]
+  sortedExercises.sort((a, b) => a.slug.localeCompare(b.slug))
+
+  return (
+    <>
+      {sortedExercises.map((exercise) => (
+        <tr key={exercise.uuid}>
+          <th scope="row">{exercise.slug} </th>
+          <td>
+            <Concepts concepts={exercise.concepts} conceptData={concepts} />
+          </td>
+          <td>
+            <Concepts
+              concepts={exercise.prerequisites}
+              conceptData={concepts}
+            />
+          </td>
+        </tr>
+      ))}
+    </>
+  )
+}
+
+interface ConceptsProps {
+  concepts: readonly string[]
+  conceptData: readonly ConceptData[]
+}
+
+function Concepts({ concepts, conceptData }: ConceptsProps): JSX.Element {
+  const findConcept = (concept: string) =>
+    conceptData.find((data) => data.variations.includes(concept))
+
+  return (
+    <>
+      {concepts.map((concept, index) => (
+        <span key={index}>
+          {index > 0 ? ', ' : ''}
+          <Concept concept={concept} data={findConcept(concept)} />
+        </span>
+      ))}
+    </>
+  )
+}
+
+interface ConceptProps {
+  concept: string
+  data: ConceptData | undefined
+}
+
+function Concept({ concept, data }: ConceptProps): JSX.Element {
+  if (data) {
+    return <a href={data.url}>{concept}</a>
+  }
+
+  return <>{concept}</>
 }
