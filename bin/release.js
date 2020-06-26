@@ -7,7 +7,7 @@ const argv = yargs
   .options({
     bump: {
       alias: 'b',
-      demandOption: true,
+      demandOption: false,
       description: 'What part of the version to bump',
       choices: ['major', 'minor', 'patch'],
     },
@@ -24,7 +24,7 @@ const argv = yargs
 const lastCommitMessage = () =>
   execSync(`git log -1 --pretty=%B`).toString().trim()
 
-const bump = argv.bump
+const bump = argv.bump || 'patch'
 const message = argv.message || lastCommitMessage()
 
 console.log('Bump version')
