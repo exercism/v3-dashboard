@@ -13,15 +13,22 @@ const argv = yargs
     },
     message: {
       alias: 'm',
-      demandOption: true,
-      description: 'Describe the release',
+      demandOption: false,
+      description:
+        'Describe the release. If not specified, the latest commit message is used',
       type: 'string',
     },
   })
   .help().argv
 
+const lastCommitMessage = () =>
+  execSync(`git log -1 --pretty=%B`).toString().trim()
+
+const bump = argv.bump
+const message = argv.message || lastCommitMessage()
+
 console.log('Bump version')
-execSync(`npm version ${argv.bump} -m "${argv.message}"`)
+execSync(`npm version ${bump} -m "${message}"`)
 
 const version = JSON.parse(fs.readFileSync('./package.json')).version
 const tag = `v${version}`
@@ -31,5 +38,5 @@ execSync(`git push`)
 execSync(`git push origin ${tag}`)
 
 console.log('Open create GitHub release page')
-const newReleaseUrl = `https://github.com/exercism/v3-dashboard/releases/new?tag=${tag}&title=${argv.message}`
+const newReleaseUrl = `https://github.com/exercism/v3-dashboard/releases/new?tag=${tag}&title=${message}`
 openUrl.open(newReleaseUrl)
