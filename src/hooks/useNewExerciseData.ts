@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useMutableMemoryValue, StoredMemoryValue } from 'use-memory-value'
 
-interface NewExerciseData {
+interface NewExerciseForTrackData {
   exerciseName?: string
   learningObjectives?: string
   outOfScope?: string
@@ -14,35 +14,52 @@ interface NewExerciseData {
   introduction?: string
 }
 
+interface NewExerciseData {
+  [trackId: string]: NewExerciseForTrackData
+}
+
 const NEW_EXERCISE_DATA = new StoredMemoryValue<NewExerciseData>(
   `exercism.new_exercise`
 )
 
-function useNewExerciseField<K extends keyof NewExerciseData>(
+function useNewExerciseField<K extends keyof NewExerciseForTrackData>(
+  trackId: TrackIdentifier,
   field: K
-): [NewExerciseData[K], (value: NewExerciseData[K]) => void] {
+): [NewExerciseForTrackData[K], (value: NewExerciseForTrackData[K]) => void] {
   const [newExercise, setNewExercise] = useMutableMemoryValue(NEW_EXERCISE_DATA)
 
   const setter = useCallback(
-    (value: NewExerciseData[K]) => {
+    (value: NewExerciseForTrackData[K]) => {
       setNewExercise((prev) => {
-        return { ...(prev || {}), [field]: value }
+        return {
+          ...prev,
+          [trackId]: { ...(prev?.[trackId] || {}), [field]: value },
+        }
       })
     },
-    [field, setNewExercise]
+    [trackId, field, setNewExercise]
   )
 
-  return [newExercise?.[field], setter]
+  return [newExercise?.[trackId]?.[field], setter]
 }
 
-export const useExerciseName = () => useNewExerciseField('exerciseName')
-export const useLearningObjectives = () =>
-  useNewExerciseField('learningObjectives')
-export const useOutOfScope = () => useNewExerciseField('outOfScope')
-export const useConcepts = () => useNewExerciseField('concepts')
-export const usePrerequisites = () => useNewExerciseField('prerequisites')
-export const useStory = () => useNewExerciseField('story')
-export const useTasks = () => useNewExerciseField('tasks')
-export const useExample = () => useNewExerciseField('example')
-export const useIssueUrl = () => useNewExerciseField('issueUrl')
-export const useIntroduction = () => useNewExerciseField('introduction')
+export const useExerciseName = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'exerciseName')
+export const useLearningObjectives = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'learningObjectives')
+export const useOutOfScope = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'outOfScope')
+export const useConcepts = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'concepts')
+export const usePrerequisites = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'prerequisites')
+export const useStory = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'story')
+export const useTasks = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'tasks')
+export const useExample = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'example')
+export const useIssueUrl = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'issueUrl')
+export const useIntroduction = (trackId: TrackIdentifier) =>
+  useNewExerciseField(trackId, 'introduction')
