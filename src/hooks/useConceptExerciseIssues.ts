@@ -337,7 +337,7 @@ export function useOpenImproveConceptExerciseIssues(
   function subject(issue: ConceptExerciseIssue): string {
     return issue.title
       .replace(/^\[.+?\]\s*/, '')
-      .replace(/^Improve exercise:\s*/i, '')
+      .replace(/^Improve (concept )?exercise:\s*/i, '')
   }
 
   return useConceptExerciseIssuesApi(
