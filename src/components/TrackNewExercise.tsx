@@ -59,6 +59,8 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
 
   const prepopulate = props.location.state
 
+  const clearState = () => window.history.pushState(null, '')
+
   useEffect(() => {
     if (!prepopulate) {
       return
@@ -70,6 +72,8 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     setOutOfScope(prepopulate.outOfScope || '')
     setLearningObjectives(prepopulate.learningObjectives || '')
     setIssueUrl(prepopulate.issueUrl || '')
+
+    clearState()
   }, [
     prepopulate,
     setExerciseName,
@@ -99,7 +103,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     issueUrl,
   ])
 
-  const clearData = () => {
+  const clearFormData = () => {
     setExerciseName('')
     setLearningObjectives('')
     setOutOfScope('')
@@ -110,6 +114,18 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     setExample('')
     setIssueUrl('')
     setIntroduction('')
+  }
+
+  const clearForm = (evt: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+    evt.preventDefault()
+
+    if (
+      window.confirm(
+        'Are you sure you want to clear the data in this form? Note: this will not clear the CLI token'
+      )
+    ) {
+      clearFormData()
+    }
   }
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
@@ -153,7 +169,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
       })
       .catch(() => setPosting(false))
       .finally(() => {
-        clearData()
+        clearFormData()
         setPosting(false)
       })
   }
@@ -484,13 +500,19 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
               />
               <input
                 type="button"
-                className="form-control btn btn-danger col-md-1 ml-1"
-                onClick={(e) => setCliToken('')}
-                value="Clear"
+                className="form-control btn btn-danger col-md-2 ml-1"
+                onClick={() => setCliToken('')}
+                value="Clear token"
               />
             </div>
           </div>
           <div className="form-group">
+            <input
+              type="submit"
+              value="Clear form"
+              className="btn btn-warning mr-1 float-right"
+              onClick={(e) => clearForm(e)}
+            />
             <input
               type="submit"
               value="Create Pull Request"
