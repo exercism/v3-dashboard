@@ -9,6 +9,10 @@ import { CheckOrCross } from '../CheckOrCross'
 
 import { Slug, Position } from './graph-types'
 
+type SVGGraphSelection = d3.Selection<SVGSVGElement, unknown, null, undefined>
+type SVGGroupSelection = d3.Selection<SVGGElement, unknown, null, undefined>
+type SVGTextSelection = d3.Selection<SVGTextElement, unknown, null, undefined>
+
 export interface ExerciseTreeGraphProps {
   config?: TrackConfiguration
 }
@@ -244,111 +248,24 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
      * Draw title
      */
 
-    graph
-      .append('text')
-      .style('font-size', '48px')
-      .style('fill', '#000')
-      .text(`${this.props.config.language} Concept Exercises`)
-      .attr('x', '50%')
-      .attr('y', 45)
-      .attr('text-anchor', 'middle')
-
-    /**
-     * Draw show legend hover
-     */
-
-    const showLegend = graph.append('g').attr('class', 'show-legend')
-
-    showLegend
-      .append('rect')
-      .attr('x', 15)
-      .attr('y', 15)
-      .attr('height', 20)
-      .attr('width', 20)
-      .style('fill', '#85C1E9')
-      .style('stroke', 'black')
-      .style('stroke-width', 1)
-
-    showLegend
-      .append('text')
-      .style('font-size', '16px')
-      .style('fill', '#EAF2F8')
-      .text('ℹ')
-      .attr('x', 25)
-      .attr('y', 31)
-      .attr('text-anchor', 'middle')
-      .attr('pointer-events', 'none')
-
-    /**
-     * Draw legend
-     */
-    const legend = graph
-      .append('g')
-      .attr('class', 'legend')
-      .attr('visibility', 'hidden')
-
-    legend
-      .append('rect')
-      .attr('x', 1)
-      .attr('y', 1)
-      .attr('height', 70)
-      .attr('width', 225)
-      .style('fill', 'white')
-      .style('stroke', 'black')
-      .style('stroke-width', 1)
-
-    legend
-      .append('circle')
-      .attr('r', circleRadius)
-      .attr('cx', 20)
-      .attr('cy', 20)
-      .style('fill', 'lightsteelblue')
-      .style('stroke', 'black')
-      .style('stroke-width', 1)
-
-    legend
-      .append('rect')
-      .attr('width', squareLength)
-      .attr('height', squareLength)
-      .attr('rx', squareCornerRadius)
-      .attr('ry', squareCornerRadius)
-      .attr('x', 20 - squareLength / 2)
-      .attr('y', 50 - squareLength / 2)
-      .style('fill', 'lightpink')
-      .style('stroke', 'black')
-      .style('stroke-width', 1)
-
-    legend
-      .append('text')
-      .style('font-size', '14px')
-      .style('fill', '#000')
-      .text('implemented exercises')
-      .attr('x', 35)
-      .attr('y', 25)
-
-    legend
-      .append('text')
-      .style('font-size', '14px')
-      .style('fill', '#000')
-      .text('concepts missing an exercise')
-      .attr('x', 35)
-      .attr('y', 55)
-
-    legend
-      .append('rect')
-      .attr('x', 1)
-      .attr('y', 1)
-      .attr('height', 70)
-      .attr('width', 225)
-      .attr('class', 'overlay')
-      .style('fill', 'rgba(0,0,0,0)')
+    drawTitle(graph, this.props.config.language)
+    const showLegend = drawShowLegendIcon(graph, { x: 15, y: 15 })
+    const legend = drawLegend(graph, {
+      x: 1,
+      y: 1,
+      circleRadius,
+      squareLength,
+      squareCornerRadius,
+    })
 
     showLegend.on('mouseover', () => {
       select('g.legend').attr('visibility', 'visible')
+      select('g.show-legend').attr('visibility', 'hidden')
     })
 
-    select('g.legend > rect.overlay').on('mouseout', () => {
+    legend.select('.overlay').on('mouseout', () => {
       select('g.legend').attr('visibility', 'hidden')
+      select('g.show-legend').attr('visibility', 'visible')
     })
   }
 
@@ -376,6 +293,154 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       </div>
     )
   }
+}
+
+/**
+ * Draw graph title
+ */
+function drawTitle(
+  graph: SVGGraphSelection,
+  textContent: string
+): SVGTextSelection {
+  return graph
+    .append('text')
+    .style('font-size', '48px')
+    .style('fill', '#000')
+    .text(`${textContent} Concept Exercises`)
+    .attr('x', '50%')
+    .attr('y', 45)
+    .attr('text-anchor', 'middle')
+}
+
+/**
+ * Draw show legend hover
+ */
+function drawShowLegendIcon(
+  graph: SVGGraphSelection,
+  { x, y }: Position
+): SVGGroupSelection {
+  const showLegend = graph.append('g').attr('class', 'show-legend')
+  const icon = showLegend.append('g').attr('class', 'show-legend-icon')
+  const caption = showLegend.append('g').attr('class', 'show-legend-caption')
+
+  icon
+    .append('rect')
+    .attr('x', x)
+    .attr('y', y)
+    .attr('height', 120)
+    .attr('width', 20)
+    .style('fill', '#EEEEEE')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+
+  icon
+    .append('rect')
+    .attr('x', x)
+    .attr('y', y)
+    .attr('height', 20)
+    .attr('width', 20)
+    .style('fill', '#85C1E9')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+
+  caption
+    .append('text')
+    .style('font-size', '16px')
+    .style('fill', '#EAF2F8')
+    .text('ℹ')
+    .attr('x', x + 10)
+    .attr('y', y + 16)
+    .attr('text-anchor', 'middle')
+    .attr('pointer-events', 'none')
+
+  caption
+    .append('text')
+    .style('font-size', '16px')
+    .style('fill', '#000')
+    .text('show legend')
+    .attr('pointer-events', 'none')
+    .attr('transform', `translate(${x + 5}, ${y + 25}), rotate(90)`)
+
+  return showLegend
+}
+
+type DrawLegendOptions = {
+  x: number
+  y: number
+  circleRadius: number
+  squareLength: number
+  squareCornerRadius: number
+}
+
+/**
+ * Draw legend
+ */
+function drawLegend(
+  graph: SVGGraphSelection,
+  { x, y, circleRadius, squareLength, squareCornerRadius }: DrawLegendOptions
+): SVGGroupSelection {
+  const legend = graph
+    .append('g')
+    .attr('class', 'legend')
+    .attr('visibility', 'hidden')
+
+  legend
+    .append('rect')
+    .attr('x', x)
+    .attr('y', y)
+    .attr('height', 70)
+    .attr('width', 225)
+    .style('fill', 'white')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+
+  legend
+    .append('circle')
+    .attr('r', circleRadius)
+    .attr('cx', x + 20)
+    .attr('cy', y + 20)
+    .style('fill', 'lightsteelblue')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+
+  legend
+    .append('rect')
+    .attr('width', squareLength)
+    .attr('height', squareLength)
+    .attr('rx', squareCornerRadius)
+    .attr('ry', squareCornerRadius)
+    .attr('x', x + 20 - squareLength / 2)
+    .attr('y', y + 50 - squareLength / 2)
+    .style('fill', 'lightpink')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+
+  legend
+    .append('text')
+    .style('font-size', '14px')
+    .style('fill', '#000')
+    .text('implemented exercises')
+    .attr('x', x + 35)
+    .attr('y', y + 25)
+
+  legend
+    .append('text')
+    .style('font-size', '14px')
+    .style('fill', '#000')
+    .text('concepts missing an exercise')
+    .attr('x', x + 35)
+    .attr('y', y + 55)
+
+  legend
+    .append('rect')
+    .attr('x', x)
+    .attr('y', y)
+    .attr('height', 70)
+    .attr('width', 225)
+    .attr('class', 'overlay')
+    .style('fill', 'rgba(0,0,0,0)')
+
+  return legend
 }
 
 /**
