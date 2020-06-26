@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, useEffect } from 'react'
 import { StaticContext } from 'react-router'
-import { useParams, RouteComponentProps } from 'react-router-dom'
+import { useParams, RouteComponentProps, Link } from 'react-router-dom'
 
 import { useTrackData } from '../hooks/useTrackData'
 import { useCliToken } from '../hooks/useUserData'
@@ -55,6 +55,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const [cliToken, setCliToken] = useCliToken()
   const [posting, setPosting] = useState(false)
   const [pullRequestUrl, setPullRequestUrl] = useState('')
+  const [linkToContributing, setLinkToContributing] = useState(false)
 
   const prepopulate = props.location.state
 
@@ -77,6 +78,25 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
     setOutOfScope,
     setLearningObjectives,
     setIssueUrl,
+    setLinkToContributing,
+  ])
+
+  useEffect(() => {
+    setLinkToContributing(
+      (exerciseName === undefined || exerciseName === '') &&
+        (concepts === undefined || concepts === '') &&
+        (prerequisites === undefined || prerequisites === '') &&
+        (outOfScope === undefined || outOfScope === '') &&
+        (learningObjectives === undefined || learningObjectives === '') &&
+        (issueUrl === undefined || issueUrl === '')
+    )
+  }, [
+    exerciseName,
+    concepts,
+    prerequisites,
+    outOfScope,
+    learningObjectives,
+    issueUrl,
   ])
 
   const clearData = () => {
@@ -162,6 +182,18 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   return (
     <div className="d-flex flex-wrap align-items-center mt-4 mb-4 row">
       <div className="col-12 mb-2">
+        {linkToContributing ? (
+          <div className="alert alert-primary" role="alert">
+            Thanks for wanting to contribute a new exercise! First, please check
+            the <Link to={`/${trackId}/contributing`}>Contributing</Link>{' '}
+            section to see if there is an open issue for the exercise you want
+            to create. If so, please use that issue's "Create exercise" button
+            to quickly get started.
+          </div>
+        ) : (
+          <></>
+        )}
+
         <form onSubmit={handleSubmit}>
           <fieldset>
             <legend>
