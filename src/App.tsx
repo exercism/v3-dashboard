@@ -25,10 +25,10 @@ function AppContainer({
   children: React.ReactNode
 }): JSX.Element {
   return (
-    <div className="app container">
+    <>
       <Header />
-      {children}
-    </div>
+      <div className="app container">{children}</div>
+    </>
   )
 }
 

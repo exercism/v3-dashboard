@@ -118,3 +118,7 @@ textarea {
 .dim {
   opacity: 0.6;
 }
+
+.text-decoration-underline {
+  text-decoration: underline;
+}

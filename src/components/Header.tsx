@@ -3,12 +3,17 @@ import { NavLink } from 'react-router-dom'
 
 export function Header(): JSX.Element {
   return (
-    <header className="p-3 mb-2" style={{ background: '#009cab' }}>
-      <HeaderLink to="/">
-        <HeaderLogo />
-      </HeaderLink>
-      <HeaderLink to="/">Tracks</HeaderLink>
-      <HeaderLink to="/stories">Stories</HeaderLink>
+    <header className="p-3 mb-3 align-right" style={{ background: '#009cab' }}>
+      <div className="container">
+        <HeaderLink to="/">
+          <HeaderLogo />
+        </HeaderLink>
+
+        <nav className="float-right">
+          <HeaderLink to="/">Tracks</HeaderLink>
+          <HeaderLink to="/stories">Stories</HeaderLink>
+        </nav>
+      </div>
     </header>
   )
 }
@@ -31,7 +36,7 @@ interface HeaderLinkProps {
 
 function HeaderLink({ children, to }: HeaderLinkProps): JSX.Element {
   return (
-    <NavLink to={to} className="text-white mr-3">
+    <NavLink to={to} className="text-white text-decoration-underline mr-3">
       {children}
     </NavLink>
   )
