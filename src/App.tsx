@@ -7,6 +7,8 @@ import { Stories } from './components/Stories'
 
 import './styles.css'
 
+import { Header } from './components/Header'
+
 export function App(): JSX.Element {
   return (
     <BrowserRouter>
@@ -22,7 +24,12 @@ function AppContainer({
 }: {
   children: React.ReactNode
 }): JSX.Element {
-  return <div className="app container">{children}</div>
+  return (
+    <div className="app container">
+      <Header />
+      {children}
+    </div>
+  )
 }
 
 function Dashboard(): JSX.Element {

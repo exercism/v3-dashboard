@@ -2,7 +2,6 @@ import React from 'react'
 
 import { LoadingIndicator } from './LoadingIndicator'
 import { Error } from './Error'
-import { BackLink } from './BackLink'
 import {
   useStories,
   StoryConcept,
@@ -25,15 +24,7 @@ export function Stories(): JSX.Element {
 
   return (
     <section>
-      <div className="d-flex justify-content-start flex-row align-items-center w-50">
-        <BackLink>Go Back</BackLink>
-      </div>
-      <header className="mb-4">
-        <h3 className="mb-4">Implemented Stories</h3>
-      </header>
-      <p>
-        This is a list of all the stories that been implemented in V3 tracks.
-      </p>
+      <p>These are all the stories that been implemented in V3 tracks.</p>
       <table className="table">
         <thead>
           <tr>

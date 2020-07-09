@@ -22,9 +22,6 @@ function TrackSelectionItem({ track }: TrackSelectionItemProps): JSX.Element {
 export function TrackSelection(): JSX.Element {
   return (
     <section>
-      <header className="mb-4">
-        <h1 className="mb-4">Exercism: V3 Dashboard</h1>
-      </header>
       <p>
         <span role="img" aria-label="hand waving">
           👋
