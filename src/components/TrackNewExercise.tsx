@@ -335,6 +335,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
                 </a>
                 ). This should generally contain no code samples. Markdown
                 should be used to format the document. Check out{' '}
+                <a href="/stories">the list of already implemented stories,</a>{' '}
                 <a href="https://github.com/exercism/v3/blob/master/docs/concept-exercises.md#docsinstructionsmd">
                   the documentation
                 </a>
