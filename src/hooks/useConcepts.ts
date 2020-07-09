@@ -7,10 +7,15 @@ export interface ConceptImplementation {
   url: string
 }
 
-export interface Concept {
+export interface ConceptDocument {
   url: string
   name: string
+}
+
+export interface Concept {
+  name: string
   variations: string[]
+  documents: ConceptDocument[]
   implementations: ConceptImplementation[]
 }
 

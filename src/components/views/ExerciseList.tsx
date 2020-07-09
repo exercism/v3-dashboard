@@ -111,8 +111,8 @@ interface ConceptProps {
 }
 
 function Concept({ concept, data }: ConceptProps): JSX.Element {
-  if (data) {
-    return <a href={data.url}>{concept}</a>
+  if (data && data.documents.length > 0) {
+    return <a href={data.documents[0].url}>{concept}</a>
   }
 
   return <>{concept}</>
