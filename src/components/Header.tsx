@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 export function Header(): JSX.Element {
   return (
@@ -36,8 +36,8 @@ interface HeaderLinkProps {
 
 function HeaderLink({ children, to }: HeaderLinkProps): JSX.Element {
   return (
-    <NavLink to={to} className="text-white text-decoration-underline mr-3">
+    <Link to={to} className="text-white text-decoration-underline mr-3">
       {children}
-    </NavLink>
+    </Link>
   )
 }
