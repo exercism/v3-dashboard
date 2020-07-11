@@ -21,7 +21,7 @@ export function Header(): JSX.Element {
 function HeaderLogo(): JSX.Element {
   return (
     <img
-      alt="Exercism"
+      alt="Exercism logo"
       src="https://assets.exercism.io/assets/logo-white-e3be059a4bfc4bf65f196a12105e9cff389b5a67f2065a0862d4ff6153571ef5.png"
       className="float-left"
       height="24px"
