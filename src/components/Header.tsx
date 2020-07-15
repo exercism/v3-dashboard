@@ -11,6 +11,7 @@ export function Header(): JSX.Element {
 
         <nav className="float-right">
           <HeaderLink to="/">Tracks</HeaderLink>
+          <HeaderLink to="/exercises">Exercises</HeaderLink>
           <HeaderLink to="/stories">Stories</HeaderLink>
         </nav>
       </div>
