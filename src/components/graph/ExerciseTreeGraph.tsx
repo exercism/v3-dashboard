@@ -3,6 +3,7 @@ import { select } from 'd3-selection'
 import { linkVertical } from 'd3-shape'
 
 import { ExerciseGraph } from './ExerciseGraph'
+import { ExerciseGraphNode } from './ExerciseGraphNode'
 import { ExerciseGraphLayout } from './ExerciseGraphLayout'
 
 import { CheckOrCross } from '../CheckOrCross'
@@ -15,6 +16,16 @@ type SVGTextSelection = d3.Selection<SVGTextElement, unknown, null, undefined>
 
 export interface ExerciseTreeGraphProps {
   config?: TrackConfiguration
+}
+
+export interface ShapeOptions {
+  circle: {
+    radius: number
+  }
+  square: {
+    length: number
+    radius: number
+  }
 }
 
 export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
@@ -50,9 +61,15 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     const exerciseLayers = layout.exerciseLayers
     const conceptLayers = layout.conceptLayers
 
-    const circleRadius = 10
-    const squareLength = 20
-    const squareCornerRadius = 5
+    const shapeOptions: ShapeOptions = {
+      circle: {
+        radius: 10,
+      },
+      square: {
+        length: 20,
+        radius: 5,
+      },
+    }
 
     /**
      * Create graph container
@@ -155,17 +172,17 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       conceptGroup
         .append('rect')
         .attr('id', (d) => `concept--${d}`)
-        .attr('width', squareLength)
-        .attr('height', squareLength)
-        .attr('rx', squareCornerRadius)
-        .attr('ry', squareCornerRadius)
+        .attr('width', shapeOptions.square.length)
+        .attr('height', shapeOptions.square.length)
+        .attr('rx', shapeOptions.square.radius)
+        .attr('ry', shapeOptions.square.radius)
         .attr('x', (d) => {
           const { x } = getPositionFrom(layout.conceptPositions, d)
-          return x - squareLength / 2
+          return x - shapeOptions.square.length / 2
         })
         .attr('y', (d) => {
           const { y } = getPositionFrom(layout.conceptPositions, d)
-          return y - squareLength / 2
+          return y - shapeOptions.square.length / 2
         })
         .style('fill', 'lightpink')
         .style('stroke', 'black')
@@ -204,22 +221,8 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
         .enter()
         .append('g')
 
-      // Circle
-      nodeGroup
-        .append('circle')
-        .attr('id', (d) => d.slug)
-        .attr('r', circleRadius)
-        .attr('cx', (d) => {
-          const { x } = getPositionFrom(layout.exercisePositions, d.slug)
-          return x
-        })
-        .attr('cy', (d) => {
-          const { y } = getPositionFrom(layout.exercisePositions, d.slug)
-          return y
-        })
-        .style('fill', 'lightsteelblue')
-        .style('stroke', 'black')
-        .style('stroke-width', 1)
+      // Draw Shape for Node
+      nodeGroup.call(drawNode, layout, shapeOptions)
 
       // text
       nodeGroup
@@ -253,9 +256,9 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
     const legend = drawLegend(graph, {
       x: 1,
       y: 1,
-      circleRadius,
-      squareLength,
-      squareCornerRadius,
+      circleRadius: shapeOptions.circle.radius,
+      squareLength: shapeOptions.square.length,
+      squareCornerRadius: shapeOptions.square.radius,
     })
 
     showLegend.on('mouseover', () => {
@@ -293,6 +296,64 @@ export class ExerciseTreeGraph extends React.Component<ExerciseTreeGraphProps> {
       </div>
     )
   }
+}
+
+function drawNode(
+  nodeSelection: d3.Selection<
+    SVGGElement,
+    ExerciseGraphNode,
+    SVGGElement,
+    unknown
+  >,
+  layout: ExerciseGraphLayout,
+  shapeOptions: ShapeOptions
+): void {
+  // Draw circle
+  nodeSelection
+    .filter(onlyDone)
+    .append('circle')
+    .attr('id', (d) => d.slug)
+    .attr('r', shapeOptions.circle.radius)
+    .attr('cx', (d) => {
+      const { x } = getPositionFrom(layout.exercisePositions, d.slug)
+      return x
+    })
+    .attr('cy', (d) => {
+      const { y } = getPositionFrom(layout.exercisePositions, d.slug)
+      return y
+    })
+    .style('fill', 'lightsteelblue')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+
+  //Draw square
+  nodeSelection
+    .filter(onlyNotDone)
+    .append('rect')
+    .attr('id', (d) => `concept--${d}`)
+    .attr('width', shapeOptions.square.length)
+    .attr('height', shapeOptions.square.length)
+    .attr('rx', shapeOptions.square.radius)
+    .attr('ry', shapeOptions.square.radius)
+    .attr('x', (d) => {
+      const { x } = getPositionFrom(layout.exercisePositions, d.slug)
+      return x - shapeOptions.square.length / 2
+    })
+    .attr('y', (d) => {
+      const { y } = getPositionFrom(layout.exercisePositions, d.slug)
+      return y - shapeOptions.square.length / 2
+    })
+    .style('fill', 'lemonchiffon')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+}
+
+function onlyNotDone(d: ExerciseGraphNode): boolean {
+  return !d.uuid
+}
+
+function onlyDone(d: ExerciseGraphNode): boolean {
+  return !onlyNotDone(d)
 }
 
 /**
@@ -388,8 +449,8 @@ function drawLegend(
     .append('rect')
     .attr('x', x)
     .attr('y', y)
-    .attr('height', 70)
-    .attr('width', 225)
+    .attr('height', 100)
+    .attr('width', 245)
     .style('fill', 'white')
     .style('stroke', 'black')
     .style('stroke-width', 1)
@@ -411,6 +472,18 @@ function drawLegend(
     .attr('ry', squareCornerRadius)
     .attr('x', x + 20 - squareLength / 2)
     .attr('y', y + 50 - squareLength / 2)
+    .style('fill', 'lemonchiffon')
+    .style('stroke', 'black')
+    .style('stroke-width', 1)
+
+  legend
+    .append('rect')
+    .attr('width', squareLength)
+    .attr('height', squareLength)
+    .attr('rx', squareCornerRadius)
+    .attr('ry', squareCornerRadius)
+    .attr('x', x + 20 - squareLength / 2)
+    .attr('y', y + 80 - squareLength / 2)
     .style('fill', 'lightpink')
     .style('stroke', 'black')
     .style('stroke-width', 1)
@@ -427,9 +500,17 @@ function drawLegend(
     .append('text')
     .style('font-size', '14px')
     .style('fill', '#000')
-    .text('concepts missing an exercise')
+    .text('concepts not fully implemented')
     .attr('x', x + 35)
     .attr('y', y + 55)
+
+  legend
+    .append('text')
+    .style('font-size', '14px')
+    .style('fill', '#000')
+    .text('concepts missing an exercise')
+    .attr('x', x + 35)
+    .attr('y', y + 85)
 
   legend
     .append('rect')
