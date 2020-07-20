@@ -450,7 +450,7 @@ function drawLegend(
     .attr('x', x)
     .attr('y', y)
     .attr('height', 100)
-    .attr('width', 245)
+    .attr('width', 225)
     .style('fill', 'white')
     .style('stroke', 'black')
     .style('stroke-width', 1)
@@ -500,7 +500,7 @@ function drawLegend(
     .append('text')
     .style('font-size', '14px')
     .style('fill', '#000')
-    .text('concepts not fully implemented')
+    .text('exercise not complete')
     .attr('x', x + 35)
     .attr('y', y + 55)
 
