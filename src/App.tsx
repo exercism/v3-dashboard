@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 import { TrackSelection } from './components/TrackSelection'
 import { TrackTool } from './components/TrackTool'
+import { Exercises } from './components/Exercises'
 import { Stories } from './components/Stories'
 
 import './styles.css'
@@ -36,6 +37,7 @@ function Dashboard(): JSX.Element {
   return (
     <Switch>
       <Route path="/stories" component={Stories} />
+      <Route path="/exercises" component={Exercises} />
       <Route path="/:trackId" component={TrackTool} />
       <Route path="/" exact component={TrackSelection} />
     </Switch>

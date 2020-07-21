@@ -9,6 +9,7 @@ export interface TrackConceptExercise {
   url: string
   slug: string
   concepts: TrackConcept[]
+  prerequisites: TrackConcept[]
 }
 
 export interface TrackExercises {
@@ -16,6 +17,7 @@ export interface TrackExercises {
 }
 
 export interface Track {
+  url: string
   name: string
   slug: string
   exercises: TrackExercises
