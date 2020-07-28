@@ -1,6 +1,9 @@
 import React, { useState, FormEvent, useEffect } from 'react'
 import { StaticContext } from 'react-router'
 import { useParams, RouteComponentProps, Link } from 'react-router-dom'
+import prettier from 'prettier/standalone'
+import parserMarkdown from 'prettier/parser-markdown'
+import parserBabel from 'prettier/parser-babel'
 
 import { useTrackData } from '../hooks/useTrackData'
 import { useCliToken } from '../hooks/useUserData'
@@ -18,6 +21,19 @@ import {
 } from '../hooks/useNewExerciseData'
 
 import { SubmitIndicator } from './SubmitIndicator'
+
+function formatMarkdown(markdown: string | undefined): string | undefined {
+  if (markdown) {
+    return prettier.format(markdown, {
+      parser: 'markdown',
+      plugins: [parserMarkdown, parserBabel],
+      semi: false,
+      singleQuote: true,
+    })
+  }
+
+  return markdown
+}
 
 export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
@@ -136,15 +152,15 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
 
     const design = [
       '## Learning objectives',
-      learningObjectives,
+      learningObjectives?.trim(),
       '## Out of scope',
-      outOfScope,
+      outOfScope?.trim(),
       '## Concepts',
-      concepts,
+      concepts?.trim(),
       '## Prerequisites',
-      prerequisites,
+      prerequisites?.trim(),
     ].join('\n\n')
-    const instructions = `${story}\n\n${tasks}`
+    const instructions = `${story?.trim()}\n\n${tasks?.trim()}`.trim()
 
     fetch(`${process.env.REACT_APP_EXERCISM_HOST}/git_api/concept_exercises`, {
       method: 'POST',
@@ -154,12 +170,12 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
       },
       body: JSON.stringify({
         track_slug: trackId,
-        exercise_slug: exerciseName,
-        example_filename: trackData.example_filename,
+        exercise_slug: exerciseName?.trim(),
+        example_filename: trackData.example_filename?.trim(),
         example_code: example,
-        instructions_markdown: instructions,
-        introduction_markdown: introduction,
-        design_markdown: design,
+        instructions_markdown: formatMarkdown(instructions?.trim()),
+        introduction_markdown: formatMarkdown(introduction?.trim()),
+        design_markdown: formatMarkdown(design?.trim()),
       }),
     })
       .then((response) => response.json())
