@@ -21,6 +21,17 @@ import {
 
 import { SubmitIndicator } from './SubmitIndicator'
 
+function formatMarkdown(markdown: string | undefined): string | undefined {
+  if (markdown) {
+    return prettier.format(markdown, {
+      parser: 'markdown',
+      plugins: [parserMarkdown],
+    })
+  }
+
+  return markdown
+}
+
 export interface TrackNewExerciseParams {
   trackId: TrackIdentifier
 }
@@ -62,17 +73,6 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
   const [linkToContributing, setLinkToContributing] = useState(false)
 
   const prepopulate = props.location.state
-
-  const formatMarkdown = (markdown: string | undefined): string | undefined => {
-    if (markdown) {
-      return prettier.format(markdown, {
-        parser: 'markdown',
-        plugins: [parserMarkdown],
-      })
-    }
-
-    return markdown
-  }
 
   const clearState = () => window.history.pushState(null, '')
 
