@@ -3,6 +3,7 @@ import { StaticContext } from 'react-router'
 import { useParams, RouteComponentProps, Link } from 'react-router-dom'
 import prettier from 'prettier/standalone'
 import parserMarkdown from 'prettier/parser-markdown'
+import parserBabel from 'prettier/parser-babel'
 
 import { useTrackData } from '../hooks/useTrackData'
 import { useCliToken } from '../hooks/useUserData'
@@ -25,7 +26,9 @@ function formatMarkdown(markdown: string | undefined): string | undefined {
   if (markdown) {
     return prettier.format(markdown, {
       parser: 'markdown',
-      plugins: [parserMarkdown],
+      plugins: [parserMarkdown, parserBabel],
+      semi: false,
+      singleQuote: true,
     })
   }
 
