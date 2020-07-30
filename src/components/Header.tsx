@@ -10,9 +10,20 @@ export function Header(): JSX.Element {
         </HeaderLink>
 
         <nav>
-          <HeaderLink to="/">Tracks</HeaderLink>
-          <HeaderLink to="/exercises">Exercises</HeaderLink>
-          <HeaderLink to="/stories">Stories</HeaderLink>
+          <ul
+            className="list-unstyled"
+            style={{ display: 'flex', marginBottom: 0 }}
+          >
+            <li>
+              <HeaderLink to="/">Tracks</HeaderLink>
+            </li>
+            <li>
+              <HeaderLink to="/exercises">Exercises</HeaderLink>
+            </li>
+            <li>
+              <HeaderLink to="/stories">Stories</HeaderLink>
+            </li>
+          </ul>
         </nav>
       </div>
     </header>
