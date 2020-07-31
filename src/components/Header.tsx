@@ -10,10 +10,7 @@ export function Header(): JSX.Element {
         </HeaderLink>
 
         <nav>
-          <ul
-            className="list-unstyled"
-            style={{ display: 'flex', marginBottom: 0 }}
-          >
+          <ul className="list-unstyled d-flex mb-0">
             <li>
               <HeaderLink to="/">Tracks</HeaderLink>
             </li>
