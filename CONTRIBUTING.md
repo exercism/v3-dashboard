@@ -8,7 +8,7 @@ submitting patches.
 
 ## Code of Conduct
 
-Help us keep Exercism welcoming. Please read and abide by the [Code of Conduct][https://exercism.io/code-of-conduct].
+Help us keep Exercism welcoming. Please read and abide by the [Code of Conduct](https://exercism.io/code-of-conduct).
 
 ### Prerequisites
 
