@@ -182,7 +182,7 @@ export function TrackNewExercise(props: TrackNewExerciseProps): JSX.Element {
       .then((data) => {
         const body = issueUrl ? `Closes ${issueUrl}` : ''
         setPullRequestUrl(
-          `https://github.com/exercism/v3/compare/master...exercism-bot:${data.branch_name}?expand=1&body=${body}`
+          `https://github.com/exercism/v3/compare/master...exercism-external-bot:${data.branch_name}?expand=1&body=${body}`
         )
       })
       .catch(() => setPosting(false))
